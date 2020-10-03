@@ -72,6 +72,15 @@ class VecDVBO extends DVBO {
     }
 }
 
+class ColorDVBO extends DVBO {
+    constructor(gl,nElements,dynamic=true) {
+        super(gl,3,nElements,dynamic);
+    }
+    acquire(index) {
+        return new ArrayFloats(this.subarray(index));
+    }
+}
+
 class MatDVBO extends DVBO {
     constructor(gl,nElements,dynamic=true) {
         super(gl,9,nElements,dynamic);
@@ -127,7 +136,7 @@ class DynamicVAO {
         this.malformed_names = new Set();
         for (const name in channels) {
             const channel = channels[name];
-            if (channel.type === "scalar" || channel.type === "vec") {
+            if (channel.type === "scalar" || channel.type === "vec" || channel.type === "color") {
                 const loc = gl.getAttribLocation(program,name);
                 if (loc < 0) {
                     console.error("Could not find attribute",name);
@@ -176,6 +185,13 @@ class DynamicVAO {
                 this.DVBOs.set(name,DVBO);
                 gl.bindBuffer(gl.ARRAY_BUFFER,DVBO.vbo);
                 gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(loc);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc, 1);
+            } else if (channel.type === "color") {
+                const DVBO = new ColorDVBO(gl,size,channel.dynamic);
+                this.DVBOs.set(name,DVBO);
+                gl.bindBuffer(gl.ARRAY_BUFFER,DVBO.vbo);
+                gl.vertexAttribPointer(loc, 3, gl.FLOAT, false, 0, 0);
                 gl.enableVertexAttribArray(loc);
                 gl.ext_instance.vertexAttribDivisorANGLE(loc, 1);
             } else if (channel.type === "mat") {

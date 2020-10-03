@@ -3,6 +3,7 @@
 class Scene {
     constructor(gl,view=new Mat()) {
         this.view = view;
+        this.solar_vector = new Vec(1.0,0.0);
         this.time = 0;
         this.passes = [];
         this.pass_depths = [];

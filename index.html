@@ -33,45 +33,82 @@ void main() {
 precision highp float;
 varying vec2 world_coord;
 varying float daytime;
-uniform float t;
+uniform float planet_radius;
 uniform sampler2D gradient;
 void main() {
-    gl_FragColor = texture2D(gradient,vec2(24.0-length(world_coord),0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
+    float texture_index = 0.5*length(world_coord)/planet_radius;
+    texture_index += 0.25*smoothstep(0.5-0.0005,0.5+0.0005,texture_index)-0.125;
+    gl_FragColor = texture2D(gradient,vec2(texture_index,daytime+0.5));
 }
 </script>
 
-<script id="shader-foreground-f" type="x-shader/x-fragment">
-precision highp float;
-varying vec2 world_coord;
+<script id="shader-nightday-sprite-v" type="x-shader/x-vertex">
+uniform vec2 solar_vector;
+uniform mat3 view;
+attribute vec2 vertex;
+attribute vec3 model_x;
+attribute vec3 model_y;
+attribute vec3 model_z;
+attribute vec3 uv_x;
+attribute vec3 uv_y;
+attribute vec3 uv_z;
+attribute vec3 variant_mask; // Used to access sprite variants
+attribute float layer;
+varying vec2 uv;
 varying float daytime;
-uniform float t;
-uniform sampler2D gradient;
+varying float layer_level;
+varying vec3 mask; // Used to access sprite variants
 void main() {
-    gl_FragColor = texture2D(gradient,vec2(4.0-length(world_coord),0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
+    mat3 model = mat3(model_x,model_y,model_z);
+    vec3 pos = model * vec3(vertex,1.0);
+    daytime = dot(pos.xy,solar_vector);
+    gl_Position = vec4((view*pos).xy,0.5,1.0);
+    mask = variant_mask;
+    layer_level = layer;
+    uv = (mat3(uv_x,uv_y,uv_z) * vec3(vertex,1.0)).xy;
+}
+</script>
+
+<script id="shader-nightday-sprite-f" type="x-shader/x-fragment">
+precision highp float;
+varying vec2 uv;
+varying float daytime;
+uniform sampler2D gradient; // Day/night - layer gradient
+uniform sampler2D spritesheet;
+varying float layer_level; // Used for the background/foreground color gradient
+varying vec3 mask; // Used to access sprite variants
+
+void main() {
+    vec4 sheet_color = texture2D(spritesheet,uv);
+    float alpha = clamp(dot(sheet_color.xyz,mask),0.0,1.0);
+    vec3 base_color = texture2D(gradient,vec2(layer_level,daytime+0.5)).xyz;
+    gl_FragColor = vec4(base_color*alpha,alpha);
 }
 </script>
 <script>
+
+const PLANET_RADIUS = 24;
 
 /*
  * A custom render pass that uses the custom shaders
  */
 class BackgroundPass extends RenderPass {
-    constructor(gl,scene,program,gradient_texture) {
+    constructor(gl,scene,program,gradient_texture,planet_radius) {
         super(gl,program);
+        this.planet_radius = planet_radius;
+        this.scene = scene;
         this.gradient_texture = gradient_texture;
         this.vao = new SimpleVAO(gl,program,scene.square_vao);
         this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
+        this.planet_radius_loc = gl.getUniformLocation(program,"planet_radius");
         this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
-        this.t_loc = gl.getUniformLocation(program,"t");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.inverse_view = new Mat();
         this.t = 0;
-        this.solar_vector = new Vec(1.0,0.0);
     }
     update(scene,dt) {
         Mat.Inv(this.inverse_view,scene.view);
         this.t += dt;
-        this.solar_vector.polareq(1/24,-0.2*this.t);
     }
     draw(gl) {
         gl.useProgram(this.program);
@@ -79,9 +116,115 @@ class BackgroundPass extends RenderPass {
         gl.uniform1i(this.gradient_texture_loc, 0);
         gl.bindTexture(gl.TEXTURE_2D, this.gradient_texture);
         gl.uniformMatrix3fv(this.inverse_view_loc,false,this.inverse_view.a);
-        gl.uniform1f(this.t_loc,this.t);
-        gl.uniform2fv(this.solar_loc,this.solar_vector.a);
+        gl.uniform1f(this.planet_radius_loc,this.planet_radius);
+        gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
         this.vao.draw(gl);
+    }
+}
+
+// A builtin pass
+class NightdaySpritePass extends RenderPass{
+    constructor(gl,scene,program,texture,gradient,planet_radius) {
+        super(gl,program);
+        this.scene = scene;
+        this.texture = texture;
+        this.gradient = gradient;
+        this.planet_radius = planet_radius;
+        this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:false},
+            uv: {type:'mat',dynamic:false},
+            layer: {type:'scalar',dynamic:false},
+            variant_mask: {type:'color',dynamic:false},
+        },8);
+        // Texture locations
+        this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
+        this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
+        // Uniform locations
+        this.view_loc = gl.getUniformLocation(program,"view");
+        this.solar_loc = gl.getUniformLocation(program,"solar_vector");
+        this.view = new Mat();
+    }
+    update(scene,dt) {
+        this.view.eq(scene.view);
+    }
+    prepare(gl) {
+        this.dvao.prepare(gl);
+    }
+    draw(gl) {
+        gl.useProgram(this.program);
+        // Texture 0: Spritesheet
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(this.gradient_texture_loc, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        // Texture 1: Gradient
+        gl.activeTexture(gl.TEXTURE1);
+        gl.uniform1i(this.spritesheet_loc, 1);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
+        // Uniforms
+        gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
+        gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
+        this.dvao.draw(gl);
+    }
+}
+
+const VARIANT_R = 1;
+const VARIANT_G = 2;
+const VARIANT_B = 4;
+
+class NightdaySprite {
+    constructor(engine,pass,image=null,variant=0,layer=1.0,scale=0.3) {
+        this.engine = engine;
+        this.pass = pass;
+        this.scale = scale;
+        this.pos = new Vec();
+        this.mirror = false;
+        this.data = pass.dvao.acquire(engine.gl);
+        this.sprite_matrix = new Mat();
+        this.rotation = new Mat();
+        this.translation = new Mat();
+        this.scaling = new Mat();
+        this.setImage(image,variant,layer);
+        this.transform_computed = false;
+        this.engine.sprites.add(this);
+    }
+    destroy() {
+        this.pass.dvao.relenquish(this.data);
+        this.engine.sprites.delete(this);
+    }
+    setImage(image,variant=0,layer=0.5) {
+        this.image = image;
+        if (image !== null) {
+            this.sprite_matrix.eq(engine.il.model_frames.get(image));
+            this.data.uv.eq(engine.il.texture_frames.get(image));
+            this.data.variant_mask.a[0] = variant & VARIANT_R ? 1.0 : 0.0;
+            this.data.variant_mask.a[1] = variant & VARIANT_G ? 1.0 : 0.0;
+            this.data.variant_mask.a[2] = variant & VARIANT_B ? 1.0 : 0.0;
+            this.data.layer.set(layer);
+        } else {
+            this.sprite_matrix.zeroeq();
+            this.data.uv.zeroeq();
+        }
+    }
+    compute_transform() {
+        // Set matrices from values
+        this.rotation.rotationeq(-Math.atan2(-this.pos.x,this.pos.y));
+        this.translation.translationeq(this.pos);
+        if (this.mirror) {
+            this.scaling.scalingeq(-this.scale,this.scale);
+        } else {
+            this.scaling.scalingeq(this.scale,this.scale);
+        }
+        // Compute model matrix
+        this.data.model.eq(this.sprite_matrix);
+        this.data.model.composeq(this.scaling);
+        this.data.model.composeq(this.rotation);
+        this.data.model.composeq(this.translation);
+    }
+    update(dt) {
+        if (!this.transform_computed) {
+            this.compute_transform();
+            this.transform_computed = true;
+        }
     }
 }
 
@@ -91,13 +234,31 @@ class DemoEngine extends Engine {
         this.backgroundpass = new BackgroundPass(this.gl,
             this.scene,
             this.sc.programs.get('background'),
-            this.il.textures.get('gradient'),
+            this.il.textures.get('planet_sky'),
+            PLANET_RADIUS,
         );
         this.scene.addPass(this.backgroundpass,1.0);
-        this.scene.view.translationeq(new Vec(0.0,-24.0));
+        // Background sprite pass
+        this.ndspritepass = new NightdaySpritePass(this.gl,
+            this.scene,
+            this.sc.programs.get('background_sprites'),
+            this.il.textures.get('gradient'),
+            this.il.textures.get('mountainbiome'),
+            PLANET_RADIUS,
+        );
+        this.scene.addPass(this.ndspritepass,0.7);
+        // Create a background sprite
+        for (let i=0; i<8; ++i) {
+            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/rock8.png",i);
+            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02);
+        }
+        this.scene.view.translationeq(new Vec(0.0,-PLANET_RADIUS));
+        this.t = 0;
     }
     update(dt) {
         super.update(dt);
+        this.t += dt;
+        this.scene.solar_vector.polareq(1/24,-0.2*this.t);
         this.scene.view.a[0] = 1/this.cm.aspectRatio;
     }
 }
@@ -105,13 +266,16 @@ class DemoEngine extends Engine {
 const engine = new DemoEngine(
     canvas_container = document.getElementById("canvas-container"),
     shader_programs = {
-        background:['shader-background-v','shader-background-f']
+        background:['shader-background-v','shader-background-f'],
+        background_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
     },
     images = {
-        gradient:'images/gradient_example.png'
+        gradient:'images/gradient_example.png',
+        planet_sky:'images/planet_sky.png',
+        mountainbiome:'images/mountainbiome.png',
     },    
     frames = {
-        //spritesheet:'images/hoverbots.json'
+        mountainbiome:'images/mountainbiome.json',
     },
     music = {
         //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
