@@ -59,6 +59,7 @@ class Engine {
             that.mouse_pos.eq(inverse_view.transform(new Vec(that.cm.mouse_x,that.cm.mouse_y)));
             if (last_t !== null) {
                 const dt = (t-last_t)*0.001;
+                if (dt > 0.04) dt = 0.04;
                 that.scene.update(dt);
                 that.update(dt);
                 that.scene.prepare(that.gl);
