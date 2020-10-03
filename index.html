@@ -258,12 +258,12 @@ class Man extends AnimatedSprite {
             1,1.0,1, // variant, layer, scale
         );
         this.frames = [
-            "Tex/man1.png",
-            "Tex/man2.png",
-            "Tex/man3.png",
-            "Tex/man4.png",
-            "Tex/man5.png",
-            "Tex/man6.png",
+            //"Tex/man1.png",
+            //"Tex/man2.png",
+            //"Tex/man3.png",
+            //"Tex/man4.png",
+            //"Tex/man5.png",
+            //"Tex/man6.png",
             "Tex/man7.png",
         ];
         this.FRAME_TIME = 0.1;
@@ -277,6 +277,7 @@ class Man extends AnimatedSprite {
             this.frame_age = 0;
             this.setImage(this.frames[this.frame]);
         }
+        this.pos.polareq(PLANET_RADIUS,0.1*Math.sin(0.30*this.engine.t));
         super.update(dt);
     }
 }
@@ -307,22 +308,35 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('animations'),
         );
         this.scene.addPass(this.anspritepass,0.5);
-        // Create a background sprite
+        // Generate background
+        const BACK_LAYER = 0.0;
+        const MID_LAYER = 0.25;
+        const FORE_LAYER = 0.5;
+        
         for (let i=0; i<8; ++i) {
             const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
-            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
+            test.pos.polareq(PLANET_RADIUS,i*0.02 - 0.1);
         }
         // Create man Tex/man3.png
-        const man = new Man(this,this.anspritepass);
-        man.pos.polareq(PLANET_RADIUS,Math.PI/2);
-        this.scene.view.translationeq(new Vec(0.0,-PLANET_RADIUS));
+        this.man = new Man(this,this.anspritepass);
+        this.man.pos.polareq(PLANET_RADIUS,0);
         this.t = 0;
+        
+        this.camera_pos = new Vec(new Vec(0.0,PLANET_RADIUS));
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
         this.scene.solar_vector.polareq(1/24,-0.2*this.t);
-        this.scene.view.a[0] = 1/this.cm.aspectRatio;
+        this.camera_pos.polareq(PLANET_RADIUS,0.00*this.t);
+        
+        let T = new Mat().translationeq(this.camera_pos.mul(-1));
+        let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
+        let S = new Mat();
+        S.a[0] = 1/this.cm.aspectRatio;
+        this.scene.view.eq(T);
+        Mat.Compose(this.scene.view, R, this.scene.view);
+        Mat.Compose(this.scene.view, S, this.scene.view);
     }
 }
 
