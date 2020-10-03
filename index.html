@@ -175,6 +175,8 @@ class NightdaySprite {
     constructor(engine,pass,image=null,variant=0,layer=0.75,scale=1) {
         this.engine = engine;
         this.pass = pass;
+        this.variant = variant;
+        this.layer = layer;
         this.scale = scale;
         this.pos = new Vec();
         this.mirror = false;
@@ -191,8 +193,10 @@ class NightdaySprite {
         this.pass.dvao.relenquish(this.data);
         this.engine.sprites.delete(this);
     }
-    setImage(image,variant=0,layer=0.5) {
+    setImage(image,variant=null,layer=null) {
         this.image = image;
+        variant = variant === null ? this.variant : variant;
+        layer = layer === null ? this.layer : layer;
         if (image !== null) {
             this.sprite_matrix.eq(engine.il.model_frames.get(image));
             this.data.uv.eq(engine.il.texture_frames.get(image));
@@ -225,6 +229,13 @@ class NightdaySprite {
             this.compute_transform();
             this.transform_computed = true;
         }
+    }
+}
+
+class AnimatedSprite extends NightdaySprite {
+    update(dt) {
+        this.compute_transform();
+        this.transform_computed = true;
     }
 }
 
