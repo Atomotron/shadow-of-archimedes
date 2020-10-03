@@ -36,9 +36,18 @@ varying float daytime;
 uniform float t;
 uniform sampler2D gradient;
 void main() {
-    float r2 = dot(world_coord,world_coord);
-    float planet_ness = 1.0-smoothstep(7.0*7.0,8.0*8.0,r2);
-    gl_FragColor = texture2D(gradient,vec2(planet_ness,0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
+    gl_FragColor = texture2D(gradient,vec2(24.0-length(world_coord),0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
+}
+</script>
+
+<script id="shader-foreground-f" type="x-shader/x-fragment">
+precision highp float;
+varying vec2 world_coord;
+varying float daytime;
+uniform float t;
+uniform sampler2D gradient;
+void main() {
+    gl_FragColor = texture2D(gradient,vec2(4.0-length(world_coord),0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
 }
 </script>
 <script>
@@ -62,7 +71,7 @@ class BackgroundPass extends RenderPass {
     update(scene,dt) {
         Mat.Inv(this.inverse_view,scene.view);
         this.t += dt;
-        this.solar_vector.polareq(1/8,0.2*this.t);
+        this.solar_vector.polareq(1/24,-0.2*this.t);
     }
     draw(gl) {
         gl.useProgram(this.program);
@@ -85,7 +94,7 @@ class DemoEngine extends Engine {
             this.il.textures.get('gradient'),
         );
         this.scene.addPass(this.backgroundpass,1.0);
-        this.scene.view.translationeq(new Vec(0.0,-8.0));
+        this.scene.view.translationeq(new Vec(0.0,-24.0));
     }
     update(dt) {
         super.update(dt);
