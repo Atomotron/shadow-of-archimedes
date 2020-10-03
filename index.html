@@ -124,18 +124,12 @@ class BackgroundPass extends RenderPass {
 
 // A builtin pass
 class NightdaySpritePass extends RenderPass{
-    constructor(gl,scene,program,texture,gradient,planet_radius) {
+    constructor(gl,scene,program,texture,gradient) {
         super(gl,program);
         this.scene = scene;
         this.texture = texture;
         this.gradient = gradient;
-        this.planet_radius = planet_radius;
-        this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
-            model: {type:'mat',dynamic:false},
-            uv: {type:'mat',dynamic:false},
-            layer: {type:'scalar',dynamic:false},
-            variant_mask: {type:'color',dynamic:false},
-        },8);
+        this.dvao = this.makeDVAO(gl,program,scene);
         // Texture locations
         this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
         this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
@@ -143,6 +137,14 @@ class NightdaySpritePass extends RenderPass{
         this.view_loc = gl.getUniformLocation(program,"view");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.view = new Mat();
+    }
+    makeDVAO(gl,program,scene) {
+        return new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:false},
+            uv: {type:'mat',dynamic:false},
+            layer: {type:'scalar',dynamic:false},
+            variant_mask: {type:'color',dynamic:false},
+        },8);
     }
     update(scene,dt) {
         this.view.eq(scene.view);
@@ -155,15 +157,26 @@ class NightdaySpritePass extends RenderPass{
         // Texture 0: Spritesheet
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(this.gradient_texture_loc, 0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
         // Texture 1: Gradient
         gl.activeTexture(gl.TEXTURE1);
         gl.uniform1i(this.spritesheet_loc, 1);
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
         // Uniforms
         gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
         gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
         this.dvao.draw(gl);
+    }
+}
+
+class AnimatedSpritePass extends NightdaySpritePass {
+    makeDVAO(gl,program,scene) {
+        return new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:true},
+            uv: {type:'mat',dynamic:true},
+            layer: {type:'scalar',dynamic:false},
+            variant_mask: {type:'color',dynamic:true},
+        },8);
     }
 }
 
@@ -239,6 +252,34 @@ class AnimatedSprite extends NightdaySprite {
     }
 }
 
+class Man extends AnimatedSprite {
+    constructor(engine,pass) {
+        super(engine,pass,
+            "Tex/man1.png", // image
+            0,1.0,1, // variant, layer, scale
+        );
+        this.frames = [
+            "Tex/man1.png",
+            "Tex/man2.png",
+            "Tex/man3.png",
+            "Tex/man4.png",
+            "Tex/man5.png",
+        ];
+        this.FRAME_TIME = 0.1;
+        this.frame_age = 0;
+        this.frame = 0;
+    }
+    update(dt) {
+        this.frame_age += dt;
+        if (this.frame_age > this.FRAME_TIME) {
+            this.frame = (this.frame+1) % this.frames.length;
+            this.frame_age = 0;
+            this.setImage(this.frames[this.frame]);
+        }
+        super.update(dt);
+    }
+}
+
 class ArchimedesEngine extends Engine {
     setup() {
         // Background pass
@@ -255,14 +296,24 @@ class ArchimedesEngine extends Engine {
             this.sc.programs.get('nightday_sprites'),
             this.il.textures.get('gradient'),
             this.il.textures.get('mountainbiome'),
-            PLANET_RADIUS,
         );
         this.scene.addPass(this.ndspritepass,0.7);
+        // Animated sprite pass
+        this.anspritepass = new AnimatedSpritePass(this.gl,
+            this.scene,
+            this.sc.programs.get('nightday_sprites'),
+            this.il.textures.get('animations'),
+            this.il.textures.get('gradient'),
+        );
+        this.scene.addPass(this.anspritepass,0.5);
         // Create a background sprite
         for (let i=0; i<8; ++i) {
-            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
-            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
+            //const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
+            //test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
         }
+        // Create man Tex/man3.png
+        const man = new Man(this,this.anspritepass);
+        man.pos.polareq(PLANET_RADIUS,Math.PI/2);
         this.scene.view.translationeq(new Vec(0.0,-PLANET_RADIUS));
         this.t = 0;
     }
