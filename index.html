@@ -245,10 +245,6 @@ class NightdaySprite {
 }
 
 class AnimatedSprite extends NightdaySprite {
-    update(dt) {
-        this.compute_transform();
-        this.transform_computed = true;
-    }
 }
 
 class Man extends AnimatedSprite {
@@ -261,9 +257,9 @@ class Man extends AnimatedSprite {
             //"Tex/man1.png",
             //"Tex/man2.png",
             //"Tex/man3.png",
-            //"Tex/man4.png",
-            //"Tex/man5.png",
-            //"Tex/man6.png",
+            "Tex/man4.png",
+            "Tex/man5.png",
+            "Tex/man6.png",
             "Tex/man7.png",
         ];
         this.FRAME_TIME = 0.1;
@@ -276,8 +272,9 @@ class Man extends AnimatedSprite {
             this.frame = (this.frame+1) % this.frames.length;
             this.frame_age = 0;
             this.setImage(this.frames[this.frame]);
+            this.pos.polareq(PLANET_RADIUS,0.1*Math.sin(0.30*this.engine.t)+0.025*this.engine.t);
+            this.transform_computed = false;
         }
-        this.pos.polareq(PLANET_RADIUS,0.1*Math.sin(0.30*this.engine.t));
         super.update(dt);
     }
 }
@@ -328,7 +325,7 @@ class ArchimedesEngine extends Engine {
         super.update(dt);
         this.t += dt;
         this.scene.solar_vector.polareq(1/24,-0.2*this.t);
-        this.camera_pos.polareq(PLANET_RADIUS,0.00*this.t);
+        this.camera_pos.polareq(PLANET_RADIUS,0.025*this.t);
         
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
