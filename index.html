@@ -42,6 +42,21 @@ void main() {
 }
 </script>
 
+<script id="shader-planet-disc-f" type="x-shader/x-fragment">
+precision highp float;
+varying vec2 world_coord;
+varying float daytime;
+uniform float planet_radius;
+uniform sampler2D gradient;
+void main() {
+    float texture_index = 0.5*length(world_coord)/planet_radius;
+    float step = smoothstep(0.5-0.0001,0.5+0.0001,texture_index);
+    texture_index += 0.25*step-0.125;
+    float alpha = 1.0-step;
+    gl_FragColor = vec4(texture2D(gradient,vec2(0.1,daytime+0.5)).xyz,1.0)*alpha;
+}
+</script>
+
 <script id="shader-nightday-sprite-v" type="x-shader/x-vertex">
 uniform vec2 solar_vector;
 uniform mat3 view;
@@ -88,7 +103,8 @@ void main() {
 <script>
 
 const PLANET_RADIUS = 24;
-const MAN_RADIUS = 24-0.4;
+const MAN_RADIUS = PLANET_RADIUS-0.02;
+const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 
 /*
  * A custom render pass that uses the custom shaders
@@ -235,6 +251,7 @@ class NightdaySprite {
         // Compute model matrix
         this.data.model.eq(this.sprite_matrix);
         this.data.model.composeq(this.scaling);
+        this.data.model.y += this.data.model.yy;
         this.data.model.composeq(this.rotation);
         this.data.model.composeq(this.translation);
     }
@@ -296,6 +313,14 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('mountainbiome'),
         );
         this.scene.addPass(this.ndspritepass,0.75);
+        // Disc pass
+        this.plantdiscpass = new BackgroundPass(this.gl,
+            this.scene,
+            this.sc.programs.get('planet_disc'),
+            this.il.textures.get('planet_sky'),
+            PLANET_RADIUS,
+        );
+        this.scene.addPass(this.plantdiscpass,0.5);
         // Animated sprite pass
         this.aspritepass = new AnimatedSpritePass(this.gl,
             this.scene,
@@ -303,7 +328,7 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('gradient'),
             this.il.textures.get('animations'),
         );
-        this.scene.addPass(this.aspritepass,0.5);
+        this.scene.addPass(this.aspritepass,0.25);
         // Generate background
         
         function find_layer(map,folder) {
@@ -333,25 +358,25 @@ class ArchimedesEngine extends Engine {
                 if (flags > 7) flags = 7;
                 console.log(flags);
                 const sprite = new NightdaySprite(that,that.ndspritepass,name,flags,layer);
-                sprite.pos.polareq(PLANET_RADIUS+rdelta+sprite.sprite_matrix.yy,angle);
+                sprite.pos.polareq(PLANET_RADIUS+rdelta,angle);
                 that.bgsprites.push(sprite);
             }
         }
-        gen_layer(bsprites,0.0,-0.1);
-        gen_layer(msprites,0.25,-0.25);
-        gen_layer(fsprites,0.5,-0.4);
+        gen_layer(bsprites,0.0,-0.3);
+        gen_layer(msprites,0.33,-0.3);
+        gen_layer(fsprites,0.66,-0.3);
         // Create man Tex/man3.png
         this.man = new Man(this,this.aspritepass);
         this.man.pos.polareq(MAN_RADIUS,0);
         this.t = 0;
         
-        this.camera_pos = new Vec(new Vec(0.0,PLANET_RADIUS));
+        this.camera_pos = new Vec(new Vec(0.0,CAMERA_RADIUS));
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
         this.scene.solar_vector.polareq(1/24,-0.2*this.t);
-        this.camera_pos.polareq(PLANET_RADIUS,0.025*this.t);
+        this.camera_pos.polareq(CAMERA_RADIUS,0.025*this.t);
         
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
@@ -367,6 +392,7 @@ const engine = new ArchimedesEngine(
     canvas_container = document.getElementById("canvas-container"),
     shader_programs = {
         background:['shader-background-v','shader-background-f'],
+        planet_disc:['shader-background-v','shader-planet-disc-f'],
         nightday_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
     },
     images = {
