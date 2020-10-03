@@ -54,7 +54,7 @@ class ImageLoader {
                     const frame = frames[name].frame;
                     this.texture_frames.set(name,(new Mat()).unittotexrecteq(frame.x/size.w,frame.y/size.h,frame.w/size.w,frame.h/size.h));
                     const largest_dim = size.h>size.w ? size.h:size.w;
-                    const sourceSize = frames[name].sourceSize;
+                    const sourceSize = frames[name].spriteSourceSize;
                     const model_matrix = (new Mat(sourceSize.w,0.0, 0.0,sourceSize.h, 0.0,0.0)).muleq(1/512);
                     this.model_frames.set(name,model_matrix);
                 }

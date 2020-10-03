@@ -172,7 +172,7 @@ const VARIANT_G = 2;
 const VARIANT_B = 4;
 
 class NightdaySprite {
-    constructor(engine,pass,image=null,variant=0,layer=1.0,scale=0.3) {
+    constructor(engine,pass,image=null,variant=0,layer=0.75,scale=1) {
         this.engine = engine;
         this.pass = pass;
         this.scale = scale;
@@ -228,7 +228,7 @@ class NightdaySprite {
     }
 }
 
-class DemoEngine extends Engine {
+class ArchimedesEngine extends Engine {
     setup() {
         // Background pass
         this.backgroundpass = new BackgroundPass(this.gl,
@@ -241,7 +241,7 @@ class DemoEngine extends Engine {
         // Background sprite pass
         this.ndspritepass = new NightdaySpritePass(this.gl,
             this.scene,
-            this.sc.programs.get('background_sprites'),
+            this.sc.programs.get('nightday_sprites'),
             this.il.textures.get('gradient'),
             this.il.textures.get('mountainbiome'),
             PLANET_RADIUS,
@@ -249,8 +249,8 @@ class DemoEngine extends Engine {
         this.scene.addPass(this.ndspritepass,0.7);
         // Create a background sprite
         for (let i=0; i<8; ++i) {
-            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/rock8.png",i);
-            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02);
+            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
+            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
         }
         this.scene.view.translationeq(new Vec(0.0,-PLANET_RADIUS));
         this.t = 0;
@@ -263,19 +263,21 @@ class DemoEngine extends Engine {
     }
 }
 
-const engine = new DemoEngine(
+const engine = new ArchimedesEngine(
     canvas_container = document.getElementById("canvas-container"),
     shader_programs = {
         background:['shader-background-v','shader-background-f'],
-        background_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
+        nightday_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
     },
     images = {
         gradient:'images/gradient_example.png',
         planet_sky:'images/planet_sky.png',
         mountainbiome:'images/mountainbiome.png',
+        animations: 'images/Animations.png',
     },    
     frames = {
         mountainbiome:'images/mountainbiome.json',
+        animations: 'images/Animations.json',
     },
     music = {
         //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
