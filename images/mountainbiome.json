@@ -1,0 +1,375 @@
+{
+  "frames": {
+    "MountainBiome/texture.png": {
+      "frame": {
+        "x": 4,
+        "y": 4,
+        "w": 1703,
+        "h": 1710
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 4,
+        "w": 1703,
+        "h": 1710
+      },
+      "sourceSize": {
+        "w": 2048,
+        "h": 2048
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock8.png": {
+      "frame": {
+        "x": 1715,
+        "y": 4,
+        "w": 796,
+        "h": 449
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 796,
+        "h": 449
+      },
+      "sourceSize": {
+        "w": 796,
+        "h": 449
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock2.png": {
+      "frame": {
+        "x": 2519,
+        "y": 4,
+        "w": 782,
+        "h": 318
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 782,
+        "h": 318
+      },
+      "sourceSize": {
+        "w": 782,
+        "h": 318
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock10.png": {
+      "frame": {
+        "x": 3309,
+        "y": 4,
+        "w": 662,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 57,
+        "y": 1209,
+        "w": 662,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock1.png": {
+      "frame": {
+        "x": 3309,
+        "y": 276,
+        "w": 630,
+        "h": 359
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 120,
+        "w": 630,
+        "h": 359
+      },
+      "sourceSize": {
+        "w": 630,
+        "h": 557
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock5.png": {
+      "frame": {
+        "x": 2519,
+        "y": 330,
+        "w": 393,
+        "h": 520
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 520
+      },
+      "sourceSize": {
+        "w": 393,
+        "h": 520
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock3.png": {
+      "frame": {
+        "x": 2920,
+        "y": 330,
+        "w": 363,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 363,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 363,
+        "h": 208
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock4.png": {
+      "frame": {
+        "x": 2920,
+        "y": 546,
+        "w": 356,
+        "h": 534
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 356,
+        "h": 534
+      },
+      "sourceSize": {
+        "w": 356,
+        "h": 534
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock9.png": {
+      "frame": {
+        "x": 1715,
+        "y": 461,
+        "w": 337,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 23,
+        "y": 802,
+        "w": 337,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock7.png": {
+      "frame": {
+        "x": 2060,
+        "y": 461,
+        "w": 292,
+        "h": 399
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 292,
+        "h": 399
+      },
+      "sourceSize": {
+        "w": 292,
+        "h": 399
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/rock6.png": {
+      "frame": {
+        "x": 1715,
+        "y": 609,
+        "w": 236,
+        "h": 423
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 236,
+        "h": 423
+      },
+      "sourceSize": {
+        "w": 236,
+        "h": 423
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/singletree4.png": {
+      "frame": {
+        "x": 2360,
+        "y": 858,
+        "w": 229,
+        "h": 236
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1645,
+        "y": 1155,
+        "w": 229,
+        "h": 236
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/singletree2.png": {
+      "frame": {
+        "x": 2597,
+        "y": 858,
+        "w": 229,
+        "h": 203
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1113,
+        "y": 1172,
+        "w": 229,
+        "h": 203
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/singletree1.png": {
+      "frame": {
+        "x": 2597,
+        "y": 1069,
+        "w": 228,
+        "h": 262
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 838,
+        "y": 1134,
+        "w": 228,
+        "h": 262
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/singletree3.png": {
+      "frame": {
+        "x": 1959,
+        "y": 868,
+        "w": 208,
+        "h": 197
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1357,
+        "y": 1188,
+        "w": 208,
+        "h": 197
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "mountainbiome.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 4096,
+      "h": 2048
+    },
+    "scale": 1
+  }
+}
