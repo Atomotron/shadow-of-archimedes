@@ -52,14 +52,15 @@ class Engine {
         // Start mainloop
         let last_t = null;
         const that = this;
+        this.toggle = true;
         (function loop(t) {
             that.cm.updateSize();
             const inverse_view = that.scene.view.inv();
             that.mouse_pos.eq(inverse_view.transform(new Vec(that.cm.mouse_x,that.cm.mouse_y)));
             if (last_t !== null) {
                 const dt = (t-last_t)*0.001;
-                that.update(dt);
                 that.scene.update(dt);
+                that.update(dt);
                 that.scene.prepare(that.gl);
                 that.scene.draw(that.gl);
             }

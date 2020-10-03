@@ -254,6 +254,18 @@ class Vec extends AbstractVec {
         a[6] = x;  a[7] = y;  a[8] = 1.0;
         return this;
     }
+    get xx() {return this.a[0];}
+    set xx(value) {this.a[0] = value;}
+    get xy() {return this.a[1];}
+    set xy(value) {this.a[1] = value;}
+    get yx() {return this.a[3];}
+    set yx(value) {this.a[3] = value;}
+    get yy() {return this.a[4];}
+    set yy(value) {this.a[4] = value;}
+    get x() {return this.a[6];}
+    set x(value) {this.a[6] = value;}
+    get y() {return this.a[7];}
+    set y(value) {this.a[7] = value;}
     
     /** Constructive setters **/
     static Translation(out,vec) {

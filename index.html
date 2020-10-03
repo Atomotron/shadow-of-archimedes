@@ -88,6 +88,7 @@ void main() {
 <script>
 
 const PLANET_RADIUS = 24;
+const MAN_RADIUS = 24-0.4;
 
 /*
  * A custom render pass that uses the custom shaders
@@ -175,7 +176,7 @@ class AnimatedSpritePass extends NightdaySpritePass {
             uv: {type:'mat',dynamic:true},
             layer: {type:'scalar',dynamic:false},
             variant_mask: {type:'color',dynamic:true},
-        },8);
+        },1);
     }
 }
 
@@ -220,6 +221,7 @@ class NightdaySprite {
             this.sprite_matrix.zeroeq();
             this.data.uv.zeroeq();
         }
+        this.transform_computed = false;
     }
     compute_transform() {
         // Set matrices from values
@@ -244,10 +246,7 @@ class NightdaySprite {
     }
 }
 
-class AnimatedSprite extends NightdaySprite {
-}
-
-class Man extends AnimatedSprite {
+class Man extends NightdaySprite {
     constructor(engine,pass) {
         super(engine,pass,
             "Tex/man1.png", // image
@@ -272,9 +271,9 @@ class Man extends AnimatedSprite {
             this.frame = (this.frame+1) % this.frames.length;
             this.frame_age = 0;
             this.setImage(this.frames[this.frame]);
-            this.pos.polareq(PLANET_RADIUS,0.1*Math.sin(0.30*this.engine.t)+0.025*this.engine.t);
-            this.transform_computed = false;
         }
+        this.pos.polareq(MAN_RADIUS,0.025*this.engine.t);
+        this.transform_computed = false;
         super.update(dt);
     }
 }
@@ -296,27 +295,54 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('gradient'),
             this.il.textures.get('mountainbiome'),
         );
-        this.scene.addPass(this.ndspritepass,0.7);
+        this.scene.addPass(this.ndspritepass,0.75);
         // Animated sprite pass
-        this.anspritepass = new AnimatedSpritePass(this.gl,
+        this.aspritepass = new AnimatedSpritePass(this.gl,
             this.scene,
             this.sc.programs.get('nightday_sprites'),
             this.il.textures.get('gradient'),
             this.il.textures.get('animations'),
         );
-        this.scene.addPass(this.anspritepass,0.5);
+        this.scene.addPass(this.aspritepass,0.5);
         // Generate background
-        const BACK_LAYER = 0.0;
-        const MID_LAYER = 0.25;
-        const FORE_LAYER = 0.5;
         
-        for (let i=0; i<8; ++i) {
-            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
-            test.pos.polareq(PLANET_RADIUS,i*0.02 - 0.1);
+        function find_layer(map,folder) {
+            const names = [];
+            for (const [key,value] of map) {
+                if (key.includes("/"+folder+"/")) {
+                    names.push(key);                
+                }
+            }
+            return names;
         }
+        const bsprites = find_layer(this.il.model_frames,"Background");
+        const msprites = find_layer(this.il.model_frames,"Midground");
+        const fsprites = find_layer(this.il.model_frames,"Foreground");
+        
+        const that = this;
+        this.bgsprites = [];
+        function gen_layer(sprites,layer,rdelta) {
+            let angle = 0;
+            while (angle < Math.PI*2.0) {
+                angle += 0.1*Math.random();
+                let idx = Math.floor(Math.random()*sprites.length);
+                idx = idx >= sprites.length ? sprites.length-1 : idx;
+                const name = sprites[idx];
+                const flags = Math.floor(Math.random()*7.0+1);
+                if (flags < 1) flags = 1;
+                if (flags > 7) flags = 7;
+                console.log(flags);
+                const sprite = new NightdaySprite(that,that.ndspritepass,name,flags,layer);
+                sprite.pos.polareq(PLANET_RADIUS+rdelta+sprite.sprite_matrix.yy,angle);
+                that.bgsprites.push(sprite);
+            }
+        }
+        gen_layer(bsprites,0.0,-0.1);
+        gen_layer(msprites,0.25,-0.25);
+        gen_layer(fsprites,0.5,-0.4);
         // Create man Tex/man3.png
-        this.man = new Man(this,this.anspritepass);
-        this.man.pos.polareq(PLANET_RADIUS,0);
+        this.man = new Man(this,this.aspritepass);
+        this.man.pos.polareq(MAN_RADIUS,0);
         this.t = 0;
         
         this.camera_pos = new Vec(new Vec(0.0,PLANET_RADIUS));
