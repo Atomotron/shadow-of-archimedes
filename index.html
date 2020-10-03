@@ -280,6 +280,13 @@ class Man extends NightdaySprite {
             "Tex/man6.png",
             "Tex/man7.png",
         ];
+        this.step_sounds = [
+            "rock_walk1",
+            "rock_walk2",
+            "rock_walk3",
+            "rock_walk4",
+            "rock_walk5",
+        ]
         this.FRAME_TIME = 0.1;
         this.frame_age = 0;
         this.frame = 0;
@@ -305,6 +312,11 @@ class Man extends NightdaySprite {
         // Update animation
         this.frame_age += dt;
         if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
+            if (this.frame === 3) {
+                this.engine.sound.play(
+                    this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
+                );
+            }
             this.frame = this.frame+1;
             if (walking) {
                 if (this.frame >= this.frames.length) {
@@ -436,7 +448,11 @@ const engine = new ArchimedesEngine(
         //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
     },
     sfx = {
-        //"hit": "sound/hit.mp3"
+        "rock_walk1": "sounds/rock_walk1.mp3",
+        "rock_walk2": "sounds/rock_walk2.mp3",
+        "rock_walk3": "sounds/rock_walk3.mp3",
+        "rock_walk4": "sounds/rock_walk4.mp3",
+        "rock_walk5": "sounds/rock_walk5.mp3",
     },
 );
 
