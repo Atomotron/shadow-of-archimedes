@@ -62,14 +62,14 @@ class Sounds {
         
         // Create audio context and master volume
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        this.master_volume = new GainNode(this.ctx);
+        this.master_volume = this.ctx.createGain();
         this.master_volume.connect(this.ctx.destination); 
         // Set up music, connecting them all to music volume.
-        this.music_volume = new GainNode(this.ctx);
+        this.music_volume = this.ctx.createGain();
         this.music_volume.connect(this.master_volume);
         this.music_track_volumes = new Map();
         // Set up sound effects master nodes
-        this.sfx_volume = new GainNode(this.ctx);
+        this.sfx_volume = this.ctx.createGain();
         this.sfx_volume.connect(this.master_volume);
         
         this.start_loading();
@@ -87,7 +87,7 @@ class Sounds {
         for (const [name,path] of this.music_paths) {
             const element = new Audio(path);
             element.addEventListener("canplaythrough", event => {
-                const volume = new GainNode(this.ctx);
+                const volume = this.ctx.createGain();
                 this.ctx.createMediaElementSource(element).connect(volume);
                 volume.connect(this.music_volume);
                 this.music_track_volumes.set(name,volume);
@@ -161,7 +161,7 @@ class Sounds {
     }
     // Plays a sound effect
     play(name) {
-        const node = new AudioBufferSourceNode(this.ctx);
+        const node = this.ctx.createBufferSource();
         node.buffer = this.sound.get(name);
         node.connect(this.sfx_volume);
         node.start();
