@@ -34,10 +34,11 @@ precision highp float;
 varying vec2 world_coord;
 varying float daytime;
 uniform float t;
+uniform sampler2D gradient;
 void main() {
     float r2 = dot(world_coord,world_coord);
-    float planet_ness = smoothstep(1.5,1.53,r2);
-    gl_FragColor = vec4(daytime+0.5,0.5,planet_ness, 1.0);
+    float planet_ness = 1.0-smoothstep(7.0*7.0,8.0*8.0,r2);
+    gl_FragColor = texture2D(gradient,vec2(planet_ness,0.4*daytime+0.5));//vec4(daytime+0.5,0.5,planet_ness, 1.0);
 }
 </script>
 <script>
@@ -46,10 +47,12 @@ void main() {
  * A custom render pass that uses the custom shaders
  */
 class BackgroundPass extends RenderPass {
-    constructor(gl,scene,program) {
+    constructor(gl,scene,program,gradient_texture) {
         super(gl,program);
+        this.gradient_texture = gradient_texture;
         this.vao = new SimpleVAO(gl,program,scene.square_vao);
         this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
+        this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
         this.t_loc = gl.getUniformLocation(program,"t");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.inverse_view = new Mat();
@@ -59,10 +62,13 @@ class BackgroundPass extends RenderPass {
     update(scene,dt) {
         Mat.Inv(this.inverse_view,scene.view);
         this.t += dt;
-        this.solar_vector.polareq(1.0,this.t);
+        this.solar_vector.polareq(1/8,0.2*this.t);
     }
     draw(gl) {
         gl.useProgram(this.program);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(this.gradient_texture_loc, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient_texture);
         gl.uniformMatrix3fv(this.inverse_view_loc,false,this.inverse_view.a);
         gl.uniform1f(this.t_loc,this.t);
         gl.uniform2fv(this.solar_loc,this.solar_vector.a);
@@ -75,10 +81,11 @@ class DemoEngine extends Engine {
         // Background pass
         this.backgroundpass = new BackgroundPass(this.gl,
             this.scene,
-            this.sc.programs.get('background')
+            this.sc.programs.get('background'),
+            this.il.textures.get('gradient'),
         );
         this.scene.addPass(this.backgroundpass,1.0);
-        this.scene.view.translationeq(new Vec(0.0,-1.0));
+        this.scene.view.translationeq(new Vec(0.0,-8.0));
     }
     update(dt) {
         super.update(dt);
@@ -92,7 +99,7 @@ const engine = new DemoEngine(
         background:['shader-background-v','shader-background-f']
     },
     images = {
-        //spritesheet:'images/hoverbots.png'
+        gradient:'images/gradient_example.png'
     },    
     frames = {
         //spritesheet:'images/hoverbots.json'

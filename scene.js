@@ -61,6 +61,7 @@ class SpritePass extends RenderPass{
             uv: {type:'mat',dynamic:true},
         },8);
         this.view_loc = gl.getUniformLocation(program,"view");
+        this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
         this.view = new Mat();
     }
     update(scene,dt) {
@@ -71,6 +72,8 @@ class SpritePass extends RenderPass{
     }
     draw(gl) {
         gl.useProgram(this.program);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(this.spritesheet_loc, 0);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
         this.dvao.draw(gl);
