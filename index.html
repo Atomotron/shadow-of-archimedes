@@ -93,15 +93,15 @@ const PLANET_RADIUS = 24;
  * A custom render pass that uses the custom shaders
  */
 class BackgroundPass extends RenderPass {
-    constructor(gl,scene,program,gradient_texture,planet_radius) {
+    constructor(gl,scene,program,gradient,planet_radius) {
         super(gl,program);
         this.planet_radius = planet_radius;
         this.scene = scene;
-        this.gradient_texture = gradient_texture;
+        this.gradient = gradient;
         this.vao = new SimpleVAO(gl,program,scene.square_vao);
         this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
         this.planet_radius_loc = gl.getUniformLocation(program,"planet_radius");
-        this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
+        this.gradient_loc = gl.getUniformLocation(program,"gradient");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.inverse_view = new Mat();
         this.t = 0;
@@ -113,8 +113,8 @@ class BackgroundPass extends RenderPass {
     draw(gl) {
         gl.useProgram(this.program);
         gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(this.gradient_texture_loc, 0);
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient_texture);
+        gl.uniform1i(this.gradient_loc, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
         gl.uniformMatrix3fv(this.inverse_view_loc,false,this.inverse_view.a);
         gl.uniform1f(this.planet_radius_loc,this.planet_radius);
         gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
@@ -122,9 +122,8 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-// A builtin pass
 class NightdaySpritePass extends RenderPass{
-    constructor(gl,scene,program,texture,gradient) {
+    constructor(gl,scene,program,gradient,texture) {
         super(gl,program);
         this.scene = scene;
         this.texture = texture;
@@ -256,7 +255,7 @@ class Man extends AnimatedSprite {
     constructor(engine,pass) {
         super(engine,pass,
             "Tex/man1.png", // image
-            0,1.0,1, // variant, layer, scale
+            1,1.0,1, // variant, layer, scale
         );
         this.frames = [
             "Tex/man1.png",
@@ -264,6 +263,8 @@ class Man extends AnimatedSprite {
             "Tex/man3.png",
             "Tex/man4.png",
             "Tex/man5.png",
+            "Tex/man6.png",
+            "Tex/man7.png",
         ];
         this.FRAME_TIME = 0.1;
         this.frame_age = 0;
@@ -302,14 +303,14 @@ class ArchimedesEngine extends Engine {
         this.anspritepass = new AnimatedSpritePass(this.gl,
             this.scene,
             this.sc.programs.get('nightday_sprites'),
-            this.il.textures.get('animations'),
             this.il.textures.get('gradient'),
+            this.il.textures.get('animations'),
         );
         this.scene.addPass(this.anspritepass,0.5);
         // Create a background sprite
         for (let i=0; i<8; ++i) {
-            //const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
-            //test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
+            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
+            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
         }
         // Create man Tex/man3.png
         const man = new Man(this,this.anspritepass);
