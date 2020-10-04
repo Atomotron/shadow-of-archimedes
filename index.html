@@ -312,8 +312,10 @@ class Man extends NightdaySprite {
         // Set up clickable region for jumping  
         const that = this;
         this.click_region = new Clickable(this.pos,0.25,() => {
-            that.jumped = true;
-            that.r_vel = MAN_JUMP_VEL;
+            if (!that.jumped) {
+                that.r_vel = MAN_JUMP_VEL;
+                that.jumped = true;
+            }
         });
         this.engine.clickables.add(this.click_region);
     }
@@ -395,7 +397,6 @@ class ArchimedesEngine extends Engine {
                 nearest.callback();
             }
         });
-        
         // Background pass
         this.backgroundpass = new BackgroundPass(this.gl,
             this.scene,
@@ -442,16 +443,22 @@ class ArchimedesEngine extends Engine {
         const bsprites = find_layer(this.il.model_frames,"Background");
         const msprites = find_layer(this.il.model_frames,"Midground");
         const fsprites = find_layer(this.il.model_frames,"Foreground");
-        
+        const biomes = ["MountainBiome","AridBiome"];
         const that = this;
         this.bgsprites = [];
         function gen_layer(sprites,layer,rdelta) {
             let angle = 0;
             while (angle < Math.PI*2.0) {
+                const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
                 angle += 0.1*Math.random();
-                let idx = Math.floor(Math.random()*sprites.length);
-                idx = idx >= sprites.length ? sprites.length-1 : idx;
-                const name = sprites[idx];
+                let found = false;
+                let name = ""
+                while (!found) {
+                    let idx = Math.floor(Math.random()*sprites.length);
+                    idx = idx >= sprites.length ? sprites.length-1 : idx;
+                    name = sprites[idx];
+                    found = !name.includes(biome+"/");
+                }
                 const flags = Math.floor(Math.random()*7.0+1);
                 if (flags < 1) flags = 1;
                 if (flags > 7) flags = 7;
@@ -466,7 +473,6 @@ class ArchimedesEngine extends Engine {
         // Create man 
         this.man = new Man(this,this.aspritepass);
         this.t = 0;
-        
         // Set up camera and zoom control
         window.addEventListener('wheel',(e) => {
             const factor = Math.exp(-e.deltaY/12.0);
