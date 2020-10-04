@@ -475,12 +475,12 @@ class ArchimedesEngine extends Engine {
         this.t = 0;
         // Set up camera and zoom control
         window.addEventListener('wheel',(e) => {
-            const factor = Math.exp(-e.deltaY/12.0);
-            const new_zoom = that.zoom*factor;
-            if (new_zoom > MIN_ZOOM && new_zoom < MAX_ZOOM) {
-                that.zoom_target = new_zoom;
-                that.zoom = new_zoom;
-            }
+            const factor = Math.exp(-0.25*Math.sign(e.deltaY));
+            let new_zoom = that.zoom*factor;
+            if (new_zoom < MIN_ZOOM) new_zoom = MIN_ZOOM;
+            if (new_zoom > MAX_ZOOM) new_zoom = MAX_ZOOM;
+            that.zoom_target = new_zoom;
+            that.zoom = new_zoom;
         });
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
         this.zoom = 0.01;
