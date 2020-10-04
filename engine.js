@@ -53,6 +53,9 @@ class Engine {
         let last_t = null;
         const that = this;
         this.toggle = true;
+        let frames = 0;
+        let time = 0;
+        let average_dt = 1/60;
         (function loop(t) {
             that.cm.updateSize();
             const inverse_view = that.scene.view.inv();
@@ -60,8 +63,14 @@ class Engine {
             if (last_t !== null) {
                 let dt = (t-last_t)*0.001;
                 if (dt > 0.04) dt = 0.04;
-                that.scene.update(dt);
-                that.update(dt);
+                time += dt;
+                frames += 1;
+                if (frames >= 15) {
+                    average_dt = time/frames;
+                    time = 0; frames = 0;
+                }
+                that.scene.update(average_dt);
+                that.update(average_dt);
                 that.scene.prepare(that.gl);
                 that.scene.draw(that.gl);
             }

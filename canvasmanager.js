@@ -12,12 +12,19 @@ class CanvasManager {
         // Set up mouse inputs
         this.mouse_x = 0;
         this.mouse_y = 0;
+        this.mouse_pressed = false;
         this.canvas.addEventListener('mousemove',(e) => {
             const rect = this.canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             this.mouse_x = 2.0*x/rect.width - 1.0; // Convert to gl coords
             this.mouse_y = 1.0 - 2.0*y/rect.height;
+        });
+        window.addEventListener('mousedown',(e) => {
+            this.mouse_pressed = true;
+        });
+        window.addEventListener('mouseup',(e) => {
+            this.mouse_pressed = false;
         });
         
         // Set up keyboard map

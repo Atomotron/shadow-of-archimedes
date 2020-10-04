@@ -105,8 +105,9 @@ const PLANET_RADIUS = 24;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 
-const MAN_SPEED = 1;
+const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
+const CAMERA_SPEED = MAN_SPEED*1.2;
 /*
  * A custom render pass that uses the custom shaders
  */
@@ -292,11 +293,13 @@ class Man extends NightdaySprite {
         this.target = new Vec(MAN_RADIUS,0.0);
         this.vel_mul = 0;
         this.walking = false;
-        window.addEventListener('click',(e) => {
-            this.target.eq(this.engine.mouse_pos.norm().muleq(MAN_RADIUS));
-        });
     }
     update(dt) {
+        // Update target
+        if (this.engine.cm.mouse_pressed) {
+            this.target.eq(this.engine.mouse_pos);
+        }
+        this.target.normeq().muleq(MAN_RADIUS)
         // Update position
         const dr = this.target.sub(this.pos);
         const walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
@@ -407,19 +410,24 @@ class ArchimedesEngine extends Engine {
         this.t = 0;
         
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
+        this.zoom = 0.25;
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
         this.scene.solar_vector.polareq(1/24,-0.2*this.t);
-        const dr = this.man.target.sub(this.camera_pos);
-        this.camera_pos.addeq(dr.mul(dt*1.6));
+        const dr_target = this.man.target.sub(this.camera_pos);
+        const dr_man = this.man.pos.sub(this.camera_pos);
+        this.camera_pos.addeq(dr_man.mul(dt*CAMERA_SPEED));
+        this.camera_pos.addeq(dr_target.mul(dt*CAMERA_SPEED));
         this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
         
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
         let S = new Mat();
-        S.a[0] = 1/this.cm.aspectRatio;
+        
+        S.a[0] = this.zoom;
+        S.a[4] = this.zoom*this.cm.aspectRatio;
         this.scene.view.eq(T);
         Mat.Compose(this.scene.view, R, this.scene.view);
         Mat.Compose(this.scene.view, S, this.scene.view);
