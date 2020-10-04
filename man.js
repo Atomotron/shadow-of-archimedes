@@ -39,6 +39,14 @@ class Man extends NightdaySprite {
             }
         });
         this.engine.clickables.add(this.click_region);
+        
+        // Set up inventory node
+        this.inventory_pos = (new Vec()).eq(this.pos);
+        this.inventory_force = new SpringForceNode(
+            this.inventory_pos,
+            MAN_INVENTORY_FORCE,
+            MAN_INVENTORY_DRAG,
+        );
     }
     update(dt) {
         // Update target
@@ -55,7 +63,7 @@ class Man extends NightdaySprite {
             );
         };
         this.r_defect += this.r_vel*dt;
-        this.r_vel += MAN_GRAVITY*dt;
+        this.r_vel -= GRAVITY*dt;
         if (this.r_defect < 0) {
             this.r_vel = 0
             this.r_defect = 0;
@@ -64,6 +72,8 @@ class Man extends NightdaySprite {
         this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
         this.mirror = this.pos.cross(dr) < 0;
         this.transform_computed = false;
+        // Update inventory pos
+        Vec.Mul(this.inventory_pos,this.pos,MAN_INVENTORY_HEIGHT);
         // Update animation
         this.frame_age += dt;
         if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {

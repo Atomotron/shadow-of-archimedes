@@ -176,8 +176,9 @@ class AbstractVec extends ArrayFloats {
     // Normalization: makes a vector unit-length but keeps its direction
     static Norm(out,x) {
         let mag = Vec.Abs(x);
+        const factor = mag === 0.0 ? 0.0 : 1.0/mag;
         out.eq(x);
-        out.muleq(Math.fround(Math.fround(1.0)/mag));
+        out.muleq(Math.fround(factor));
         return out;
     }
     normeq(x) {return Vec.Norm(this,this,x);}

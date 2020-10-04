@@ -120,8 +120,7 @@ class Sprite {
             this.data.uv.zeroeq();
         }
     }
-    update(dt) {
-        this.tick(dt);
+    compute_transform() {
         // Set matrices from values
         this.rotation.rotationeq(this.angle);
         this.translation.translationeq(this.pos);
@@ -136,6 +135,7 @@ class Sprite {
         this.data.model.composeq(this.rotation);
         this.data.model.composeq(this.translation);
     }
-    // Meant to be overriden
-    tick(dt) {}
+    update(dt) {
+        this.compute_transform();
+    }
 }

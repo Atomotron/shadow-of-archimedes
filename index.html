@@ -11,6 +11,7 @@
     <script src="scene.js"></script>
     <script src="engine.js"></script>
     <script src="nightdaysprite.js"></script>
+    <script src="physics.js"></script>
     <script src="man.js"></script>
 </head>
 <body style="background-color:#000000;padding:0px;margin:0px;">
@@ -112,17 +113,29 @@ const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;
 const ZONE_STARTING_ANGLE = 0.4; //Radians
 
+// Physics
+const GRAVITY = 2;
+const PARTICLE_FRICTION = 0.2; // Friction when in contact with planet
+const PARTICLE_ELASTICITY = 1.6; // Elasticity off of planet surface
+
 // Man
 const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
-const MAN_GRAVITY = -2;
 const MAN_JUMP_VEL = 1.5;
+const MAN_INVENTORY_HEIGHT = 1.01;
+const MAN_INVENTORY_FORCE = 8;
+const MAN_INVENTORY_DRAG = 0.1;
 
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
 const ZOOM_SPEED = 0.25;
 const MIN_ZOOM = 0.04;
 const MAX_ZOOM = 0.5;
+
+// Items
+const ITEM_CLICK_RADIUS = 0.25;
+const ITEM_JUMP_FREQUENCY = 1;
+const ITEM_JUMP_POWER = 0.3;
 /*
  * A custom render pass that uses the custom shaders
  */
@@ -156,15 +169,40 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-/* An object that can either 
-class PhysicsItem
-
+class Item extends Sprite{
+    constructor(engine,pos=new Vec(),vel=new Vec()) {
+        super(engine,engine.spritepass,"Light/green2.png");
+        this.pos.eq(pos);
+        this.particle = new PhysicsParticle(this.pos,vel,engine.gravity);
+        engine.live_particles.add(this.particle);
+        this.click_region = new Clickable(this.pos,ITEM_CLICK_RADIUS,()=>{this.clickitem();});
+        engine.clickables.add(this.click_region);        
+        this.holder = null;
+    }
+    destroy() {
+        super.destroy();
+        engine.live_particles.delete(this.particle);
+        engine.clickables.delete(this.click_region);
+    }
+    clickitem() {
+        if (this.holder === null) {
+            this.holder = this.engine.man;
+            this.particle.force_node = this.engine.man.inventory_force;
+        }
+    }
+    update(dt) {
+        if (Math.random() < dt*ITEM_JUMP_FREQUENCY) {
+            this.particle.vel.addeq(this.pos.norm().mul(ITEM_JUMP_POWER));
+        }
+        super.update(dt);
+    }
+}
 
 /* Container class for clickable regions as used by the engine object.*/
 class Clickable {
     constructor(x,r,callback) {
-        this.r = r;
         this.x = x;
+        this.r = r;
         this.callback = callback;
     }
 }
@@ -285,11 +323,33 @@ class ArchimedesEngine extends Engine {
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
         this.zoom = 0.01;
         this.zoom_target = 0.25;
+        // Set up physics objects
+        this.gravity = new ForceNode(
+            new Vec(), // center
+            GRAVITY, // strength
+            0, // drag
+            true, // The planet's center never moves
+        );
+        this.live_particles = new Set(); // Particles that get simulation updates
+        new Item(
+            this,// engine
+            (new Vec()).polareq(PLANET_RADIUS+1.0,0.0), // Pos
+            new Vec(1.0,Math.random()-0.5), // Vel
+        );
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
+        
+        // Update physics particles
+        for (const p of this.live_particles) {
+            p.update(this,dt);
+        }
+        
+        // Update daytime
         this.scene.solar_vector.polareq(1/NICE_ZONE_SIZE,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
+        
+        // Camera update
         const dr_target = this.man.target.sub(this.camera_pos);
         const dr_man = this.man.pos.sub(this.camera_pos);
         this.camera_pos.addeq(dr_man.mul(dt*CAMERA_SPEED));
@@ -297,10 +357,10 @@ class ArchimedesEngine extends Engine {
         this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
         this.zoom += ZOOM_SPEED*(this.zoom_target-this.zoom)*dt;
         
+        // Build view matrix
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
         let S = new Mat();
-        
         S.a[0] = this.zoom;
         S.a[4] = this.zoom*this.cm.aspectRatio;
         this.scene.view.eq(T);
