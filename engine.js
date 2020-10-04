@@ -61,6 +61,7 @@ class Engine {
             const inverse_view = that.scene.view.inv();
             that.mouse_pos.eq(inverse_view.transform(new Vec(that.cm.mouse_x,that.cm.mouse_y)));
             if (last_t !== null) {
+                // DT smoothing because animation juddering can be very easy to notice.
                 let dt = (t-last_t)*0.001;
                 if (dt > 0.04) dt = 0.04;
                 time += dt;
