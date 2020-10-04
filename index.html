@@ -35,9 +35,10 @@ varying float daytime;
 uniform float planet_radius;
 uniform sampler2D gradient;
 void main() {
-    float texture_index = 0.5*length(world_coord)/planet_radius;
-    texture_index += 0.25*smoothstep(0.5-0.0005,0.5+0.0005,texture_index)-0.125;
-    gl_FragColor = texture2D(gradient,vec2(texture_index,daytime+0.5));
+    float r = length(world_coord)/planet_radius;
+    float darkness = 1.0/(r*r);
+    float texture_index = r + 0.25*smoothstep(0.5-0.0005,0.5+0.0005,0.5*r)-0.125;
+    gl_FragColor = darkness*texture2D(gradient,vec2(texture_index,daytime+0.5));
 }
 </script>
 
@@ -101,13 +102,23 @@ void main() {
 </script>
 <script>
 
+// Planet
 const PLANET_RADIUS = 24;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
+const NICE_ZONE_SIZE = 48;
+const ZONE_SPEED = 0.03;
+const ZONE_STARTING_ANGLE = 0.4; //Radians
 
+// Man
 const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
+
+// Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
+const ZOOM_SPEED = 0.25;
+const MIN_ZOOM = 0.04;
+const MAX_ZOOM = 0.5;
 /*
  * A custom render pass that uses the custom shaders
  */
@@ -405,22 +416,33 @@ class ArchimedesEngine extends Engine {
         gen_layer(bsprites,0.0,-0.3);
         gen_layer(msprites,0.33,-0.3);
         gen_layer(fsprites,0.66,-0.3);
-        // Create man Tex/man3.png
+        // Create man 
         this.man = new Man(this,this.aspritepass);
         this.t = 0;
         
+        // Set up camera and zoom control
+        window.addEventListener('wheel',(e) => {
+            const factor = Math.exp(-e.deltaY/12.0);
+            const new_zoom = that.zoom*factor;
+            if (new_zoom > MIN_ZOOM && new_zoom < MAX_ZOOM) {
+                that.zoom_target = new_zoom;
+                that.zoom = new_zoom;
+            }
+        });
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
-        this.zoom = 0.25;
+        this.zoom = 0.01;
+        this.zoom_target = 0.25;
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
-        this.scene.solar_vector.polareq(1/24,-0.2*this.t);
+        this.scene.solar_vector.polareq(1/NICE_ZONE_SIZE,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
         const dr_target = this.man.target.sub(this.camera_pos);
         const dr_man = this.man.pos.sub(this.camera_pos);
         this.camera_pos.addeq(dr_man.mul(dt*CAMERA_SPEED));
         this.camera_pos.addeq(dr_target.mul(dt*CAMERA_SPEED));
         this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
+        this.zoom += ZOOM_SPEED*(this.zoom_target-this.zoom)*dt;
         
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
