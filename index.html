@@ -113,6 +113,8 @@ const ZONE_STARTING_ANGLE = 0.4; //Radians
 // Man
 const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
+const MAN_GRAVITY = -2;
+const MAN_JUMP_VEL = 1.5;
 
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
@@ -304,6 +306,16 @@ class Man extends NightdaySprite {
         this.target = new Vec(MAN_RADIUS,0.0);
         this.vel_mul = 0;
         this.walking = false;
+        this.r_defect = 0;
+        this.r_vel = 0;
+        
+        // Set up clickable region for jumping  
+        const that = this;
+        this.click_region = new Clickable(this.pos,0.25,() => {
+            that.jumped = true;
+            that.r_vel = MAN_JUMP_VEL;
+        });
+        this.engine.clickables.add(this.click_region);
     }
     update(dt) {
         // Update target
@@ -319,7 +331,14 @@ class Man extends NightdaySprite {
                 dr.normeq().muleq(MAN_SPEED*dt)
             );
         };
-        this.pos.normeq().muleq(MAN_RADIUS);
+        this.r_defect += this.r_vel*dt;
+        this.r_vel += MAN_GRAVITY*dt;
+        if (this.r_defect < 0) {
+            this.r_vel = 0
+            this.r_defect = 0;
+            this.jumped = false;
+        }
+        this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
         this.mirror = this.pos.cross(dr) < 0;
         this.transform_computed = false;
         // Update animation
@@ -347,8 +366,36 @@ class Man extends NightdaySprite {
     }
 }
 
+class Clickable {
+    constructor(x,r,callback) {
+        this.r = r;
+        this.x = x;
+        this.callback = callback;
+    }
+}
+
 class ArchimedesEngine extends Engine {
     setup() {
+        // Clickable region management
+        this.clickables = new Set();
+        window.addEventListener('click',(e) => {
+            let nearest = null;
+            let nearest_r = null;
+            const dr = new Vec();
+            for (const clickable of this.clickables) {
+                const r = dr.eq(clickable.x).subeq(this.mouse_pos).abs();
+                if (r <= clickable.r) {
+                    if (nearest_r === null || nearest_r > r) {
+                        nearest = clickable;
+                        nearest_r = r;
+                    }
+                }
+            }
+            if (nearest !== null) {
+                nearest.callback();
+            }
+        });
+        
         // Background pass
         this.backgroundpass = new BackgroundPass(this.gl,
             this.scene,
