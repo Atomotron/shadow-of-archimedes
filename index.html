@@ -122,7 +122,8 @@ const PARTICLE_ELASTICITY = 1.6; // Elasticity off of planet surface
 const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
 const MAN_JUMP_VEL = 1.5;
-const MAN_INVENTORY_HEIGHT = 1.01;
+const MAN_INVENTORY_HEIGHT = 1.013;
+const MAN_INVENTORY_BEHIND = 0.20;
 const MAN_INVENTORY_FORCE = 8;
 const MAN_INVENTORY_DRAG = 0.1;
 
@@ -169,9 +170,10 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-class Item extends Sprite{
+class Item extends Sprite {
     constructor(engine,pos=new Vec(),vel=new Vec()) {
-        super(engine,engine.spritepass,"Light/green2.png");
+        super(engine,engine.spritepass,"Items/item-carbom.png");
+        this.scale = 0.5;
         this.pos.eq(pos);
         this.particle = new PhysicsParticle(this.pos,vel,engine.gravity);
         engine.live_particles.add(this.particle);
@@ -186,12 +188,14 @@ class Item extends Sprite{
     }
     clickitem() {
         if (this.holder === null) {
+            this.engine.sound.play("antenna_upload");
             this.holder = this.engine.man;
             this.particle.force_node = this.engine.man.inventory_force;
         }
     }
     update(dt) {
-        if (Math.random() < dt*ITEM_JUMP_FREQUENCY) {
+        this.angle = -Math.atan2(-this.pos.x,this.pos.y);
+        if (this.holder === null && Math.random() < dt*ITEM_JUMP_FREQUENCY) {
             this.particle.vel.addeq(this.pos.norm().mul(ITEM_JUMP_POWER));
         }
         super.update(dt);
@@ -395,6 +399,7 @@ const engine = new ArchimedesEngine(
         "stone_walk3": "sounds/stone_walk3.mp3",
         "stone_walk4": "sounds/stone_walk4.mp3",
         "stone_walk5": "sounds/stone_walk5.mp3",
+        "antenna_upload": "sounds/antenna_upload.mp3",
     },
 );
 

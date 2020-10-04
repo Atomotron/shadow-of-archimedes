@@ -184,6 +184,16 @@ class AbstractVec extends ArrayFloats {
     normeq(x) {return Vec.Norm(this,this,x);}
     norm(x) {return this.clone().normeq(x);}
     
+    // Rotates a vector 90 degrees counterclockwise
+    static Rot90(out,x) {
+        const new_x = -x.a[1];
+        out.a[1] = x.a[0];
+        out.a[0] = new_x;
+        return out;
+    }
+    rot90eq() {return Vec.Rot90(this,this);}
+    rot90() {return this.clone().rot90eq();}
+    
     // A very useful higher-order function that passes a vector's length
     // through a function but keeps its direction unchanged (unless set to zero-length).
     static MapAbs(out,x,f) {

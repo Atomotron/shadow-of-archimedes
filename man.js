@@ -74,6 +74,9 @@ class Man extends NightdaySprite {
         this.transform_computed = false;
         // Update inventory pos
         Vec.Mul(this.inventory_pos,this.pos,MAN_INVENTORY_HEIGHT);
+        const facing = this.pos.norm().rot90eq();
+        facing.muleq(this.mirror ? MAN_INVENTORY_BEHIND : -MAN_INVENTORY_BEHIND);
+        this.inventory_pos.addeq(facing);
         // Update animation
         this.frame_age += dt;
         if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
