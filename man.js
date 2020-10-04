@@ -40,19 +40,52 @@ class Man extends NightdaySprite {
         });
         this.engine.clickables.add(this.click_region);
         
-        // Set up inventory node
-        this.inventory_pos = (new Vec()).eq(this.pos);
-        this.inventory_force = new SpringForceNode(
-            this.inventory_pos,
-            MAN_INVENTORY_FORCE,
-            MAN_INVENTORY_DRAG,
-        );
+        // Set up inventory
+        this.inventory = [];
+        this.inventory_slots = [];
+        this.inventory_root = this.pos.clone();
+    }
+    // Gets an item of the right type of the man's inventory, returning either an Item or null (if no such item was found)
+    getItem(type) {
+        let found_index = null;
+        for (let i=0; i<this.inventory.length; ++i) {
+            if (this.inventory[i].type === type) {
+                found_index = i;
+                break;
+            }
+        }
+        if (found_index === null) return null;
+        const found = this.inventory[found_index];
+        this.inventory.splice(found_index,1);
+        this.recalculateInventorySlots();
+        return found;
+    }
+    // Puts an item in the man's inventory
+    putItem(item) {
+        this.inventory.push(item);
+        this.recalculateInventorySlots();
+    }
+    recalculateInventorySlots() {
+        this.inventory_slots = [];
+        for (const item of this.inventory) {
+            const slot = new SpringForceNode(
+                this.pos.clone(),
+                MAN_INVENTORY_FORCE,
+                MAN_INVENTORY_DRAG,
+            );
+            this.inventory_slots.push(slot);
+            item.particle.force_node = slot;
+        }
+    }    
+    // Called by the engine if a click is not trapped by anything else
+    setTarget(target) {
+        this.target.eq(target);
     }
     update(dt) {
         // Update target
-        if (this.engine.cm.mouse_pressed) {
+        /*if (this.engine.cm.mouse_pressed) {
             this.target.eq(this.engine.mouse_pos);
-        }
+        }*/
         this.target.normeq().muleq(MAN_RADIUS)
         // Update position
         const dr = this.target.sub(this.pos);
@@ -73,10 +106,13 @@ class Man extends NightdaySprite {
         this.mirror = this.pos.cross(dr) < 0;
         this.transform_computed = false;
         // Update inventory pos
-        Vec.Mul(this.inventory_pos,this.pos,MAN_INVENTORY_HEIGHT);
+        Vec.Mul(this.inventory_root,this.pos,MAN_INVENTORY_HEIGHT);
         const facing = this.pos.norm().rot90eq();
         facing.muleq(this.mirror ? MAN_INVENTORY_BEHIND : -MAN_INVENTORY_BEHIND);
-        this.inventory_pos.addeq(facing);
+        for (const slot of this.inventory_slots) {
+            this.inventory_root.addeq(facing);
+            slot.pos.eq(this.inventory_root);
+        }
         // Update animation
         this.frame_age += dt;
         if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
