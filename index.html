@@ -94,7 +94,7 @@ uniform sampler2D gradient; // Day/night - layer gradient
 uniform sampler2D spritesheet;
 varying float layer_level; // Used for the background/foreground color gradient
 varying vec3 mask; // Used to access sprite variants
-const float ALPHA_WIDTH = 0.25;
+const float ALPHA_WIDTH = 0.20;
 void main() {
     vec4 sheet_color = texture2D(spritesheet,uv);
     float alpha = smoothstep(0.5-ALPHA_WIDTH, 0.5+ALPHA_WIDTH, dot(sheet_color.xyz,mask));
