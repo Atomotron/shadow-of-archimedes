@@ -18,7 +18,7 @@ class ArrayFloats {
     /** Operations (Constant) **/
     // Zeroing
     static Zero(out) {
-        return out.fill(out,0);
+        return out.a.fill(out,0);
     }
     zeroeq() {return ArrayFloats.Zero(this);}
     /** Operations (Unary) **/

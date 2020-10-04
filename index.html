@@ -95,10 +95,9 @@ uniform sampler2D gradient; // Day/night - layer gradient
 uniform sampler2D spritesheet;
 varying float layer_level; // Used for the background/foreground color gradient
 varying vec3 mask; // Used to access sprite variants
-const float ALPHA_WIDTH = 0.20;
 void main() {
     vec4 sheet_color = texture2D(spritesheet,uv);
-    float alpha = smoothstep(0.5-ALPHA_WIDTH, 0.5+ALPHA_WIDTH, dot(sheet_color.xyz,mask));
+    float alpha = smoothstep(1.0/3.0, 2.0/3.0, dot(sheet_color.xyz,mask));
     vec3 base_color = texture2D(gradient,vec2(layer_level,daytime+0.5)).xyz;
     gl_FragColor = vec4(base_color*alpha,alpha);
 }
@@ -200,6 +199,55 @@ class Item extends Sprite {
         }
         super.update(dt);
     }
+}
+
+const MACHINE_STAGES = [
+    new ArrayFloats(new Float32Array([0.0,0.0,0.0])), // 0 - nothing built
+    new ArrayFloats(new Float32Array([2/3,0.0,0.0])), // 1 - base
+    new ArrayFloats(new Float32Array([4/3,0.0,0.0])), // 2
+    new ArrayFloats(new Float32Array([4/3,2/3,0.0])), // 3
+    new ArrayFloats(new Float32Array([4/3,4/3,0.0])), // 4
+    new ArrayFloats(new Float32Array([4/3,4/3,2/3])), // 5
+    new ArrayFloats(new Float32Array([4/3,4/3,4/3])), // 6
+];
+
+class Machine extends NightdaySprite {
+    constructor(engine,pass,image) {
+        super(engine,pass,
+            image,
+            0, // variant
+            1.0, // layer
+            1, // scale
+        );
+        this.frame_age = 0;
+    }
+    setImage(image,variant=null,layer=null) {
+        this.image = image;
+        variant = variant === null ? this.variant : variant;
+        this.variant = variant;
+        layer = layer === null ? this.layer : layer;
+        this.layer = layer;
+        if (image !== null) {
+            this.sprite_matrix.eq(engine.il.model_frames.get(image));
+            this.data.uv.eq(engine.il.texture_frames.get(image));
+            this.data.variant_mask.eq(MACHINE_STAGES[variant])
+            this.data.layer.set(layer);
+        } else {
+            console.log(this.sprite_matrix);
+            this.sprite_matrix.zeroeq();
+            this.data.uv.zeroeq();
+        }
+        this.transform_computed = false;
+    }
+    update(dt) {
+        this.frame_age += dt;
+        if (this.frame_age > 0.6) {
+            this.frame_age = 0.0;
+            this.variant = (this.variant + 1) % MACHINE_STAGES.length;
+        }
+        this.setImage(this.image,this.variant);
+        super.update(dt);
+    }   
 }
 
 /* Container class for clickable regions as used by the engine object.*/
@@ -340,6 +388,22 @@ class ArchimedesEngine extends Engine {
             (new Vec()).polareq(PLANET_RADIUS+1.0,0.0), // Pos
             new Vec(1.0,Math.random()-0.5), // Vel
         );
+        
+        // Machine test
+        let y = 0.0;
+        for (const name of [
+            "Machimes/carbom.png",
+            "Machimes/water.png",
+            "Machimes/metal.png",
+            "Machimes/battery-combustiom.png",
+            "Machimes/battery-steam.png",
+            ]) {
+            const m = new Machine(this,this.aspritepass,name);
+            m.pos.x = PLANET_RADIUS;
+            m.pos.y = y;
+            m.pos.normeq().muleq(PLANET_RADIUS*0.99);
+            y += 1.0;
+        }
     }
     update(dt) {
         super.update(dt);
