@@ -1,0 +1,207 @@
+{
+  "frames": {
+    "Resources/lakebed-1.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 1071,
+        "h": 97
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1071,
+        "h": 97
+      },
+      "sourceSize": {
+        "w": 1071,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/batterypad-1.png": {
+      "frame": {
+        "x": 1071,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/lakebed-2.png": {
+      "frame": {
+        "x": 0,
+        "y": 97,
+        "w": 1071,
+        "h": 97
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1071,
+        "h": 97
+      },
+      "sourceSize": {
+        "w": 1071,
+        "h": 97
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/batterypad-2.png": {
+      "frame": {
+        "x": 0,
+        "y": 194,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/coalrocks-1.png": {
+      "frame": {
+        "x": 802,
+        "y": 224,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/coalrocks-2.png": {
+      "frame": {
+        "x": 0,
+        "y": 418,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/orequarry-1.png": {
+      "frame": {
+        "x": 802,
+        "y": 448,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Resources/orequarry-2.png": {
+      "frame": {
+        "x": 0,
+        "y": 642,
+        "w": 802,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 802,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 802,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "resources.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2048,
+      "h": 1024
+    },
+    "scale": 1
+  }
+}
