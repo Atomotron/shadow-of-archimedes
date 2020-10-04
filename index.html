@@ -42,6 +42,21 @@ void main() {
 }
 </script>
 
+<script id="shader-planet-disc-f" type="x-shader/x-fragment">
+precision highp float;
+varying vec2 world_coord;
+varying float daytime;
+uniform float planet_radius;
+uniform sampler2D gradient;
+void main() {
+    float texture_index = 0.5*length(world_coord)/planet_radius;
+    float step = smoothstep(0.5-0.0001,0.5+0.0001,texture_index);
+    texture_index += 0.25*step-0.125;
+    float alpha = 1.0-step;
+    gl_FragColor = vec4(texture2D(gradient,vec2(0.1,daytime+0.5)).xyz,1.0)*alpha;
+}
+</script>
+
 <script id="shader-nightday-sprite-v" type="x-shader/x-vertex">
 uniform vec2 solar_vector;
 uniform mat3 view;
@@ -88,20 +103,24 @@ void main() {
 <script>
 
 const PLANET_RADIUS = 24;
+const MAN_RADIUS = PLANET_RADIUS-0.02;
+const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 
+const MAN_SPEED = 1;
+const MAN_WALK_SATISFACTION_RANGE = 0.1;
 /*
  * A custom render pass that uses the custom shaders
  */
 class BackgroundPass extends RenderPass {
-    constructor(gl,scene,program,gradient_texture,planet_radius) {
+    constructor(gl,scene,program,gradient,planet_radius) {
         super(gl,program);
         this.planet_radius = planet_radius;
         this.scene = scene;
-        this.gradient_texture = gradient_texture;
+        this.gradient = gradient;
         this.vao = new SimpleVAO(gl,program,scene.square_vao);
         this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
         this.planet_radius_loc = gl.getUniformLocation(program,"planet_radius");
-        this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
+        this.gradient_loc = gl.getUniformLocation(program,"gradient");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.inverse_view = new Mat();
         this.t = 0;
@@ -113,8 +132,8 @@ class BackgroundPass extends RenderPass {
     draw(gl) {
         gl.useProgram(this.program);
         gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(this.gradient_texture_loc, 0);
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient_texture);
+        gl.uniform1i(this.gradient_loc, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
         gl.uniformMatrix3fv(this.inverse_view_loc,false,this.inverse_view.a);
         gl.uniform1f(this.planet_radius_loc,this.planet_radius);
         gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
@@ -122,20 +141,13 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-// A builtin pass
 class NightdaySpritePass extends RenderPass{
-    constructor(gl,scene,program,texture,gradient,planet_radius) {
+    constructor(gl,scene,program,gradient,texture) {
         super(gl,program);
         this.scene = scene;
         this.texture = texture;
         this.gradient = gradient;
-        this.planet_radius = planet_radius;
-        this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
-            model: {type:'mat',dynamic:false},
-            uv: {type:'mat',dynamic:false},
-            layer: {type:'scalar',dynamic:false},
-            variant_mask: {type:'color',dynamic:false},
-        },8);
+        this.dvao = this.makeDVAO(gl,program,scene);
         // Texture locations
         this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
         this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
@@ -143,6 +155,14 @@ class NightdaySpritePass extends RenderPass{
         this.view_loc = gl.getUniformLocation(program,"view");
         this.solar_loc = gl.getUniformLocation(program,"solar_vector");
         this.view = new Mat();
+    }
+    makeDVAO(gl,program,scene) {
+        return new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:false},
+            uv: {type:'mat',dynamic:false},
+            layer: {type:'scalar',dynamic:false},
+            variant_mask: {type:'color',dynamic:false},
+        },8);
     }
     update(scene,dt) {
         this.view.eq(scene.view);
@@ -155,15 +175,26 @@ class NightdaySpritePass extends RenderPass{
         // Texture 0: Spritesheet
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(this.gradient_texture_loc, 0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
         // Texture 1: Gradient
         gl.activeTexture(gl.TEXTURE1);
         gl.uniform1i(this.spritesheet_loc, 1);
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
         // Uniforms
         gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
         gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
         this.dvao.draw(gl);
+    }
+}
+
+class AnimatedSpritePass extends NightdaySpritePass {
+    makeDVAO(gl,program,scene) {
+        return new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:true},
+            uv: {type:'mat',dynamic:true},
+            layer: {type:'scalar',dynamic:false},
+            variant_mask: {type:'color',dynamic:true},
+        },1);
     }
 }
 
@@ -208,6 +239,7 @@ class NightdaySprite {
             this.sprite_matrix.zeroeq();
             this.data.uv.zeroeq();
         }
+        this.transform_computed = false;
     }
     compute_transform() {
         // Set matrices from values
@@ -221,6 +253,7 @@ class NightdaySprite {
         // Compute model matrix
         this.data.model.eq(this.sprite_matrix);
         this.data.model.composeq(this.scaling);
+        this.data.model.y += this.data.model.yy;
         this.data.model.composeq(this.rotation);
         this.data.model.composeq(this.translation);
     }
@@ -232,10 +265,72 @@ class NightdaySprite {
     }
 }
 
-class AnimatedSprite extends NightdaySprite {
+class Man extends NightdaySprite {
+    constructor(engine,pass) {
+        super(engine,pass,
+            "Tex/man1.png", // image
+            1,1.0,1, // variant, layer, scale
+        );
+        this.frames = [
+            "Tex/man1.png",
+            "Tex/man2.png",
+            "Tex/man3.png",
+            "Tex/man4.png",
+            "Tex/man5.png",
+            "Tex/man6.png",
+            "Tex/man7.png",
+        ];
+        this.step_sounds = [
+            "rock_walk1",
+            "rock_walk2",
+            "rock_walk3",
+            "rock_walk4",
+            "rock_walk5",
+        ]
+        this.FRAME_TIME = 0.1;
+        this.frame_age = 0;
+        this.frame = 0;
+        this.target = new Vec(MAN_RADIUS,0.0);
+        this.vel_mul = 0;
+        this.walking = false;
+        window.addEventListener('click',(e) => {
+            this.target.eq(this.engine.mouse_pos.norm().muleq(MAN_RADIUS));
+        });
+    }
     update(dt) {
-        this.compute_transform();
-        this.transform_computed = true;
+        // Update position
+        const dr = this.target.sub(this.pos);
+        const walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
+        if (walking) {
+            this.pos.addeq(
+                dr.normeq().muleq(MAN_SPEED*dt)
+            );
+        };
+        this.pos.normeq().muleq(MAN_RADIUS);
+        this.mirror = this.pos.cross(dr) < 0;
+        this.transform_computed = false;
+        // Update animation
+        this.frame_age += dt;
+        if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
+            if (this.frame === 3) {
+                this.engine.sound.play(
+                    this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
+                );
+            }
+            this.frame = this.frame+1;
+            if (walking) {
+                if (this.frame >= this.frames.length) {
+                    this.frame = 3;
+                }
+            } else {
+                if (this.frame >= 4) {
+                    this.frame = 0;
+                }
+            }                
+            this.frame_age = 0;
+            this.setImage(this.frames[this.frame]);
+        }
+        super.update(dt);
     }
 }
 
@@ -255,22 +350,80 @@ class ArchimedesEngine extends Engine {
             this.sc.programs.get('nightday_sprites'),
             this.il.textures.get('gradient'),
             this.il.textures.get('mountainbiome'),
+        );
+        this.scene.addPass(this.ndspritepass,0.75);
+        // Disc pass
+        this.plantdiscpass = new BackgroundPass(this.gl,
+            this.scene,
+            this.sc.programs.get('planet_disc'),
+            this.il.textures.get('planet_sky'),
             PLANET_RADIUS,
         );
-        this.scene.addPass(this.ndspritepass,0.7);
-        // Create a background sprite
-        for (let i=0; i<8; ++i) {
-            const test = new NightdaySprite(this,this.ndspritepass,"MountainBiome/Foreground/hill2.png",i);
-            test.pos.polareq(PLANET_RADIUS,Math.PI/2 + i*0.02 - 0.1);
+        this.scene.addPass(this.plantdiscpass,0.5);
+        // Animated sprite pass
+        this.aspritepass = new AnimatedSpritePass(this.gl,
+            this.scene,
+            this.sc.programs.get('nightday_sprites'),
+            this.il.textures.get('gradient'),
+            this.il.textures.get('animations'),
+        );
+        this.scene.addPass(this.aspritepass,0.25);
+        // Generate background
+        
+        function find_layer(map,folder) {
+            const names = [];
+            for (const [key,value] of map) {
+                if (key.includes("/"+folder+"/")) {
+                    names.push(key);                
+                }
+            }
+            return names;
         }
-        this.scene.view.translationeq(new Vec(0.0,-PLANET_RADIUS));
+        const bsprites = find_layer(this.il.model_frames,"Background");
+        const msprites = find_layer(this.il.model_frames,"Midground");
+        const fsprites = find_layer(this.il.model_frames,"Foreground");
+        
+        const that = this;
+        this.bgsprites = [];
+        function gen_layer(sprites,layer,rdelta) {
+            let angle = 0;
+            while (angle < Math.PI*2.0) {
+                angle += 0.1*Math.random();
+                let idx = Math.floor(Math.random()*sprites.length);
+                idx = idx >= sprites.length ? sprites.length-1 : idx;
+                const name = sprites[idx];
+                const flags = Math.floor(Math.random()*7.0+1);
+                if (flags < 1) flags = 1;
+                if (flags > 7) flags = 7;
+                const sprite = new NightdaySprite(that,that.ndspritepass,name,flags,layer);
+                sprite.pos.polareq(PLANET_RADIUS+rdelta,angle);
+                that.bgsprites.push(sprite);
+            }
+        }
+        gen_layer(bsprites,0.0,-0.3);
+        gen_layer(msprites,0.33,-0.3);
+        gen_layer(fsprites,0.66,-0.3);
+        // Create man Tex/man3.png
+        this.man = new Man(this,this.aspritepass);
         this.t = 0;
+        
+        this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
     }
     update(dt) {
         super.update(dt);
         this.t += dt;
         this.scene.solar_vector.polareq(1/24,-0.2*this.t);
-        this.scene.view.a[0] = 1/this.cm.aspectRatio;
+        const dr = this.man.target.sub(this.camera_pos);
+        this.camera_pos.addeq(dr.mul(dt*1.6));
+        this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
+        
+        let T = new Mat().translationeq(this.camera_pos.mul(-1));
+        let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);
+        let S = new Mat();
+        S.a[0] = 1/this.cm.aspectRatio;
+        this.scene.view.eq(T);
+        Mat.Compose(this.scene.view, R, this.scene.view);
+        Mat.Compose(this.scene.view, S, this.scene.view);
     }
 }
 
@@ -278,6 +431,7 @@ const engine = new ArchimedesEngine(
     canvas_container = document.getElementById("canvas-container"),
     shader_programs = {
         background:['shader-background-v','shader-background-f'],
+        planet_disc:['shader-background-v','shader-planet-disc-f'],
         nightday_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
     },
     images = {
@@ -294,7 +448,11 @@ const engine = new ArchimedesEngine(
         //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
     },
     sfx = {
-        //"hit": "sound/hit.mp3"
+        "rock_walk1": "sounds/rock_walk1.mp3",
+        "rock_walk2": "sounds/rock_walk2.mp3",
+        "rock_walk3": "sounds/rock_walk3.mp3",
+        "rock_walk4": "sounds/rock_walk4.mp3",
+        "rock_walk5": "sounds/rock_walk5.mp3",
     },
 );
 
