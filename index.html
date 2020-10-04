@@ -10,6 +10,8 @@
     <script src="dynamicvao.js"></script>
     <script src="scene.js"></script>
     <script src="engine.js"></script>
+    <script src="nightdaysprite.js"></script>
+    <script src="man.js"></script>
 </head>
 <body style="background-color:#000000;padding:0px;margin:0px;">
 <div id="canvas-container" style="height:99vh; width:100%"></div>
@@ -93,9 +95,10 @@ uniform sampler2D spritesheet;
 varying float layer_level; // Used for the background/foreground color gradient
 varying vec3 mask; // Used to access sprite variants
 
+const float ALPHA_WIDTH = 0.2;
 void main() {
     vec4 sheet_color = texture2D(spritesheet,uv);
-    float alpha = clamp(dot(sheet_color.xyz,mask),0.0,1.0);
+    float alpha = smoothstep(0.5-ALPHA_WIDTH, 0.5+ALPHA_WIDTH, dot(sheet_color.xyz,mask));
     vec3 base_color = texture2D(gradient,vec2(layer_level,daytime+0.5)).xyz;
     gl_FragColor = vec4(base_color*alpha,alpha);
 }
@@ -154,220 +157,11 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-class NightdaySpritePass extends RenderPass{
-    constructor(gl,scene,program,gradient,texture) {
-        super(gl,program);
-        this.scene = scene;
-        this.texture = texture;
-        this.gradient = gradient;
-        this.dvao = this.makeDVAO(gl,program,scene);
-        // Texture locations
-        this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
-        this.gradient_texture_loc = gl.getUniformLocation(program,"gradient");
-        // Uniform locations
-        this.view_loc = gl.getUniformLocation(program,"view");
-        this.solar_loc = gl.getUniformLocation(program,"solar_vector");
-        this.view = new Mat();
-    }
-    makeDVAO(gl,program,scene) {
-        return new DynamicVAO(gl,program,scene.square_vao,{
-            model: {type:'mat',dynamic:false},
-            uv: {type:'mat',dynamic:false},
-            layer: {type:'scalar',dynamic:false},
-            variant_mask: {type:'color',dynamic:false},
-        },8);
-    }
-    update(scene,dt) {
-        this.view.eq(scene.view);
-    }
-    prepare(gl) {
-        this.dvao.prepare(gl);
-    }
-    draw(gl) {
-        gl.useProgram(this.program);
-        // Texture 0: Spritesheet
-        gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(this.gradient_texture_loc, 0);
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
-        // Texture 1: Gradient
-        gl.activeTexture(gl.TEXTURE1);
-        gl.uniform1i(this.spritesheet_loc, 1);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        // Uniforms
-        gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
-        gl.uniform2fv(this.solar_loc,this.scene.solar_vector.a);
-        this.dvao.draw(gl);
-    }
-}
+/* An object that can either 
+class PhysicsItem
 
-class AnimatedSpritePass extends NightdaySpritePass {
-    makeDVAO(gl,program,scene) {
-        return new DynamicVAO(gl,program,scene.square_vao,{
-            model: {type:'mat',dynamic:true},
-            uv: {type:'mat',dynamic:true},
-            layer: {type:'scalar',dynamic:false},
-            variant_mask: {type:'color',dynamic:true},
-        },1);
-    }
-}
 
-const VARIANT_R = 1;
-const VARIANT_G = 2;
-const VARIANT_B = 4;
-
-class NightdaySprite {
-    constructor(engine,pass,image=null,variant=0,layer=0.75,scale=1) {
-        this.engine = engine;
-        this.pass = pass;
-        this.variant = variant;
-        this.layer = layer;
-        this.scale = scale;
-        this.pos = new Vec();
-        this.mirror = false;
-        this.data = pass.dvao.acquire(engine.gl);
-        this.sprite_matrix = new Mat();
-        this.rotation = new Mat();
-        this.translation = new Mat();
-        this.scaling = new Mat();
-        this.setImage(image,variant,layer);
-        this.transform_computed = false;
-        this.engine.sprites.add(this);
-    }
-    destroy() {
-        this.pass.dvao.relenquish(this.data);
-        this.engine.sprites.delete(this);
-    }
-    setImage(image,variant=null,layer=null) {
-        this.image = image;
-        variant = variant === null ? this.variant : variant;
-        layer = layer === null ? this.layer : layer;
-        if (image !== null) {
-            this.sprite_matrix.eq(engine.il.model_frames.get(image));
-            this.data.uv.eq(engine.il.texture_frames.get(image));
-            this.data.variant_mask.a[0] = variant & VARIANT_R ? 1.0 : 0.0;
-            this.data.variant_mask.a[1] = variant & VARIANT_G ? 1.0 : 0.0;
-            this.data.variant_mask.a[2] = variant & VARIANT_B ? 1.0 : 0.0;
-            this.data.layer.set(layer);
-        } else {
-            this.sprite_matrix.zeroeq();
-            this.data.uv.zeroeq();
-        }
-        this.transform_computed = false;
-    }
-    compute_transform() {
-        // Set matrices from values
-        this.rotation.rotationeq(-Math.atan2(-this.pos.x,this.pos.y));
-        this.translation.translationeq(this.pos);
-        if (this.mirror) {
-            this.scaling.scalingeq(-this.scale,this.scale);
-        } else {
-            this.scaling.scalingeq(this.scale,this.scale);
-        }
-        // Compute model matrix
-        this.data.model.eq(this.sprite_matrix);
-        this.data.model.composeq(this.scaling);
-        this.data.model.y += this.data.model.yy;
-        this.data.model.composeq(this.rotation);
-        this.data.model.composeq(this.translation);
-    }
-    update(dt) {
-        if (!this.transform_computed) {
-            this.compute_transform();
-            this.transform_computed = true;
-        }
-    }
-}
-
-class Man extends NightdaySprite {
-    constructor(engine,pass) {
-        super(engine,pass,
-            "Tex/man1.png", // image
-            1,1.0,1, // variant, layer, scale
-        );
-        this.frames = [
-            "Tex/man1.png",
-            "Tex/man2.png",
-            "Tex/man3.png",
-            "Tex/man4.png",
-            "Tex/man5.png",
-            "Tex/man6.png",
-            "Tex/man7.png",
-        ];
-        this.step_sounds = [
-            "stone_walk1",
-            "stone_walk2",
-            "stone_walk3",
-            "stone_walk4",
-            "stone_walk5",
-        ]
-        this.FRAME_TIME = 0.1;
-        this.frame_age = 0;
-        this.frame = 0;
-        this.target = new Vec(MAN_RADIUS,0.0);
-        this.vel_mul = 0;
-        this.walking = false;
-        this.r_defect = 0;
-        this.r_vel = 0;
-        
-        // Set up clickable region for jumping  
-        const that = this;
-        this.click_region = new Clickable(this.pos,0.25,() => {
-            if (!that.jumped) {
-                that.r_vel = MAN_JUMP_VEL;
-                that.jumped = true;
-            }
-        });
-        this.engine.clickables.add(this.click_region);
-    }
-    update(dt) {
-        // Update target
-        if (this.engine.cm.mouse_pressed) {
-            this.target.eq(this.engine.mouse_pos);
-        }
-        this.target.normeq().muleq(MAN_RADIUS)
-        // Update position
-        const dr = this.target.sub(this.pos);
-        const walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
-        if (walking) {
-            this.pos.addeq(
-                dr.normeq().muleq(MAN_SPEED*dt)
-            );
-        };
-        this.r_defect += this.r_vel*dt;
-        this.r_vel += MAN_GRAVITY*dt;
-        if (this.r_defect < 0) {
-            this.r_vel = 0
-            this.r_defect = 0;
-            this.jumped = false;
-        }
-        this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
-        this.mirror = this.pos.cross(dr) < 0;
-        this.transform_computed = false;
-        // Update animation
-        this.frame_age += dt;
-        if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
-            if (this.frame === 3) {
-                this.engine.sound.play(
-                    this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
-                );
-            }
-            this.frame = this.frame+1;
-            if (walking) {
-                if (this.frame >= this.frames.length) {
-                    this.frame = 3;
-                }
-            } else {
-                if (this.frame >= 4) {
-                    this.frame = 0;
-                }
-            }                
-            this.frame_age = 0;
-            this.setImage(this.frames[this.frame]);
-        }
-        super.update(dt);
-    }
-}
-
+/* Container class for clickable regions as used by the engine object.*/
 class Clickable {
     constructor(x,r,callback) {
         this.r = r;
@@ -375,7 +169,6 @@ class Clickable {
         this.callback = callback;
     }
 }
-
 class ArchimedesEngine extends Engine {
     setup() {
         // Clickable region management
@@ -429,6 +222,14 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('animations'),
         );
         this.scene.addPass(this.aspritepass,0.25);
+        // Colored overlay sprite class
+        this.spritepass = new SpritePass(this.gl,
+            this.scene,
+            this.sc.programs.get('sprite'),
+            this.il.textures.get('animations'),
+        );
+        this.scene.addPass(this.spritepass,0.125);
+        
         // Generate background
         
         function find_layer(map,folder) {

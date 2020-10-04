@@ -88,13 +88,14 @@ class Engine {
 }
 
 class Sprite {
-    constructor(engine,image=null) {
+    constructor(engine,pass,image=null) {
         this.engine = engine;
+        this.pass = pass;
         this.angle = 0;
         this.scale = 1;
         this.pos = new Vec();
         this.mirror = false;
-        this.data = engine.spritepass.dvao.acquire(engine.gl);
+        this.data = pass.dvao.acquire(engine.gl);
         this.sprite_matrix = new Mat();
         this.rotation = new Mat();
         this.translation = new Mat();
@@ -103,14 +104,17 @@ class Sprite {
         this.engine.sprites.add(this);
     }
     destroy() {
-        this.engine.spritepass.dvao.relenquish(this.data);
+        this.pass.dvao.relenquish(this.data);
         this.engine.sprites.delete(this);
     }
     setImage(image) {
         this.image = image;
         if (image !== null) {
-            this.sprite_matrix.eq(engine.il.model_frames.get(image));
-            this.data.uv.eq(engine.il.texture_frames.get(image));
+            if (!this.engine.il.model_frames.has(image)) {
+                console.error("Missing image:",image);
+            }
+            this.sprite_matrix.eq(this.engine.il.model_frames.get(image));
+            this.data.uv.eq(this.engine.il.texture_frames.get(image));
         } else {
             this.sprite_matrix.zeroeq();
             this.data.uv.zeroeq();
