@@ -489,13 +489,13 @@ class ArchimedesEngine extends Engine {
         // Buttons
         new Button(
             this,this.uipass,"UI/steam-selected.png",
-            new Vec(-0.8,0.65),
+            new Vec(-0.66,0.65),
             0.3,
             () => {if (!this.man.dead) this.buildMachine("boiler",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/combust-selected.png",
-            new Vec(-0.4,0.65),
+            new Vec(-0.33,0.65),
             0.3,
             () => {if (!this.man.dead) this.buildMachine("engine",this.man.pos)}
         );
@@ -507,13 +507,13 @@ class ArchimedesEngine extends Engine {
         );
         new Button(
             this,this.uipass,"UI/waterpump-selected.png",
-            new Vec(0.4,0.65),
+            new Vec(0.33,0.65),
             0.3,
             () => {if (!this.man.dead) this.buildMachine("water",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/metalmimer-selected.png",
-            new Vec(0.8,0.65),
+            new Vec(0.66,0.65),
             0.3,
             () => {if (!this.man.dead) this.buildMachine("metal",this.man.pos)}
         );
@@ -567,8 +567,10 @@ class ArchimedesEngine extends Engine {
         this.seen_cold_warning = false;
         this.item_tutorial_message = null;
         this.particles = new Set();
+        this.lost = false;
         this.create();
-        
+        this.respite = 0;
+        this.daytime = 0;
         //Title (only on first start)
         this.message("UI/text-title.png");
     }
@@ -705,6 +707,9 @@ class ArchimedesEngine extends Engine {
         this.nice_zone_size = NICE_ZONE_SIZE;
         this.won = false;
         this.item_tutorial_message.hide();
+        this.lost = false;
+        this.respite = 0;
+        this.daytime = 0;
     }
     reset() {
         this.reset_scheduled = false;
@@ -714,7 +719,10 @@ class ArchimedesEngine extends Engine {
     schedule_reset() {
         if (this.reset_scheduled) return;
         this.reset_scheduled = true;
-        //window.setTimeout(()=>this.reset(),100);
+        window.setTimeout(()=>this.reset(),100);
+    }
+    lose() {
+        this.lost = true;
     }
     update(dt) {
         super.update(dt);
@@ -733,16 +741,20 @@ class ArchimedesEngine extends Engine {
             p.update(this,dt);
         }
         // Update daytime
-        this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
+        this.respite += dt;
+        if (this.respite > RESPITE) {
+            this.daytime += dt;
+            this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.daytime);
+        }
         
         // Update thermometer
         this.thermometer.full = this.man.temperature+0.5;
-        if (this.man.temperature > 0.5) {
+        if (this.man.temperature > 0.5 && !this.lost) {
             this.message("UI/text-heatdeath.png",new Vec(0.0,0.5));
-            this.schedule_reset();
-        } else if (this.man.temperature < -0.5) {
+            this.lose();
+        } else if (this.man.temperature < -0.5 && !this.lost) {
             this.message("UI/text-frozedeath.png",new Vec(0.0,0.5));
-            this.schedule_reset();
+            this.lose();
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
             this.message("UI/text-damgerouslyhigh.png",new Vec(0.0,0.85));

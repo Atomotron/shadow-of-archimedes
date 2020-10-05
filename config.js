@@ -11,6 +11,7 @@ const BIOMES = ["MountainBiome","AridBiome","CityBiome",
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.1;
 const ZONE_STARTING_ANGLE = 0.4+Math.PI; //Radians
+const RESPITE = 15;
 const TEMPERATURE_SCALE = 1.6;
 const TERRAFORMING_SPEED = 1; // When winning the game
 
@@ -32,7 +33,7 @@ const MAN_INVENTORY_DRAG = 0.2;
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
 const ZOOM_SPEED = 0.25;
-const MIN_ZOOM = 0.0001;//0.04;
+const MIN_ZOOM = 0.0038;//0.04;
 const MAX_ZOOM = 0.5;
 
 // Items
