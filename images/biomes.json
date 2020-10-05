@@ -1,57 +1,9 @@
 {
   "frames": {
-    "AridBiome/Background/dume0.png": {
-      "frame": {
-        "x": 4,
-        "y": 4,
-        "w": 1347,
-        "h": 168
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 10,
-        "y": 53,
-        "w": 1347,
-        "h": 168
-      },
-      "sourceSize": {
-        "w": 1415,
-        "h": 283
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Foreground/hill1.png": {
-      "frame": {
-        "x": 4,
-        "y": 180,
-        "w": 808,
-        "h": 250
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 83,
-        "y": 224,
-        "w": 808,
-        "h": 250
-      },
-      "sourceSize": {
-        "w": 919,
-        "h": 622
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "MountainBiome/Background/rock8.png": {
       "frame": {
         "x": 4,
-        "y": 438,
+        "y": 4,
         "w": 796,
         "h": 449
       },
@@ -75,7 +27,7 @@
     "MountainBiome/Background/rock2.png": {
       "frame": {
         "x": 4,
-        "y": 895,
+        "y": 461,
         "w": 782,
         "h": 318
       },
@@ -96,48 +48,24 @@
         "y": 0.5
       }
     },
-    "MountainBiome/Foreground/hill2.png": {
+    "AridBiome/Background/dume0.png": {
       "frame": {
         "x": 4,
-        "y": 1221,
-        "w": 698,
-        "h": 313
+        "y": 787,
+        "w": 1347,
+        "h": 168
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 233,
-        "y": 683,
-        "w": 698,
-        "h": 313
+        "x": 10,
+        "y": 53,
+        "w": 1347,
+        "h": 168
       },
       "sourceSize": {
-        "w": 940,
-        "h": 1162
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Background/rock10.png": {
-      "frame": {
-        "x": 1359,
-        "y": 4,
-        "w": 662,
-        "h": 264
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 57,
-        "y": 1209,
-        "w": 662,
-        "h": 264
-      },
-      "sourceSize": {
-        "w": 2000,
-        "h": 2000
+        "w": 1415,
+        "h": 283
       },
       "pivot": {
         "x": 0.5,
@@ -146,8 +74,8 @@
     },
     "MountainBiome/Background/rock1.png": {
       "frame": {
-        "x": 794,
-        "y": 895,
+        "x": 4,
+        "y": 963,
         "w": 630,
         "h": 359
       },
@@ -168,10 +96,34 @@
         "y": 0.5
       }
     },
+    "MountainBiome/Foreground/hill2.png": {
+      "frame": {
+        "x": 642,
+        "y": 963,
+        "w": 698,
+        "h": 313
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 233,
+        "y": 683,
+        "w": 698,
+        "h": 313
+      },
+      "sourceSize": {
+        "w": 940,
+        "h": 1162
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "CityBiome/Background/ruims3.png": {
       "frame": {
-        "x": 1432,
-        "y": 276,
+        "x": 642,
+        "y": 1284,
         "w": 549,
         "h": 388
       },
@@ -192,130 +144,10 @@
         "y": 0.5
       }
     },
-    "MountainBiome/Background/rock4.png": {
-      "frame": {
-        "x": 820,
-        "y": 276,
-        "w": 356,
-        "h": 534
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 356,
-        "h": 534
-      },
-      "sourceSize": {
-        "w": 356,
-        "h": 534
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Background/rock5.png": {
-      "frame": {
-        "x": 1432,
-        "y": 672,
-        "w": 393,
-        "h": 520
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 393,
-        "h": 520
-      },
-      "sourceSize": {
-        "w": 393,
-        "h": 520
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Midground/midrock7.png": {
-      "frame": {
-        "x": 710,
-        "y": 1262,
-        "w": 519,
-        "h": 252
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 28,
-        "y": 280,
-        "w": 519,
-        "h": 252
-      },
-      "sourceSize": {
-        "w": 940,
-        "h": 1162
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "CityBiome/Midground/ruims-sideways1.png": {
-      "frame": {
-        "x": 1432,
-        "y": 1200,
-        "w": 506,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 43,
-        "y": 10,
-        "w": 506,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 589,
-        "h": 177
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "AridBiome/Midground/mesa2.png": {
-      "frame": {
-        "x": 4,
-        "y": 1542,
-        "w": 503,
-        "h": 352
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 1,
-        "y": 28,
-        "w": 503,
-        "h": 352
-      },
-      "sourceSize": {
-        "w": 506,
-        "h": 400
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "AridBiome/Midground/mesa3.png": {
       "frame": {
-        "x": 1237,
-        "y": 1354,
+        "x": 808,
+        "y": 4,
         "w": 481,
         "h": 434
       },
@@ -336,48 +168,168 @@
         "y": 0.5
       }
     },
-    "CityBiome/Foreground/car4.png": {
+    "MountainBiome/Background/rock5.png": {
       "frame": {
-        "x": 710,
-        "y": 1522,
-        "w": 443,
-        "h": 175
+        "x": 1348,
+        "y": 963,
+        "w": 393,
+        "h": 520
       },
       "rotated": false,
-      "trimmed": true,
+      "trimmed": false,
       "spriteSourceSize": {
-        "x": 29,
-        "y": 27,
-        "w": 443,
-        "h": 175
+        "x": 0,
+        "y": 0,
+        "w": 393,
+        "h": 520
       },
       "sourceSize": {
-        "w": 500,
-        "h": 219
+        "w": 393,
+        "h": 520
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "MountainBiome/Midground/midrock1.png": {
+    "MountainBiome/Foreground/hill1.png": {
       "frame": {
-        "x": 515,
-        "y": 1705,
-        "w": 431,
-        "h": 183
+        "x": 794,
+        "y": 461,
+        "w": 808,
+        "h": 250
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 335,
-        "y": 333,
-        "w": 431,
-        "h": 183
+        "x": 83,
+        "y": 224,
+        "w": 808,
+        "h": 250
       },
       "sourceSize": {
-        "w": 940,
-        "h": 1162
+        "w": 919,
+        "h": 622
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Background/rock4.png": {
+      "frame": {
+        "x": 1199,
+        "y": 1491,
+        "w": 356,
+        "h": 534
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 356,
+        "h": 534
+      },
+      "sourceSize": {
+        "w": 356,
+        "h": 534
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "AridBiome/Midground/mesa2.png": {
+      "frame": {
+        "x": 4,
+        "y": 1330,
+        "w": 503,
+        "h": 352
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 28,
+        "w": 503,
+        "h": 352
+      },
+      "sourceSize": {
+        "w": 506,
+        "h": 400
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Background/rock10.png": {
+      "frame": {
+        "x": 515,
+        "y": 1680,
+        "w": 662,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 57,
+        "y": 1209,
+        "w": 662,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Background/ruims2.png": {
+      "frame": {
+        "x": 1297,
+        "y": 4,
+        "w": 402,
+        "h": 386
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 61,
+        "w": 402,
+        "h": 386
+      },
+      "sourceSize": {
+        "w": 458,
+        "h": 472
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Background/ruims1.png": {
+      "frame": {
+        "x": 4,
+        "y": 1690,
+        "w": 394,
+        "h": 384
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 8,
+        "w": 394,
+        "h": 384
+      },
+      "sourceSize": {
+        "w": 482,
+        "h": 421
       },
       "pivot": {
         "x": 0.5,
@@ -386,8 +338,8 @@
     },
     "AridBiome/Midground/mesa1.png": {
       "frame": {
-        "x": 4,
-        "y": 1902,
+        "x": 1610,
+        "y": 398,
         "w": 317,
         "h": 423
       },
@@ -408,10 +360,82 @@
         "y": 0.5
       }
     },
+    "MountainBiome/Midground/midrock7.png": {
+      "frame": {
+        "x": 406,
+        "y": 1952,
+        "w": 519,
+        "h": 252
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 28,
+        "y": 280,
+        "w": 519,
+        "h": 252
+      },
+      "sourceSize": {
+        "w": 940,
+        "h": 1162
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Background/rock7.png": {
+      "frame": {
+        "x": 1563,
+        "y": 1491,
+        "w": 292,
+        "h": 399
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 292,
+        "h": 399
+      },
+      "sourceSize": {
+        "w": 292,
+        "h": 399
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Midground/midrock5.png": {
+      "frame": {
+        "x": 1707,
+        "y": 4,
+        "w": 368,
+        "h": 278
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 335,
+        "y": 446,
+        "w": 368,
+        "h": 278
+      },
+      "sourceSize": {
+        "w": 940,
+        "h": 1162
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "MountainBiome/Background/rock6.png": {
       "frame": {
-        "x": 329,
-        "y": 1902,
+        "x": 1749,
+        "y": 829,
         "w": 236,
         "h": 423
       },
@@ -434,18 +458,18 @@
     },
     "CityBiome/Midground/rubble1.png": {
       "frame": {
-        "x": 573,
-        "y": 1896,
-        "w": 422,
-        "h": 201
+        "x": 1563,
+        "y": 1898,
+        "w": 421,
+        "h": 194
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 4,
-        "y": 29,
-        "w": 422,
-        "h": 201
+        "x": 2,
+        "y": 28,
+        "w": 421,
+        "h": 194
       },
       "sourceSize": {
         "w": 431,
@@ -456,92 +480,20 @@
         "y": 0.5
       }
     },
-    "CityBiome/Background/ruims2.png": {
+    "MountainBiome/Midground/midrock1.png": {
       "frame": {
-        "x": 1003,
-        "y": 1796,
-        "w": 402,
-        "h": 386
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 32,
-        "y": 61,
-        "w": 402,
-        "h": 386
-      },
-      "sourceSize": {
-        "w": 458,
-        "h": 472
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Background/rock7.png": {
-      "frame": {
-        "x": 1726,
-        "y": 1354,
-        "w": 292,
-        "h": 399
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 292,
-        "h": 399
-      },
-      "sourceSize": {
-        "w": 292,
-        "h": 399
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "CityBiome/Background/ruims1.png": {
-      "frame": {
-        "x": 1413,
-        "y": 1796,
-        "w": 394,
-        "h": 384
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 53,
-        "y": 8,
-        "w": 394,
-        "h": 384
-      },
-      "sourceSize": {
-        "w": 482,
-        "h": 421
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Midground/midrock5.png": {
-      "frame": {
-        "x": 2029,
-        "y": 4,
-        "w": 368,
-        "h": 278
+        "x": 933,
+        "y": 2033,
+        "w": 431,
+        "h": 183
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 335,
-        "y": 446,
-        "w": 368,
-        "h": 278
+        "y": 333,
+        "w": 431,
+        "h": 183
       },
       "sourceSize": {
         "w": 940,
@@ -552,10 +504,82 @@
         "y": 0.5
       }
     },
+    "CityBiome/Foreground/car4.png": {
+      "frame": {
+        "x": 1749,
+        "y": 1260,
+        "w": 443,
+        "h": 175
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 27,
+        "w": 443,
+        "h": 175
+      },
+      "sourceSize": {
+        "w": 500,
+        "h": 219
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Background/rock3.png": {
+      "frame": {
+        "x": 1863,
+        "y": 1443,
+        "w": 363,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 363,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 363,
+        "h": 208
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Midground/ruims-sideways1.png": {
+      "frame": {
+        "x": 1863,
+        "y": 1659,
+        "w": 506,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 43,
+        "y": 10,
+        "w": 506,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 589,
+        "h": 177
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "MountainBiome/Midground/midrock4.png": {
       "frame": {
-        "x": 2026,
-        "y": 290,
+        "x": 4,
+        "y": 2082,
         "w": 368,
         "h": 160
       },
@@ -576,154 +600,10 @@
         "y": 0.5
       }
     },
-    "MountainBiome/Background/rock3.png": {
-      "frame": {
-        "x": 2026,
-        "y": 458,
-        "w": 363,
-        "h": 208
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 363,
-        "h": 208
-      },
-      "sourceSize": {
-        "w": 363,
-        "h": 208
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Background/rock9.png": {
-      "frame": {
-        "x": 2026,
-        "y": 674,
-        "w": 337,
-        "h": 140
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 23,
-        "y": 802,
-        "w": 337,
-        "h": 140
-      },
-      "sourceSize": {
-        "w": 2000,
-        "h": 2000
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "CityBiome/Foreground/car3.png": {
-      "frame": {
-        "x": 2026,
-        "y": 822,
-        "w": 309,
-        "h": 156
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 35,
-        "y": 32,
-        "w": 309,
-        "h": 156
-      },
-      "sourceSize": {
-        "w": 353,
-        "h": 213
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Midground/midrock6.png": {
-      "frame": {
-        "x": 1184,
-        "y": 180,
-        "w": 156,
-        "h": 280
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 740,
-        "y": 796,
-        "w": 156,
-        "h": 280
-      },
-      "sourceSize": {
-        "w": 940,
-        "h": 1162
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MountainBiome/Midground/midrock3.png": {
-      "frame": {
-        "x": 1833,
-        "y": 986,
-        "w": 252,
-        "h": 175
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 659,
-        "y": 74,
-        "w": 252,
-        "h": 175
-      },
-      "sourceSize": {
-        "w": 940,
-        "h": 1162
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "AridBiome/Background/cairm0.png": {
-      "frame": {
-        "x": 954,
-        "y": 1705,
-        "w": 241,
-        "h": 33
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 10,
-        "y": 39,
-        "w": 241,
-        "h": 33
-      },
-      "sourceSize": {
-        "w": 270,
-        "h": 92
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "MountainBiome/Foreground/foretree1.png": {
       "frame": {
-        "x": 1184,
-        "y": 468,
+        "x": 1359,
+        "y": 719,
         "w": 229,
         "h": 236
       },
@@ -744,44 +624,68 @@
         "y": 0.5
       }
     },
-    "CityBiome/Foreground/car2.png": {
+    "CityBiome/Foreground/car3.png": {
       "frame": {
-        "x": 820,
-        "y": 180,
-        "w": 224,
-        "h": 86
+        "x": 1372,
+        "y": 2100,
+        "w": 309,
+        "h": 156
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 2,
-        "y": 38,
-        "w": 224,
-        "h": 86
+        "x": 35,
+        "y": 32,
+        "w": 309,
+        "h": 156
       },
       "sourceSize": {
-        "w": 288,
-        "h": 172
+        "w": 353,
+        "h": 213
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "MountainBiome/Midground/midrock2.png": {
+    "MountainBiome/Background/rock9.png": {
       "frame": {
-        "x": 1184,
-        "y": 712,
-        "w": 217,
-        "h": 104
+        "x": 1689,
+        "y": 2100,
+        "w": 337,
+        "h": 140
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 411,
-        "y": 267,
-        "w": 217,
-        "h": 104
+        "x": 23,
+        "y": 802,
+        "w": 337,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 2000,
+        "h": 2000
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MountainBiome/Midground/midrock3.png": {
+      "frame": {
+        "x": 1992,
+        "y": 1813,
+        "w": 252,
+        "h": 175
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 659,
+        "y": 74,
+        "w": 252,
+        "h": 175
       },
       "sourceSize": {
         "w": 940,
@@ -792,48 +696,24 @@
         "y": 0.5
       }
     },
-    "CityBiome/Foreground/car1.png": {
+    "MountainBiome/Midground/midrock6.png": {
       "frame": {
-        "x": 573,
-        "y": 2190,
-        "w": 213,
-        "h": 84
+        "x": 2252,
+        "y": 1813,
+        "w": 156,
+        "h": 280
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 20,
-        "y": 79,
-        "w": 213,
-        "h": 84
+        "x": 740,
+        "y": 796,
+        "w": 156,
+        "h": 280
       },
       "sourceSize": {
-        "w": 240,
-        "h": 216
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "CityBiome/Foreground/lamppost1.png": {
-      "frame": {
-        "x": 808,
-        "y": 818,
-        "w": 209,
-        "h": 67
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 20,
-        "y": 75,
-        "w": 209,
-        "h": 67
-      },
-      "sourceSize": {
-        "w": 230,
-        "h": 166
+        "w": 940,
+        "h": 1162
       },
       "pivot": {
         "x": 0.5,
@@ -842,8 +722,8 @@
     },
     "MountainBiome/Foreground/foretree2.png": {
       "frame": {
-        "x": 2093,
-        "y": 986,
+        "x": 2034,
+        "y": 1996,
         "w": 208,
         "h": 197
       },
@@ -866,8 +746,8 @@
     },
     "CityBiome/Foreground/lamppost2.png": {
       "frame": {
-        "x": 1833,
-        "y": 672,
+        "x": 1935,
+        "y": 290,
         "w": 155,
         "h": 184
       },
@@ -888,24 +768,96 @@
         "y": 0.5
       }
     },
-    "AridBiome/Foreground/cairm3.png": {
+    "MountainBiome/Midground/midrock2.png": {
       "frame": {
-        "x": 1833,
-        "y": 864,
-        "w": 184,
-        "h": 30
+        "x": 2250,
+        "y": 2101,
+        "w": 217,
+        "h": 104
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 28,
-        "y": 28,
-        "w": 184,
-        "h": 30
+        "x": 411,
+        "y": 267,
+        "w": 217,
+        "h": 104
       },
       "sourceSize": {
-        "w": 255,
-        "h": 78
+        "w": 940,
+        "h": 1162
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Foreground/car2.png": {
+      "frame": {
+        "x": 2083,
+        "y": 4,
+        "w": 224,
+        "h": 86
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 38,
+        "w": 224,
+        "h": 86
+      },
+      "sourceSize": {
+        "w": 288,
+        "h": 172
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Foreground/car1.png": {
+      "frame": {
+        "x": 1707,
+        "y": 290,
+        "w": 213,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 20,
+        "y": 79,
+        "w": 213,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 240,
+        "h": 216
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CityBiome/Foreground/lamppost1.png": {
+      "frame": {
+        "x": 933,
+        "y": 1952,
+        "w": 209,
+        "h": 67
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 20,
+        "y": 75,
+        "w": 209,
+        "h": 67
+      },
+      "sourceSize": {
+        "w": 230,
+        "h": 166
       },
       "pivot": {
         "x": 0.5,
@@ -914,8 +866,8 @@
     },
     "AridBiome/Foreground/cacti2.png": {
       "frame": {
-        "x": 1161,
-        "y": 1522,
+        "x": 406,
+        "y": 1690,
         "w": 65,
         "h": 132
       },
@@ -936,10 +888,34 @@
         "y": 0.5
       }
     },
+    "AridBiome/Background/cairm0.png": {
+      "frame": {
+        "x": 1297,
+        "y": 398,
+        "w": 241,
+        "h": 33
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 39,
+        "w": 241,
+        "h": 33
+      },
+      "sourceSize": {
+        "w": 270,
+        "h": 92
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "CityBiome/Foreground/cart1.png": {
       "frame": {
-        "x": 1025,
-        "y": 818,
+        "x": 1863,
+        "y": 1813,
         "w": 118,
         "h": 69
       },
@@ -962,8 +938,8 @@
     },
     "AridBiome/Foreground/cairm2.png": {
       "frame": {
-        "x": 1151,
-        "y": 824,
+        "x": 1596,
+        "y": 829,
         "w": 113,
         "h": 63
       },
@@ -986,8 +962,8 @@
     },
     "AridBiome/Foreground/cacti3.png": {
       "frame": {
-        "x": 2026,
-        "y": 1169,
+        "x": 406,
+        "y": 1830,
         "w": 56,
         "h": 107
       },
@@ -1008,24 +984,24 @@
         "y": 0.5
       }
     },
-    "AridBiome/Foreground/cacti1.png": {
+    "AridBiome/Foreground/cairm3.png": {
       "frame": {
-        "x": 2343,
-        "y": 822,
-        "w": 51,
-        "h": 104
+        "x": 2034,
+        "y": 2201,
+        "w": 184,
+        "h": 30
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 12,
-        "y": 18,
-        "w": 51,
-        "h": 104
+        "x": 28,
+        "y": 28,
+        "w": 184,
+        "h": 30
       },
       "sourceSize": {
-        "w": 80,
-        "h": 135
+        "w": 255,
+        "h": 78
       },
       "pivot": {
         "x": 0.5,
@@ -1034,7 +1010,7 @@
     },
     "CityBiome/Foreground/cart2.png": {
       "frame": {
-        "x": 1946,
+        "x": 1199,
         "y": 1284,
         "w": 96,
         "h": 62
@@ -1056,10 +1032,34 @@
         "y": 0.5
       }
     },
+    "AridBiome/Foreground/cacti1.png": {
+      "frame": {
+        "x": 1199,
+        "y": 1354,
+        "w": 51,
+        "h": 104
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 18,
+        "w": 51,
+        "h": 104
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 135
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "AridBiome/Foreground/cairm5.png": {
       "frame": {
-        "x": 2343,
-        "y": 934,
+        "x": 1258,
+        "y": 1354,
         "w": 53,
         "h": 67
       },
@@ -1082,8 +1082,8 @@
     },
     "AridBiome/Foreground/cairm4.png": {
       "frame": {
-        "x": 954,
-        "y": 1746,
+        "x": 1150,
+        "y": 1952,
         "w": 41,
         "h": 37
       },
@@ -1106,8 +1106,8 @@
     },
     "AridBiome/Foreground/cairm1.png": {
       "frame": {
-        "x": 954,
-        "y": 1705,
+        "x": 1297,
+        "y": 398,
         "w": 241,
         "h": 33
       },
@@ -1135,8 +1135,8 @@
     "image": "biomes.png",
     "format": "RGBA8888",
     "size": {
-      "w": 2401,
-      "h": 2329
+      "w": 2471,
+      "h": 2260
     },
     "scale": 1
   }
