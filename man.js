@@ -20,8 +20,7 @@ class Man extends NightdaySprite {
             "stone_walk3",
             "stone_walk4",
             "stone_walk5",
-        ]
-        this.FRAME_TIME = 0.1;
+        ];
         this.frame_age = 0;
         this.frame = 0;
         this.target = new Vec(MAN_RADIUS,0.0);
@@ -127,7 +126,7 @@ class Man extends NightdaySprite {
         }
         // Update animation
         this.frame_age += dt;
-        if ((walking || this.frame != 0) && this.frame_age > this.FRAME_TIME) {
+        if ((walking || this.frame != 0) && this.frame_age > MAN_FRAME_TIME) {
             if (this.frame === 3) {
                 this.engine.sound.play(
                     this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
