@@ -279,14 +279,16 @@ class Message extends UISprite {
         if (this.age < this.delay) this.alpha_target = 0.0;
         else if (this.duration === null || this.age < this.delay+this.duration+this.fadein) this.alpha_target = 1.0;
         else this.alpha_target = 0.0;
-        
         if (this.age < this.delay+this.duration+this.fadein) {
             if (this.fadein > 0) this.alpha += Math.sign(this.alpha_target-this.alpha) * dt / this.fadein;
             else this.alpha = this.alpha_target;
+            if (this.alpha > this.alpha_target)  this.alpha = this.alpha_target;
         } else {
             if (this.fadeout > 0) this.alpha += Math.sign(this.alpha_target-this.alpha) * dt / this.fadeout;
             else this.alpha = this.alpha_target;
+            if (this.alpha < this.alpha_target)  this.alpha = this.alpha_target;
         }
+        if (this.duration !== null && this.age > this.delay+this.fadein+this.duration+this.fadeout) this.destroy();
         this.setImage(this.image,this.alpha);
         
         super.update(dt);
