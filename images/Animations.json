@@ -528,7 +528,7 @@
         "y": 0.5
       }
     },
-    "CityBiome/Midground/lamppost2.png": {
+    "CityBiome/Foreground/lamppost2.png": {
       "frame": {
         "x": 1689,
         "y": 314,
@@ -1296,7 +1296,7 @@
         "y": 0.5
       }
     },
-    "CityBiome/Midground/car2.png": {
+    "CityBiome/Foreground/car2.png": {
       "frame": {
         "x": 1330,
         "y": 1047,
@@ -1440,7 +1440,7 @@
         "y": 0.5
       }
     },
-    "CityBiome/Midground/car1.png": {
+    "CityBiome/Foreground/car1.png": {
       "frame": {
         "x": 226,
         "y": 933,
@@ -1464,7 +1464,7 @@
         "y": 0.5
       }
     },
-    "CityBiome/Midground/lamppost1.png": {
+    "CityBiome/Foreground/lamppost1.png": {
       "frame": {
         "x": 4,
         "y": 960,
