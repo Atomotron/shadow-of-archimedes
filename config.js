@@ -5,7 +5,8 @@ const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 const MACHINE_RADIUS = PLANET_RADIUS-0.03;
 const TERRAFORMER_RADIUS = PLANET_RADIUS-0.15;
-
+const BIOMES = ["MountainBiome","AridBiome","CityBiome",
+                "MountainBiome","AridBiome","CityBiome"];
 // Stuff having to do with the "nice zone"
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;

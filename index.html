@@ -600,35 +600,42 @@ class ArchimedesEngine extends Engine {
             fadein,duration,fadeout,delay
         );
     }
-    gen_layer(sprites,layer,rdelta,biomes) {
-        let angle = 0;
-        while (angle < Math.PI*2.0) {
-            const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
-            angle += 0.1*Math.random();
-            let found = false;
-            let name = ""
-            for (let attempt=0; attempt<100 && !found; ++attempt) {
-                let idx = Math.floor(Math.random()*sprites.length);
-                idx = idx >= sprites.length ? sprites.length-1 : idx;
-                name = sprites[idx];
-                found = !name.includes(biome+"/");
+    gen_layer(sprites,layer,rdelta,biomes,divisions) {
+        let angle = 0; 
+        if (sprites.length === 0) return;
+        // Set up biome table
+        let biome_sprites = new Map();
+        for (const b of biomes) {
+            if (!biome_sprites.has(b)) {
+                biome_sprites.set(b,sprites.filter( s=>s.includes(b) ));
             }
-            if (!found) continue; // abort this one
-            const flags = Math.floor(Math.random()*7.0+1);
-            if (flags < 1) flags = 1;
-            if (flags > 7) flags = 7;
+        }
+        let biome_index = 0;
+        for (let angle=0; angle < Math.PI*2.0; angle += 0.1*Math.random()+0.01) {
+            // Update biome index
+            while (divisions[biome_index] < angle && biome_index < divisions.length-1) biome_index+=1;
+            const biome = biome_sprites.get(biomes[biome_index]);
+            if (biome === null || biome.length === 0) continue;
+            const name = biome[Math.floor(Math.random()*biome.length)];
+            const flags = Math.floor(Math.random()*7+1);
             const sprite = new NightdaySprite(this,this.ndspritepass,name,flags,layer);
             sprite.pos.polareq(PLANET_RADIUS+rdelta,angle);
             this.bgsprites.push(sprite);
         }
     }
     create() {
-        const biomes = ["MountainBiome","AridBiome"];
+        const all_biomes = [...BIOMES];
+        const biomes = [];
+        while (all_biomes.length > 0) {
+            biomes.push(all_biomes.splice(Math.floor(Math.random()*all_biomes.length),1)[0]);
+        }
+        const divisions = [];
+        for (const b of biomes) divisions.push(Math.random()*Math.PI*2);
+        divisions.sort();        
         this.bgsprites = [];
-
-        this.gen_layer(this.bsprites,0.0,-0.3,biomes);
-        this.gen_layer(this.msprites,0.25,-0.2,biomes);
-        this.gen_layer(this.fsprites,0.50,-0.1,biomes);
+        this.gen_layer(this.bsprites,0.0,-0.3,biomes,divisions);
+        this.gen_layer(this.msprites,0.25,-0.2,biomes,divisions);
+        this.gen_layer(this.fsprites,0.50,-0.1,biomes,divisions);
         // Terraformers
         this.machines = new Set();
         this.buildMachine("terraformer",new Vec(1.0,1.0));   
