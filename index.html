@@ -750,6 +750,7 @@ class ArchimedesEngine extends Engine {
             if (!this.won) {
                 this.zoom_target = 0.005;
                 this.zoom_control = false;
+                this.message("UI/text-win.png",new Vec(0.0,0.5),1.0,null)
                 this.won = true;
             }
         }
@@ -818,7 +819,7 @@ class ArchimedesEngine extends Engine {
             this.time_until_next -= dt;
             if (this.time_until_next <= 0) {
                 const name = this.tracks.shift();
-                this.sound.start_music(name,0.1);
+                this.sound.start_music(name,2);
                 this.tracks.push(name);
                 this.time_until_next = this.time_between;
             }
