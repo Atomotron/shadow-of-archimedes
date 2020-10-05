@@ -29,6 +29,7 @@ class Man extends NightdaySprite {
         this.walking = false;
         this.r_defect = 0;
         this.r_vel = 0;
+        this.temperature = 0;
         
         // Set up clickable region for jumping  
         const that = this;
@@ -110,6 +111,10 @@ class Man extends NightdaySprite {
         this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
         this.mirror = this.pos.cross(dr) < 0;
         this.transform_computed = false;
+        // Update temperature
+        const external_temperature = TEMPERATURE_SCALE*this.pos.dot(this.engine.scene.solar_vector);
+        this.temperature = external_temperature;
+        
         // Update inventory pos
         this.inventory_root.eq(this.pos);
         const facing = this.facing();

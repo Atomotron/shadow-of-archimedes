@@ -149,7 +149,8 @@ const MACHINE_RADIUS = PLANET_RADIUS-0.03;
 const TERRAFORMER_RADIUS = PLANET_RADIUS-0.15;
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;
-const ZONE_STARTING_ANGLE = Math.PI + 0.4; //Radians
+const ZONE_STARTING_ANGLE = Math.PI; //Radians
+const TEMPERATURE_SCALE = 1.6;
 const TERRAFORMING_SPEED = 1; // When winning the game
 
 // Physics
@@ -397,8 +398,58 @@ class Message extends UISprite {
         }
         this.setImage(this.image,alpha);
         super.update(dt);
+    }    
+}
+
+class Thermometer extends UISprite {
+    constructor(engine,pass,image,bar_image,pos) {
+        super(engine,pass,image,pos,1.0);
+        this.bar_image = bar_image;
+        this.bar_sprite = pass.dvao.acquire();
+        this.bar_model_matrix = new Mat();
+        this.full = 0.5;
+        this.scale = 0.7;
+        this.setBar(this.full);
+        this.original_pos = pos.clone();
+    }
+    setBar(x) {
+        this.bar_model_matrix.eq(this.engine.il.model_frames.get(this.bar_image));
+        this.bar_model_matrix.x -= (1-x)*this.bar_model_matrix.xx;
+        this.bar_model_matrix.xx *= x;
+        this.bar_sprite.uv.eq(this.engine.il.texture_frames.get(this.bar_image));
+        this.bar_sprite.uv.x -= ((1-x)*this.bar_sprite.uv.xx);
+        this.bar_sprite.uv.xx *= x;
+        this.bar_sprite.alpha.set(1.0);
+    }
+    compute_transform() {
+        // Set matrices from values
+        this.rotation.rotationeq(this.angle);
+        this.translation.translationeq(this.pos);
+        if (this.mirror) {
+            this.scaling.scalingeq(-this.scale,this.scale);
+        } else {
+            this.scaling.scalingeq(this.scale,this.scale);
+        }
+        // Compute model matrix
+        this.data.model.eq(this.sprite_matrix);
+        this.data.model.composeq(this.scaling);
+        this.data.model.composeq(this.rotation);
+        this.data.model.composeq(this.translation);
+        this.bar_sprite.model.eq(this.bar_model_matrix);
+        this.bar_sprite.model.composeq(this.scaling);
+        this.bar_sprite.model.composeq(this.rotation);
+        this.bar_sprite.model.composeq(this.translation);
+    }
+    update(dt) {
+        if (this.full < 0.1 || this.full > 0.9) {
+            this.pos.eq(this.original_pos.add(new Vec(Math.random()-0.5,Math.random()-0.5).muleq(0.01)));
+        }
+        const x = this.full > 1.0 ? 1.0 : this.full;
+        this.setBar(x < 0.0 ? 0.0 : x);
+        super.update(dt);
     }
 }
+
 const BUTTON_UI_SCALE = 0.25;
 class Button extends UISprite {
     constructor(engine,pass,image=null,pos=new Vec(),r=0,callback=null) {
@@ -550,6 +601,13 @@ class ArchimedesEngine extends Engine {
             () => {this.buildMachine("metal",this.man.pos)}
         );
         
+        // Thermometer
+        this.thermometer = new Thermometer(this,this.uipass,
+            "UI/thermo-empty.png",
+            "UI/thermo-mercury.png",
+            new Vec(0.0,0.8)
+        )
+        
         // Set up physics objects
         this.gravity = new ForceNode(
             new Vec(), // center
@@ -587,7 +645,13 @@ class ArchimedesEngine extends Engine {
         this.running_terraformers = 0;
         this.nice_zone_size = NICE_ZONE_SIZE;
         this.won = false;
+        this.reset_scheduled = false;
+        this.seen_heat_warning = false;
+        this.seen_cold_warning = false;
         this.create();
+        
+        //Title (only on first start)
+        this.message("UI/text-title.png");
     }
     buildMachine(type,pos) {
         const stride = (!!this.man ? this.man.facing() : new Vec(1.0,0.0)).muleq(MACHINE_SIZE);
@@ -678,8 +742,8 @@ class ArchimedesEngine extends Engine {
                 name, // type
             );
         }
-        //Title
-        this.message("UI/text-title.png");
+        // Nice zone
+        this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
     }
     destroy() {
         this.man.destroy();
@@ -696,8 +760,14 @@ class ArchimedesEngine extends Engine {
         this.won = false;
     }
     reset() {
+        this.reset_scheduled = false;
         this.destroy();
         this.create();
+    }
+    schedule_reset() {
+        if (this.reset_scheduled) return;
+        this.reset_scheduled = true;
+        window.setTimeout(()=>this.reset(),100);
     }
     update(dt) {
         super.update(dt);
@@ -711,13 +781,30 @@ class ArchimedesEngine extends Engine {
                 this.won = true;
             }
         }
-        
         // Update physics particles
         for (const p of this.live_particles) {
             p.update(this,dt);
         }
         // Update daytime
         this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
+        
+        // Update thermometer
+        this.thermometer.full = this.man.temperature+0.5;
+        if (this.man.temperature > 0.5) {
+            this.message("UI/text-heatdeath.png",new Vec(0.0,0.7));
+            this.schedule_reset();
+        } else if (this.man.temperature < -0.5) {
+            this.message("UI/text-frozedeath.png",new Vec(0.0,0.7));
+            this.schedule_reset();
+        }        
+        if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
+            this.message("UI/text-damgerouslyhigh.png",new Vec(0.0,0.85));
+            this.seen_heat_warning = true;
+        } else if (this.thermometer.full < 0.1 && !this.seen_cold_warning) {
+            this.message("UI/text-damgerouslylow.png",new Vec(0.0,0.85));
+            this.seen_cold_warning = true;
+        }
+        
         // Camera update
         if (!this.won) {
             const dr_target = this.man.target.sub(this.camera_pos);
