@@ -11,6 +11,7 @@ const BIOMES = ["MountainBiome","AridBiome","CityBiome",
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.1;
 const ZONE_STARTING_ANGLE = 0.4+Math.PI; //Radians
+const RESPITE = 15;
 const TEMPERATURE_SCALE = 1.6;
 const TERRAFORMING_SPEED = 1; // When winning the game
 

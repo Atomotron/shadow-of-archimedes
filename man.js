@@ -219,6 +219,7 @@ class Man extends NightdaySprite {
             this.frame_age += dt;
             if (this.frame_age > MAN_FRAME_TIME) {
                 this.frame = this.frame+1;
+                this.frame_age = 0;
                 if (this.frame >= this.death_frames.length) this.frame = this.death_frames.length-1;
             }
             this.setImage(this.death_frames[this.frame]);
