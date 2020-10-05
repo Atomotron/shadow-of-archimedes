@@ -146,11 +146,11 @@ const PLANET_RADIUS = 24;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 const MACHINE_RADIUS = PLANET_RADIUS-0.03;
-const TERRAFORMER_RADIUS = PLANET_RADIUS-0.07;
+const TERRAFORMER_RADIUS = PLANET_RADIUS-0.15;
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;
-const ZONE_STARTING_ANGLE = 0.4; //Radians
-const TERRAFORMING_SPEED = 10; // When winning the game
+const ZONE_STARTING_ANGLE = Math.PI + 0.4; //Radians
+const TERRAFORMING_SPEED = 1; // When winning the game
 
 // Physics
 const GRAVITY = 2;
@@ -168,7 +168,7 @@ const MAN_INVENTORY_DRAG = 0.1;
 
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
-const ZOOM_SPEED = 0.05;
+const ZOOM_SPEED = 0.25;
 const MIN_ZOOM = 0.04;
 const MAX_ZOOM = 0.5;
 
@@ -656,13 +656,16 @@ class ArchimedesEngine extends Engine {
         this.gen_layer(this.fsprites,0.50,-0.1,biomes);
         // Terraformers
         this.machines = new Set();
-        this.buildMachine("terraformer",new Vec(1.0,0.0));        
+        this.buildMachine("terraformer",new Vec(1.0,1.0));   
+        this.buildMachine("terraformer",new Vec(-1.0,1.0));  
+        this.buildMachine("terraformer",new Vec(1.0,-1.0));  
+        this.buildMachine("terraformer",new Vec(-1.0,-1.0));       
         // Create man 
         this.man = new Man(this,this.aspritepass);
         this.t = 0;
         // Set up camera
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
-        this.zoom = 0.01;
+        this.zoom = 0.005;
         this.zoom_target = 0.25;
         this.live_particles = new Set(); // Particles that get simulation updates
         // Items
@@ -677,9 +680,6 @@ class ArchimedesEngine extends Engine {
         }
         //Title
         this.message("UI/text-title.png");
-        // Nice zone and endgame
-        this.nice_zone_size = NICE_ZONE_SIZE;
-        this.won = false;
     }
     destroy() {
         this.man.destroy();
@@ -692,6 +692,7 @@ class ArchimedesEngine extends Engine {
         this.ndspritepass.dvao.expunge();
         this.running_terraformers = 0;
         this.zoom_control = true;
+        this.nice_zone_size = NICE_ZONE_SIZE;
         this.won = false;
     }
     reset() {
@@ -703,7 +704,12 @@ class ArchimedesEngine extends Engine {
         this.t += dt;
         // Check for win
         if (this.running_terraformers >= 4) {
-            this.nice_zone_size += dt*TERRAFORMING_SPEED;
+            if (this.zoom < 0.01) this.nice_zone_size *= 1.0+dt*TERRAFORMING_SPEED;
+            if (!this.won) {
+                this.zoom_target = 0.005;
+                this.zoom_control = false;
+                this.won = true;
+            }
         }
         
         // Update physics particles
@@ -711,16 +717,16 @@ class ArchimedesEngine extends Engine {
             p.update(this,dt);
         }
         // Update daytime
-        this.scene.solar_vector.polareq(1/this.nize_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
-        
+        this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
         // Camera update
-        const dr_target = this.man.target.sub(this.camera_pos);
-        const dr_man = this.man.pos.sub(this.camera_pos);
-        this.camera_pos.addeq(dr_man.mul(dt*CAMERA_SPEED));
-        this.camera_pos.addeq(dr_target.mul(dt*CAMERA_SPEED));
-        this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
-        this.zoom += ZOOM_SPEED*(this.zoom_target-this.zoom)*dt;
-        
+        if (!this.won) {
+            const dr_target = this.man.target.sub(this.camera_pos);
+            const dr_man = this.man.pos.sub(this.camera_pos);
+            this.camera_pos.addeq(dr_man.mul(dt*CAMERA_SPEED));
+            this.camera_pos.addeq(dr_target.mul(dt*CAMERA_SPEED));
+            this.camera_pos.mapabseq((r) => CAMERA_RADIUS);
+        }
+        this.zoom *= Math.pow(this.zoom_target/this.zoom,ZOOM_SPEED*dt);
         // Build view matrix
         let T = new Mat().translationeq(this.camera_pos.mul(-1));
         let R = new Mat().rotationeq(Math.atan2(this.camera_pos.y,this.camera_pos.x)-Math.PI*0.5);

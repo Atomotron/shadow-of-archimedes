@@ -185,10 +185,14 @@ class Machine extends NightdaySprite {
         super.update(dt);
     }
     onStopRunning() {
-        
+        if (this.type === "terraformer") {
+            this.engine.running_terraformers -= 1;
+        }
     }
     onStartRunning() {
-    
+        if (this.type === "terraformer") {
+            this.engine.running_terraformers += 1;
+        }    
     }
     destroy() {
         this.engine.machines.delete(this);
