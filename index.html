@@ -13,6 +13,8 @@
     <script src="nightdaysprite.js"></script>
     <script src="physics.js"></script>
     <script src="man.js"></script>
+    <script src="item.js"></script>
+    <script src="machine.js"></script>
 </head>
 <body style="background-color:#000000;padding:0px;margin:0px;">
 <div id="canvas-container" style="height:99vh; width:100%"></div>
@@ -100,6 +102,41 @@ void main() {
     float alpha = smoothstep(1.0/3.0, 2.0/3.0, dot(sheet_color.xyz,mask));
     vec3 base_color = texture2D(gradient,vec2(layer_level,daytime+0.5)).xyz;
     gl_FragColor = vec4(base_color*alpha,alpha);
+}
+</script>
+
+<script id="shader-ui-v" type="x-shader/x-vertex">
+attribute vec2 vertex;
+attribute vec3 model_x;
+attribute vec3 model_y;
+attribute vec3 model_z;
+attribute vec3 uv_x;
+attribute vec3 uv_y;
+attribute vec3 uv_z;
+attribute float alpha;
+varying vec2 uv;
+varying float alpha_at_fragment;
+uniform mat3 view;
+
+void main() {
+    mat3 model = mat3(model_x,model_y,model_z);
+    vec2 view_pos = (view * (model * vec3(vertex,1.0))).xy;
+    gl_Position = vec4(view_pos,0.5,1.0);
+    uv = (mat3(uv_x,uv_y,uv_z) * vec3(vertex,1.0)).xy;
+    alpha_at_fragment = alpha;
+}
+</script>
+
+<script id="shader-ui-f" type="x-shader/x-fragment">
+precision highp float;
+varying vec2 uv;
+varying float alpha_at_fragment;
+
+uniform sampler2D spritesheet;
+
+void main() {
+    vec4 tex = texture2D(spritesheet,uv);
+    gl_FragColor = tex*alpha_at_fragment;
 }
 </script>
 <script>
@@ -233,291 +270,17 @@ class BackgroundPass extends RenderPass {
         this.vao.draw(gl);
     }
 }
-class Item extends Sprite {
-    constructor(engine,pos=new Vec(),vel=new Vec(),type="carbon") {
-        super(engine,engine.itempass,
-            {
-                'carbon':"Items/item-carbom.png",
-                'battery':"Items/item-battery.png",
-                'metal':"Items/item-metal.png",
-                'water':"Items/item-water.png",
-            }[type]      
-        );
-        this.type = type; 
-        this.scale = ITEM_SCALE;
-        this.pos.eq(pos);
-        this.particle = new PhysicsParticle(this.pos,vel,engine.gravity);
-        engine.live_particles.add(this.particle);
-        this.click_region = new Clickable(this.pos,ITEM_CLICK_RADIUS,()=>{this.clickitem();});
-        engine.clickables.add(this.click_region);        
-        this.holder = null;
-        engine.items.add(this);
-    }
-    destroy() {
-        super.destroy();
-        engine.live_particles.delete(this.particle);
-        engine.clickables.delete(this.click_region);
-    }
-    clickitem() {
-        if (this.holder === null || this.holder instanceof ItemSlot) {
-            if (this.holder instanceof ItemSlot) {
-                this.holder.holding = null;
-            }
-            this.click_region.r = 0;
-            this.engine.sound.play("antenna_upload");
-            this.holder = this.engine.man;
-            this.engine.man.putItem(this);
-        }
-    }
-    update(dt) {
-        this.angle = -Math.atan2(-this.pos.x,this.pos.y);
-        if (this.holder === null && Math.random() < dt/ITEM_JUMP_FREQUENCY) {
-            this.particle.vel.addeq(this.pos.norm().mul(ITEM_JUMP_POWER));
-        }
-        super.update(dt);
-    }
-}
-const MACHINE_STAGES = [
-    new ArrayFloats(new Float32Array([0.0,0.0,0.0])), // 0 - nothing built
-    new ArrayFloats(new Float32Array([2/3,0.0,0.0])), // 1 - base
-    new ArrayFloats(new Float32Array([4/3,0.0,0.0])), // 2
-    new ArrayFloats(new Float32Array([4/3,2/3,0.0])), // 3
-    new ArrayFloats(new Float32Array([4/3,4/3,0.0])), // 4
-    new ArrayFloats(new Float32Array([4/3,4/3,2/3])), // 5
-    new ArrayFloats(new Float32Array([4/3,4/3,4/3])), // 6
-];
-class ItemSlot extends Sprite {
-    constructor(engine,pos=new Vec(),holds="carbon") {
-        super(engine,engine.spritepass,
-            {
-                'carbon':"Items/slot-carbom.png",
-                'battery':"Items/slot-battery.png",
-                'metal':"Items/slot-metal.png",
-                'water':"Items/slot-water.png",
-            }[holds]        
-        );
-        this.scale = 0.5;
-        this.pos.eq(pos);
-        this.slot_force = new SpringForceNode(this.pos,ITEM_SLOT_FORCE,ITEM_SLOT_DRAG);
-        this.click_region = new Clickable(this.pos,ITEM_CLICK_RADIUS,()=>{this.clickslot();});
-        engine.clickables.add(this.click_region);
-        this.holds = holds;
-        this.holding = null;
-        this.radius = 0.0;
-        this.radius_target = 1.0;
-        this.doomed = false;
-    }
-    clickslot() {
-        if (this.holding !== null) {
-            this.holding.clickitem();
-            return;
-        }
-        const item = this.engine.man.getItem(this.holds);
-        if (item !== null) {
-            this.holding = item;
-            item.holder = this;
-            item.particle.force_node = this.slot_force;
-            item.click_region.r = 0.0;
-        }
-    }
-    clear() {
-        if (this.holding !== null) {
-            this.holding.destroy();
-            this.holding.click_region.r = ITEM_CLICK_RADIUS;
-            this.holding = null;
-        }
-    }
-    destroy() {
-        this.clear();
-        this.disable();
-        engine.clickables.delete(this.click_region);
-        this.doomed = true;
-    }
-    enable() {
-        this.radius_target = 1.0;
-    }
-    disable() {
-        if (this.holding !== null) {
-            this.holding.particle.force_node = this.engine.gravity;
-            this.holding.holder = null;
-            this.holding = null;
-        }
-        this.radius_target = 0.0;
-    }
-    update(dt) {
-        this.scale = ITEM_SCALE*this.radius;
-        this.click_region.r = ITEM_CLICK_RADIUS*this.radius_target;
-        this.radius += ITEM_SLOT_SCALE_SPEED*(this.radius_target - this.radius)*dt;
-        if (this.doomed && this.radius < 0.01) {
-            super.destroy();
-        }
-        this.angle = -Math.atan2(-this.pos.x,this.pos.y);
-        super.update(dt);
-    }
-}
 
-class Machine extends NightdaySprite {
-    constructor(engine,pass,pos,type) {
-        super(engine,pass,
-            MACHINE_CONFIG[type].image,
-            1, // variant
-            1.0, // layer
-            1, // scale
-        );
-        this.pos = pos;
-        this.type = type;
-        this.config = MACHINE_CONFIG[type];
-        const ihat = pos.norm();
-        const jhat = ihat.rot90();
-        this.produce_root = this.pos.add(ihat);
-        // Construction components
-        this.component_slots = [];
-        const res_root = pos.add(ihat.mul(MACHINE_SLOT_Y)).add(jhat.mul(MACHINE_SLOT_X));
-        for (const name in this.config.components) {
-            const count = this.config.components[name];
-            for (let i=0; i<count; ++i) {
-                this.component_slots.push(
-                    new ItemSlot(this.engine,res_root.add(ihat.mul(MACHINE_SLOT_SPACING*i)),name)
-                )
-            }
-        }
-        // Process consumption
-        this.consume_slots = [];
-        let con_head = res_root.add(jhat.mul(-MACHINE_SLOT_SPACING));
-        for (let stocki=0; stocki < this.config.stock; ++stocki) {
-            for (const name in this.config.consumes) {
-                const count = this.config.consumes[name];
-                for (let i=0; i<count; ++i) {
-                    let slot = new ItemSlot(this.engine,con_head.clone(),name);
-                    slot.radius_target = 0;
-                    this.consume_slots.push(slot);
-                    con_head.addeq(ihat.mul(MACHINE_SLOT_SPACING));
-                }
-            }
-        }
-        // Construction animation
-        this.frame_age = 0;
-        this.variant_target = 1;
-        this.previous_full_slots = 0;
-        // Running
-        this.run_time = 0;
-        this.consume_timer = 0;
-        this.produce_timer = 0;
-    }
-    setImage(image,variant=null,layer=null) {
-        this.image = image;
-        variant = variant === null ? this.variant : variant;
-        this.variant = variant;
-        layer = layer === null ? this.layer : layer;
-        this.layer = layer;
-        if (image !== null) {
-            this.sprite_matrix.eq(engine.il.model_frames.get(image));
-            this.data.uv.eq(engine.il.texture_frames.get(image));
-            this.data.variant_mask.eq(MACHINE_STAGES[variant])
-            this.data.layer.set(layer);
-        } else {
-            this.sprite_matrix.zeroeq();
-            this.data.uv.zeroeq();
-        }
-        this.transform_computed = false;
-    }
-    count_full(slot_list) {
-        let full = 0;
-        for (const slot of slot_list) {
-            if (slot.holding !== null) full += 1;
-        }
-        return full;
-    }
-    get_consumption_slots() {
-        const slots = [];
-        for (name in this.config.consumes) {
-            let countdown = this.config.consumes[name];
-            for (const slot of this.consume_slots) {
-                if (slot.holding !== null) {
-                    slots.push(slot);
-                    countdown -= 1;
-                }
-                if (countdown === 0) {
-                    break; // Don't find too many
-                }
-            }
-            if (countdown !== 0) {
-                return null; // Couldn't find enough stuff.
-            }
-        }
-        return slots;
-    }
-    can_consume() {
-        return this.get_consumption_slots() !== null;
-    }
-    consume() {
-        const slots = this.get_consumption_slots();
-        if (slots === null) return;
-        for (const slot of slots) {
-            slot.clear();
-        }
-    }
-    produce() {
-        for (const name in this.config.produces) {
-            const count = this.config.produces[name];
-            for (let i=0; i<count; ++i) {
-                new Item(
-                    this.engine,// engine
-                    this.produce_root, // Pos
-                    new Vec(1.0,Math.random()-0.5), // Vel
-                    name, // type
-                );
-            }
-        }
-    }
-    update(dt) {
-        // Determine construction goal
-        const full_slot_count = this.count_full(this.component_slots);
-        if (this.previous_full_slots !== full_slot_count) {
-            this.previous_full_slots = full_slot_count
-            this.variant_target = Math.round(full_slot_count/this.component_slots.length*(MACHINE_STAGES.length-1));
-        }
-        if (this.variant !== this.variant_target) {
-            this.frame_age += dt;
-            if (this.frame_age > CONSTRUCTION_ANIM_FRAME_TIME) {
-                this.frame_age = 0.0;
-                this.variant = (this.variant + (this.variant > this.variant_target ? -1 : 1));
-            }
-            this.setImage(this.image,this.variant);
-            for (const slot of this.consume_slots) slot.disable();
-        }
-        if (this.variant === this.variant_target && this.variant_target === MACHINE_STAGES.length-1) {
-            for (const slot of this.consume_slots) slot.enable();
-            // Construction complete
-            if (this.can_consume()) {
-                this.run_time += dt;
-                this.consume_timer += dt;
-                if (this.consume_timer > this.config.consume_time) {
-                    this.consume_timer = 0;
-                    this.consume();
-                }
-                this.produce_timer += dt;
-                if (this.produce_timer > this.config.produce_time) {
-                    this.produce_timer = 0;
-                    this.produce();
-                }
-                this.scale_y = 1.0 + RUNNING_WIGGLE_MAGNITUDE*Math.sin(RUNNING_WIGGLE_SPEED*this.run_time);
-                this.transform_computed = false;
-            }
-        } else {
-            this.run_time = 0; // Incomplete
-            this.produce_timer = 0;
-        }
-        if (this.variant === 0 && this.type !== "terraformer") {
-            this.destroy();
-        }
-        super.update(dt);
-    }
-    destroy() {
-        this.engine.machines.delete(this);
-        for (const slot of this.consume_slots) slot.destroy();
-        for (const slot of this.component_slots) slot.destroy();
-        super.destroy();
+class UIPass extends RenderPass {
+    constructor(gl,scene,program,texture) {
+        super(gl,program);
+        this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
+            model: {type:'mat',dynamic:true},
+            uv: {type:'mat',dynamic:true},
+            alpha: {type:'scalar',dynamic:false},
+        },16);
+        this.texture = texture;
+        this.texture_loc = gl.getUniformLocation(program,"spritesheet");
     }
 }
 
@@ -601,6 +364,13 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('animations'),
         );
         this.scene.addPass(this.itempass,0.100);
+        // UI pass
+        this.uipass = new UIPass(this.gl,
+            this.scene,
+            this.sc.programs.get('ui'),
+            this.il.textures.get('animations'),
+        );
+        this.scene.addPass(this.uipass,0.100);
         
         // Generate background
         function find_layer(map,folder) {
@@ -758,6 +528,7 @@ const engine = new ArchimedesEngine(
         background:['shader-background-v','shader-background-f'],
         planet_disc:['shader-background-v','shader-planet-disc-f'],
         nightday_sprites:['shader-nightday-sprite-v','shader-nightday-sprite-f'],
+        ui:['shader-ui-v','shader-ui-f'],
     },
     images = {
         gradient:'images/gradient.png',
