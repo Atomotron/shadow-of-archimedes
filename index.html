@@ -761,7 +761,7 @@ class ArchimedesEngine extends Engine {
         }
         
         // Update thermometer
-        this.thermometer.full = this.man.temperature+0.5;
+        if (!this.man.dead) this.thermometer.full = this.man.temperature+0.5;
         if (this.man.temperature > 0.5 && !this.lost) {
             this.message("UI/text-heatdeath.png",new Vec(0.0,0.3),0.5,2.0,2.0);
             this.lose();
@@ -809,6 +809,8 @@ class ArchimedesEngine extends Engine {
         this.scene.view.eq(T);
         Mat.Compose(this.scene.view, R, this.scene.view);
         Mat.Compose(this.scene.view, S, this.scene.view);
+        // Audio tracking
+        
     }
 }
 
@@ -831,7 +833,9 @@ const engine = new ArchimedesEngine(
         animations: 'images/Animations.json',
     },
     music = {
-        //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
+        "song1": "sounds/song1.mp3",
+        "song2": "sounds/song2.mp3",
+        "song3": "sounds/song3.mp3",
     },
     sfx = {
         "stone_walk1": "sounds/stone_walk1.mp3",
