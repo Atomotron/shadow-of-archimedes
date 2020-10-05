@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
+    <script src="config.js"></script>
     <script src="math32.js"></script>
     <script src="shadercompiler.js"></script>
     <script src="imageloader.js"></script>
@@ -140,117 +141,6 @@ void main() {
 }
 </script>
 <script>
-
-// Planet
-const PLANET_RADIUS = 24;
-const MAN_RADIUS = PLANET_RADIUS-0.02;
-const CAMERA_RADIUS = PLANET_RADIUS+0.75;
-const MACHINE_RADIUS = PLANET_RADIUS-0.03;
-const TERRAFORMER_RADIUS = PLANET_RADIUS-0.15;
-const NICE_ZONE_SIZE = 48;
-const ZONE_SPEED = 0.03;
-const ZONE_STARTING_ANGLE = Math.PI; //Radians
-const TEMPERATURE_SCALE = 1.6;
-const TERRAFORMING_SPEED = 1; // When winning the game
-
-// Physics
-const GRAVITY = 2;
-const PARTICLE_FRICTION = 0.6; // Friction when in contact with planet
-const PARTICLE_ELASTICITY = 1.3; // Elasticity off of planet surface
-
-// Man
-const MAN_SPEED = 4;
-const MAN_FRAME_TIME = 0.2/MAN_SPEED;
-const MAN_WALK_SATISFACTION_RANGE = 0.1;
-const MAN_JUMP_VEL = 1.5;
-const MAN_INVENTORY_HEIGHT = PLANET_RADIUS*1.013;
-const MAN_INVENTORY_BEHIND = 0.20;
-const MAN_INVENTORY_FORCE = 8;
-const MAN_INVENTORY_DRAG = 0.1;
-
-// Camera
-const CAMERA_SPEED = MAN_SPEED*1.2;
-const ZOOM_SPEED = 0.25;
-const MIN_ZOOM = 0.04;
-const MAX_ZOOM = 0.5;
-
-// Items
-const ITEM_CLICK_RADIUS = 0.25;
-const ITEM_JUMP_FREQUENCY = 3;
-const ITEM_JUMP_POWER = 0.3;
-const ITEM_SCALE = 0.5;
-const ITEM_SLOT_SCALE_SPEED = 8;
-
-// Machines
-const ITEM_SLOT_FORCE = 32;
-const ITEM_SLOT_DRAG = 0.2;
-
-const MACHINE_SLOT_SPACING = 0.2;
-const MACHINE_SLOT_X = 0.6;
-const MACHINE_SLOT_Y = 0.3;
-const MACHINE_SIZE = 0.6;
-
-
-const RUNNING_WIGGLE_SPEED = 24;
-const RUNNING_WIGGLE_MAGNITUDE = 0.005;
-const CONSTRUCTION_ANIM_FRAME_TIME = 0.6;
-
-const MACHINE_CONFIG = {
-    'boiler':{
-        image: "Machimes/battery-steam.png",
-        components: {"metal":2},
-        consume_time: 2, // Seconds between each resource consumption
-        produce_time: 1, // Seconds between each resource production
-        stock: 2,
-        consumes: {"water":1},
-        produces: {"battery":1},
-    },
-    'engine':{
-        image: "Machimes/battery-combustiom.png",
-        components: {"metal":2},
-        consume_time: 2, // Seconds between each resource consumption
-        produce_time: 1, // Seconds between each resource production
-        stock: 2,
-        consumes: {"carbon":1},
-        produces: {"battery":1},
-    },
-    'carbon':{
-        image: "Machimes/carbom.png",
-        components: {"metal":2},
-        consume_time: 2, // Seconds between each resource consumption
-        produce_time: 1, // Seconds between each resource production
-        stock: 2,
-        consumes: {"battery":1},
-        produces: {"carbon":1},
-    },
-    'metal':{
-        image: "Machimes/metal.png",
-        components: {"metal":2},
-        consume_time: 2, // Seconds between each resource consumption
-        produce_time: 1, // Seconds between each resource production
-        stock: 2,
-        consumes: {"battery":1},
-        produces: {"metal":1},
-    },
-    'water':{
-        image: "Machimes/water.png",
-        components: {"metal":2},
-        consume_time: 2, // Seconds between each resource consumption
-        produce_time: 1, // Seconds between each resource production
-        stock: 2,
-        consumes: {"battery":1},
-        produces: {"water":1},
-    },
-    'terraformer':{
-        image: "Machimes/terraformer.png",
-        components: {"metal":8},
-        consume_time: 2000000000000, // Seconds between each resource consumption
-        produce_time: 2000000000000, // Seconds between each resource production
-        stock: 1,
-        consumes: {"battery":8},
-        produces: {"battery":8},
-    },
-};
 
 /*
  * A custom render pass that uses the custom shaders
@@ -401,6 +291,8 @@ class Message extends UISprite {
         super.update(dt);
     }    
 }
+THERMOMETER_FADE_START = 5.0
+THERMOMETER_FADE_IN = 2.0
 
 class Thermometer extends UISprite {
     constructor(engine,pass,image,bar_image,pos) {
@@ -410,17 +302,20 @@ class Thermometer extends UISprite {
         this.bar_model_matrix = new Mat();
         this.full = 0.5;
         this.scale = 0.7;
+        this.alpha = 0.0;
         this.setBar(this.full);
         this.original_pos = pos.clone();
+        this.age = 0;
+        
     }
-    setBar(x) {
+    setBar(x,alpha) {
         this.bar_model_matrix.eq(this.engine.il.model_frames.get(this.bar_image));
         this.bar_model_matrix.x -= (1-x)*this.bar_model_matrix.xx;
         this.bar_model_matrix.xx *= x;
         this.bar_sprite.uv.eq(this.engine.il.texture_frames.get(this.bar_image));
         this.bar_sprite.uv.x -= ((1-x)*this.bar_sprite.uv.xx);
         this.bar_sprite.uv.xx *= x;
-        this.bar_sprite.alpha.set(1.0);
+        this.bar_sprite.alpha.set(alpha);
     }
     compute_transform() {
         // Set matrices from values
@@ -442,11 +337,15 @@ class Thermometer extends UISprite {
         this.bar_sprite.model.composeq(this.translation);
     }
     update(dt) {
+        this.age += dt;
+        if (this.age > THERMOMETER_FADE_START) this.alpha += dt/THERMOMETER_FADE_IN;
+        if (this.alpha > 1.0) this.alpha = 1.0;
         if (this.full < 0.1 || this.full > 0.9) {
             this.pos.eq(this.original_pos.add(new Vec(Math.random()-0.5,Math.random()-0.5).muleq(0.01)));
         }
         const x = this.full > 1.0 ? 1.0 : this.full;
-        this.setBar(x < 0.0 ? 0.0 : x);
+        this.setBar(x < 0.0 ? 0.0 : x,this.alpha);
+        this.setImage(this.image,this.alpha);
         super.update(dt);
     }
 }
@@ -731,7 +630,7 @@ class ArchimedesEngine extends Engine {
         // Set up camera
         this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
         this.zoom = 0.005;
-        this.zoom_target = 0.25;
+        this.zoom_target = 0.4;
         this.live_particles = new Set(); // Particles that get simulation updates
         // Items
         this.items = new Set();
@@ -764,6 +663,7 @@ class ArchimedesEngine extends Engine {
         this.reset_scheduled = false;
         this.destroy();
         this.create();
+        console.log("Reset");
     }
     schedule_reset() {
         if (this.reset_scheduled) return;

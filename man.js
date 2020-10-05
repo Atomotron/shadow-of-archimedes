@@ -44,6 +44,10 @@ class Man extends NightdaySprite {
         this.inventory = [];
         this.inventory_slots = [];
         this.inventory_root = this.pos.clone();
+        
+        // Put in the right spot
+        this.pos.eq(new Vec(1.0,0.0));
+        this.update_pos(0);
     }
     // Gets an item of the right type of the man's inventory, returning either an Item or null (if no such item was found)
     getItem(type) {
@@ -86,16 +90,11 @@ class Man extends NightdaySprite {
     facing() {
         return this.pos.norm().rot90eq().muleq(this.mirror ? -1:1);
     }
-    update(dt) {
-        // Update target
-        if (this.engine.cm.mouse_pressed && !this.engine.click_consumed) {
-            this.target.eq(this.engine.mouse_pos);
-        }
-        this.target.normeq().muleq(MAN_RADIUS)
+    update_pos(dt) {
         // Update position
         const dr = this.target.sub(this.pos);
-        const walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
-        if (walking) {
+        this.walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
+        if (this.walking) {
             this.pos.addeq(
                 dr.normeq().muleq(MAN_SPEED*dt)
             );
@@ -121,19 +120,27 @@ class Man extends NightdaySprite {
         let i = Math.exp(0.5);
         for (const slot of this.inventory_slots) {
             slot.pos.eq(this.inventory_root.add(facing.mul(Math.log(i)*2)));
-            slot.pos.normeq().muleq(MAN_INVENTORY_HEIGHT);
+            slot.pos.normeq().muleq(MAN_INVENTORY_HEIGHT + this.r_defect);
             i += 1;
         }
+    }
+    update(dt) {
+        // Update target
+        if (this.engine.cm.mouse_pressed && !this.engine.click_consumed) {
+            this.target.eq(this.engine.mouse_pos);
+        }
+        this.update_pos(dt);
+        this.target.normeq().muleq(MAN_RADIUS)
         // Update animation
         this.frame_age += dt;
-        if ((walking || this.frame != 0) && this.frame_age > MAN_FRAME_TIME) {
+        if ((this.walking || this.frame != 0) && this.frame_age > MAN_FRAME_TIME) {
             if (this.frame === 3) {
                 this.engine.sound.play(
                     this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
                 );
             }
             this.frame = this.frame+1;
-            if (walking) {
+            if (this.walking) {
                 if (this.frame >= this.frames.length) {
                     this.frame = 3;
                 }

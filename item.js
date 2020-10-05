@@ -41,6 +41,8 @@ class Item extends Sprite {
         if (this.holder === null && Math.random() < dt/ITEM_JUMP_FREQUENCY) {
             this.particle.vel.addeq(this.pos.norm().mul(ITEM_JUMP_POWER));
         }
+        if (this.holder === null) this.click_region.r = ITEM_CLICK_RADIUS;
+        else this.click_region.r = 0;
         super.update(dt);
     }
 }
