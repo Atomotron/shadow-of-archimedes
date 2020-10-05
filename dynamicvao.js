@@ -162,6 +162,11 @@ class DynamicVAO {
         this.vao = null;
         this.construct(gl,size);
     }
+    expunge() {
+        this.object_indices = new Map();
+        this.recycled_objects = [];
+        this.head = 0;
+    }
     construct(gl,size) {
         this.vao = gl.ext_vao.createVertexArrayOES();
         gl.ext_vao.bindVertexArrayOES(this.vao);

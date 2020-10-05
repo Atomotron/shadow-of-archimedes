@@ -83,11 +83,14 @@ class Man extends NightdaySprite {
     setTarget(target) {
         this.target.eq(target);
     }
+    facing() {
+        return this.pos.norm().rot90eq();
+    }
     update(dt) {
         // Update target
-        /*if (this.engine.cm.mouse_pressed) {
+        if (this.engine.cm.mouse_pressed && !this.engine.click_consumed) {
             this.target.eq(this.engine.mouse_pos);
-        }*/
+        }
         this.target.normeq().muleq(MAN_RADIUS)
         // Update position
         const dr = this.target.sub(this.pos);
@@ -109,7 +112,7 @@ class Man extends NightdaySprite {
         this.transform_computed = false;
         // Update inventory pos
         this.inventory_root.eq(this.pos);
-        const facing = this.pos.norm().rot90eq();
+        const facing = this.facing();
         facing.muleq(this.mirror ? MAN_INVENTORY_BEHIND : -MAN_INVENTORY_BEHIND);
         let i = Math.exp(0.5);
         for (const slot of this.inventory_slots) {

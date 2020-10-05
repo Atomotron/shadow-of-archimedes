@@ -114,8 +114,8 @@ const ZONE_STARTING_ANGLE = 0.4; //Radians
 
 // Physics
 const GRAVITY = 2;
-const PARTICLE_FRICTION = 0.2; // Friction when in contact with planet
-const PARTICLE_ELASTICITY = 1.6; // Elasticity off of planet surface
+const PARTICLE_FRICTION = 0.6; // Friction when in contact with planet
+const PARTICLE_ELASTICITY = 1.3; // Elasticity off of planet surface
 
 // Man
 const MAN_SPEED = 2;
@@ -128,7 +128,7 @@ const MAN_INVENTORY_DRAG = 0.1;
 
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
-const ZOOM_SPEED = 0.25;
+const ZOOM_SPEED = 0.05;
 const MIN_ZOOM = 0.04;
 const MAX_ZOOM = 0.5;
 
@@ -146,7 +146,7 @@ const ITEM_SLOT_DRAG = 0.2;
 
 const MACHINE_SLOT_SPACING = 0.2;
 const MACHINE_SLOT_X = 0.6;
-const MACHINE_SLOT_Y = 1.0;
+const MACHINE_SLOT_Y = 0.3;
 
 
 const RUNNING_WIGGLE_SPEED = 24;
@@ -235,7 +235,7 @@ class BackgroundPass extends RenderPass {
 }
 class Item extends Sprite {
     constructor(engine,pos=new Vec(),vel=new Vec(),type="carbon") {
-        super(engine,engine.spritepass,
+        super(engine,engine.itempass,
             {
                 'carbon':"Items/item-carbom.png",
                 'battery':"Items/item-battery.png",
@@ -251,6 +251,7 @@ class Item extends Sprite {
         this.click_region = new Clickable(this.pos,ITEM_CLICK_RADIUS,()=>{this.clickitem();});
         engine.clickables.add(this.click_region);        
         this.holder = null;
+        engine.items.add(this);
     }
     destroy() {
         super.destroy();
@@ -262,6 +263,7 @@ class Item extends Sprite {
             if (this.holder instanceof ItemSlot) {
                 this.holder.holding = null;
             }
+            this.click_region.r = 0;
             this.engine.sound.play("antenna_upload");
             this.holder = this.engine.man;
             this.engine.man.putItem(this);
@@ -303,6 +305,7 @@ class ItemSlot extends Sprite {
         this.holding = null;
         this.radius = 0.0;
         this.radius_target = 1.0;
+        this.doomed = false;
     }
     clickslot() {
         if (this.holding !== null) {
@@ -314,13 +317,21 @@ class ItemSlot extends Sprite {
             this.holding = item;
             item.holder = this;
             item.particle.force_node = this.slot_force;
+            item.click_region.r = 0.0;
         }
     }
     clear() {
         if (this.holding !== null) {
             this.holding.destroy();
+            this.holding.click_region.r = ITEM_CLICK_RADIUS;
             this.holding = null;
         }
+    }
+    destroy() {
+        this.clear();
+        this.disable();
+        engine.clickables.delete(this.click_region);
+        this.doomed = true;
     }
     enable() {
         this.radius_target = 1.0;
@@ -337,6 +348,9 @@ class ItemSlot extends Sprite {
         this.scale = ITEM_SCALE*this.radius;
         this.click_region.r = ITEM_CLICK_RADIUS*this.radius_target;
         this.radius += ITEM_SLOT_SCALE_SPEED*(this.radius_target - this.radius)*dt;
+        if (this.doomed && this.radius < 0.01) {
+            super.destroy();
+        }
         this.angle = -Math.atan2(-this.pos.x,this.pos.y);
         super.update(dt);
     }
@@ -346,7 +360,7 @@ class Machine extends NightdaySprite {
     constructor(engine,pass,pos,type) {
         super(engine,pass,
             MACHINE_CONFIG[type].image,
-            0, // variant
+            1, // variant
             1.0, // layer
             1, // scale
         );
@@ -383,7 +397,8 @@ class Machine extends NightdaySprite {
         }
         // Construction animation
         this.frame_age = 0;
-        this.variant_target = 0;
+        this.variant_target = 1;
+        this.previous_full_slots = 0;
         // Running
         this.run_time = 0;
         this.consume_timer = 0;
@@ -457,7 +472,11 @@ class Machine extends NightdaySprite {
     }
     update(dt) {
         // Determine construction goal
-        this.variant_target = Math.round(this.count_full(this.component_slots)/this.component_slots.length*(MACHINE_STAGES.length-1));
+        const full_slot_count = this.count_full(this.component_slots);
+        if (this.previous_full_slots !== full_slot_count) {
+            this.previous_full_slots = full_slot_count
+            this.variant_target = Math.round(full_slot_count/this.component_slots.length*(MACHINE_STAGES.length-1));
+        }
         if (this.variant !== this.variant_target) {
             this.frame_age += dt;
             if (this.frame_age > CONSTRUCTION_ANIM_FRAME_TIME) {
@@ -487,9 +506,19 @@ class Machine extends NightdaySprite {
             }
         } else {
             this.run_time = 0; // Incomplete
+            this.produce_timer = 0;
+        }
+        if (this.variant === 0 && this.type !== "terraformer") {
+            this.destroy();
         }
         super.update(dt);
-    }   
+    }
+    destroy() {
+        this.engine.machines.delete(this);
+        for (const slot of this.consume_slots) slot.destroy();
+        for (const slot of this.component_slots) slot.destroy();
+        super.destroy();
+    }
 }
 
 /* Container class for clickable regions as used by the engine object.*/
@@ -504,7 +533,9 @@ class ArchimedesEngine extends Engine {
     setup() {
         // Clickable region management
         this.clickables = new Set();
-        window.addEventListener('click',(e) => {
+        this.click_consumed = false;
+        window.addEventListener('mouseup',(e) => this.click_consumed = false);
+        window.addEventListener('mousedown',(e) => {
             let nearest = null;
             let nearest_r = null;
             const dr = new Vec();
@@ -519,6 +550,7 @@ class ArchimedesEngine extends Engine {
             }
             if (nearest !== null) {
                 nearest.callback();
+                this.click_consumed = true;
             } else {
                 this.man.setTarget(this.mouse_pos);
             }
@@ -562,9 +594,15 @@ class ArchimedesEngine extends Engine {
             this.il.textures.get('animations'),
         );
         this.scene.addPass(this.spritepass,0.125);
+        // Top colored overlay sprite class
+        this.itempass = new SpritePass(this.gl,
+            this.scene,
+            this.sc.programs.get('sprite'),
+            this.il.textures.get('animations'),
+        );
+        this.scene.addPass(this.itempass,0.100);
         
         // Generate background
-        
         function find_layer(map,folder) {
             const names = [];
             for (const [key,value] of map) {
@@ -574,51 +612,6 @@ class ArchimedesEngine extends Engine {
             }
             return names;
         }
-        const bsprites = find_layer(this.il.model_frames,"Background");
-        const msprites = find_layer(this.il.model_frames,"Midground");
-        const fsprites = find_layer(this.il.model_frames,"Foreground");
-        const biomes = ["MountainBiome","AridBiome"];
-        const that = this;
-        this.bgsprites = [];
-        function gen_layer(sprites,layer,rdelta) {
-            let angle = 0;
-            while (angle < Math.PI*2.0) {
-                const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
-                angle += 0.1*Math.random();
-                let found = false;
-                let name = ""
-                while (!found) {
-                    let idx = Math.floor(Math.random()*sprites.length);
-                    idx = idx >= sprites.length ? sprites.length-1 : idx;
-                    name = sprites[idx];
-                    found = !name.includes(biome+"/");
-                }
-                const flags = Math.floor(Math.random()*7.0+1);
-                if (flags < 1) flags = 1;
-                if (flags > 7) flags = 7;
-                const sprite = new NightdaySprite(that,that.ndspritepass,name,flags,layer);
-                sprite.pos.polareq(PLANET_RADIUS+rdelta,angle);
-                that.bgsprites.push(sprite);
-            }
-        }
-        gen_layer(bsprites,0.0,-0.3);
-        gen_layer(msprites,0.33,-0.3);
-        gen_layer(fsprites,0.66,-0.3);
-        // Create man 
-        this.man = new Man(this,this.aspritepass);
-        this.t = 0;
-        // Set up camera and zoom control
-        window.addEventListener('wheel',(e) => {
-            const factor = Math.exp(-0.25*Math.sign(e.deltaY));
-            let new_zoom = that.zoom*factor;
-            if (new_zoom < MIN_ZOOM) new_zoom = MIN_ZOOM;
-            if (new_zoom > MAX_ZOOM) new_zoom = MAX_ZOOM;
-            that.zoom_target = new_zoom;
-            that.zoom = new_zoom;
-        });
-        this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
-        this.zoom = 0.01;
-        this.zoom_target = 0.25;
         // Set up physics objects
         this.gravity = new ForceNode(
             new Vec(), // center
@@ -626,14 +619,84 @@ class ArchimedesEngine extends Engine {
             0, // drag
             true, // The planet's center never moves
         );
-        this.live_particles = new Set(); // Particles that get simulation updates
-        // Machine test
-        let y = 0.0;
-        for (const name in MACHINE_CONFIG) {
-            const m = new Machine(this,this.aspritepass,new Vec(PLANET_RADIUS,y).normeq().muleq(MACHINE_RADIUS),name);
-            y += 1.0;
+        this.bsprites = find_layer(this.il.model_frames,"Background");
+        this.msprites = find_layer(this.il.model_frames,"Midground");
+        this.fsprites = find_layer(this.il.model_frames,"Foreground");
+        
+        // Set zoom control
+        window.addEventListener('wheel',(e) => {
+            const factor = Math.exp(-0.25*Math.sign(e.deltaY));
+            let new_zoom = this.zoom*factor;
+            if (new_zoom < MIN_ZOOM) new_zoom = MIN_ZOOM;
+            if (new_zoom > MAX_ZOOM) new_zoom = MAX_ZOOM;
+            this.zoom_target = new_zoom;
+            this.zoom = new_zoom;
+        });
+        
+        this.create();
+    }
+    buildMachine(type,pos) {
+        const MACHINE_SIZE = 0.5;
+        const stride = this.man.facing().muleq(2*MACHINE_SIZE);
+        pos = pos.clone();
+        for (let attempt=0; attempt < 4; ++attempt) {
+            pos.addeq(stride);
+            pos.normeq().muleq(MACHINE_RADIUS);
+            let overlap = false;
+            for (const machine of this.machines) {
+                if (machine.pos.sub(pos).abs() < MACHINE_SIZE) {
+                    overlap = true;
+                    break;
+                }
+            }
+            if (!overlap) {
+                this.machines.add(new Machine(
+                    this,this.aspritepass,pos,type
+                ));
+                break;
+            }
         }
+    }
+    gen_layer(sprites,layer,rdelta,biomes) {
+        let angle = 0;
+        while (angle < Math.PI*2.0) {
+            const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
+            angle += 0.1*Math.random();
+            let found = false;
+            let name = ""
+            while (!found) {
+                let idx = Math.floor(Math.random()*sprites.length);
+                idx = idx >= sprites.length ? sprites.length-1 : idx;
+                name = sprites[idx];
+                found = !name.includes(biome+"/");
+            }
+            const flags = Math.floor(Math.random()*7.0+1);
+            if (flags < 1) flags = 1;
+            if (flags > 7) flags = 7;
+            const sprite = new NightdaySprite(this,this.ndspritepass,name,flags,layer);
+            sprite.pos.polareq(PLANET_RADIUS+rdelta,angle);
+            this.bgsprites.push(sprite);
+        }
+    }
+    create() {
+        const biomes = ["MountainBiome","AridBiome"];
+        this.bgsprites = [];
+
+        this.gen_layer(this.bsprites,0.0,-0.3,biomes);
+        this.gen_layer(this.msprites,0.33,-0.3,biomes);
+        this.gen_layer(this.fsprites,0.66,-0.3,biomes);
+        // Create man 
+        this.man = new Man(this,this.aspritepass);
+        this.t = 0;
+        // Set up camera
+        this.camera_pos = new Vec(CAMERA_RADIUS,0.0);
+        this.zoom = 0.01;
+        this.zoom_target = 0.25;
+        this.live_particles = new Set(); // Particles that get simulation updates
+        // Machines
+        this.machines = new Set();
         // Items
+        this.items = new Set();
         for (const name of ['carbon','water','battery','metal','metal']) {
             new Item(
                 this,// engine
@@ -642,6 +705,20 @@ class ArchimedesEngine extends Engine {
                 name, // type
             );
         }
+    }
+    destroy() {
+        this.man.destroy();
+        for (const s of this.bgsprites) s.destroy();
+        this.bgsprites = null;
+        for (const m of this.machines) m.destroy();
+        this.machines = null;
+        for (const i of this.items) i.destroy();
+        this.items = null;
+        this.ndspritepass.dvao.expunge();
+    }
+    reset() {
+        this.destroy();
+        this.create();
     }
     update(dt) {
         super.update(dt);
