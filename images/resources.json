@@ -191,6 +191,30 @@
         "x": 0.5,
         "y": 0.5
       }
+    },
+    "Resources/terraformhill-1.png": {
+      "frame": {
+        "x": 0,
+        "y": 866,
+        "w": 609,
+        "h": 646
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 609,
+        "h": 646
+      },
+      "sourceSize": {
+        "w": 609,
+        "h": 646
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
     }
   },
   "meta": {
@@ -200,7 +224,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 2048,
-      "h": 1024
+      "h": 2048
     },
     "scale": 1
   }
