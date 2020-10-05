@@ -568,13 +568,20 @@ class ArchimedesEngine extends Engine {
             this.bgsprites.push(sprite);
         }
     }
+    message(image,pos=new Vec(0.0,0.5),fadein=0.5,duration=2.0,fadeout=2.0) {
+        let title = new Message(
+            this,this.uipass,image,
+            pos,
+            fadein,duration,fadeout
+        );
+    }
     create() {
         const biomes = ["MountainBiome","AridBiome"];
         this.bgsprites = [];
 
         this.gen_layer(this.bsprites,0.0,-0.3,biomes);
-        this.gen_layer(this.msprites,0.33,-0.3,biomes);
-        this.gen_layer(this.fsprites,0.66,-0.3,biomes);
+        this.gen_layer(this.msprites,0.33,-0.2,biomes);
+        this.gen_layer(this.fsprites,0.66,-0.1,biomes);
         // Create man 
         this.man = new Man(this,this.aspritepass);
         this.t = 0;
@@ -595,12 +602,7 @@ class ArchimedesEngine extends Engine {
                 name, // type
             );
         }
-        // Title drop
-        let title = new Message(
-            this,this.uipass,"UI/text-title.png",
-            new Vec(0.0,0.5),
-            0.5,2.0,2.0,
-        );
+        this.message("UI/text-title.png");
     }
     destroy() {
         this.man.destroy();
