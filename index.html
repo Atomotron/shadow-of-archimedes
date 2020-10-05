@@ -491,31 +491,31 @@ class ArchimedesEngine extends Engine {
             this,this.uipass,"UI/steam-selected.png",
             new Vec(-0.8,0.65),
             0.3,
-            () => {this.buildMachine("boiler",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("boiler",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/combust-selected.png",
             new Vec(-0.4,0.65),
             0.3,
-            () => {this.buildMachine("engine",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("engine",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/carbomrefimer-selected.png",
             new Vec(0.0,0.65),
             0.3,
-            () => {this.buildMachine("carbon",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("carbon",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/waterpump-selected.png",
             new Vec(0.4,0.65),
             0.3,
-            () => {this.buildMachine("water",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("water",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/metalmimer-selected.png",
             new Vec(0.8,0.65),
             0.3,
-            () => {this.buildMachine("metal",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("metal",this.man.pos)}
         );
         
         // Thermometer
