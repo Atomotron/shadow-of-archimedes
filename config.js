@@ -16,7 +16,7 @@ const TEMPERATURE_SCALE = 1.6;
 const TERRAFORMING_SPEED = 1; // When winning the game
 
 // Physics (maily used for items)
-const GRAVITY = 2;
+const GRAVITY = 4;
 const PARTICLE_FRICTION = 0.6; // Friction when in contact with planet
 const PARTICLE_ELASTICITY = 1.3; // Elasticity off of planet surface
 
@@ -24,7 +24,7 @@ const PARTICLE_ELASTICITY = 1.3; // Elasticity off of planet surface
 const MAN_SPEED = 4;
 const MAN_FRAME_TIME = 0.3/MAN_SPEED;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
-const MAN_JUMP_VEL = 1.5;
+const MAN_JUMP_VEL = 1.0;
 const MAN_INVENTORY_HEIGHT = PLANET_RADIUS*1.013;
 const MAN_INVENTORY_BEHIND = 0.20;
 const MAN_INVENTORY_FORCE = 32;
