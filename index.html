@@ -567,8 +567,8 @@ class ArchimedesEngine extends Engine {
     buildMachine(type,pos) {
         const stride = (!!this.man ? this.man.facing() : new Vec(1.0,0.0)).muleq(MACHINE_SIZE);
         pos = pos.clone();
+        if (type !== "terraformer") pos.addeq(stride);
         for (let attempt=0; attempt < 12; ++attempt) {
-            pos.addeq(stride);
             pos.normeq().muleq(type === "terraformer" ? TERRAFORMER_RADIUS:MACHINE_RADIUS);
             let overlap = false;
             for (const machine of this.machines) {
@@ -583,6 +583,7 @@ class ArchimedesEngine extends Engine {
                 ));
                 break;
             }
+            pos.addeq(stride);
         }
     }
     giveItem(name) {
@@ -660,6 +661,16 @@ class ArchimedesEngine extends Engine {
                 name, // type
             );
         }
+        for (const name in WORLD_ITEM_SCATTER) {
+            for (let i=0; i<WORLD_ITEM_SCATTER[name]; ++i) {
+                new Item(
+                    this,// engine
+                    (new Vec()).polareq(PLANET_RADIUS+1.0,Math.random()*Math.PI*2), // Pos
+                    new Vec(1.0,Math.random()-0.5), // Vel
+                    name, // type
+                );
+            }
+        }
         // Nice zone
         this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
         // Tutorial messages
@@ -688,7 +699,6 @@ class ArchimedesEngine extends Engine {
         this.reset_scheduled = false;
         this.destroy();
         this.create();
-        console.log("Reset");
     }
     schedule_reset() {
         if (this.reset_scheduled) return;
@@ -725,10 +735,16 @@ class ArchimedesEngine extends Engine {
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
             this.message("UI/text-damgerouslyhigh.png",new Vec(0.0,0.85));
+            this.sound.play("panting");
             this.seen_heat_warning = true;
         } else if (this.thermometer.full < 0.1 && !this.seen_cold_warning) {
             this.message("UI/text-damgerouslylow.png",new Vec(0.0,0.85));
+            this.sound.play("shivering");
             this.seen_cold_warning = true;
+        }
+        if (this.thermometer.full < 0.8 && this.thermometer.full > 0.2) {
+            this.seen_cold_warning = false;
+            this.seen_cold_warning = false;
         }
         
         // Camera update
@@ -790,6 +806,8 @@ const engine = new ArchimedesEngine(
         "construct2": "sounds/construction2.mp3",
         "construct3": "sounds/construction3.mp3",
         "terraformer_start": "sounds/monolith_creation.mp3",
+        "shivering": "sounds/shivering.mp3",
+        "panting": "sounds/panting.mp3",
     },
 );
 

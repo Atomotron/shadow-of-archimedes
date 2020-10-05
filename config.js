@@ -1,6 +1,6 @@
 ////// Planet
 // Radii: Height at which stuff is put
-const PLANET_RADIUS = 24;
+const PLANET_RADIUS = 16;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
 const MACHINE_RADIUS = PLANET_RADIUS-0.03;
@@ -9,7 +9,7 @@ const BIOMES = ["MountainBiome","AridBiome","CityBiome",
                 "MountainBiome","AridBiome","CityBiome"];
 // Stuff having to do with the "nice zone"
 const NICE_ZONE_SIZE = 48;
-const ZONE_SPEED = 0.03;
+const ZONE_SPEED = 0.1;
 const ZONE_STARTING_ANGLE = 0.4+Math.PI; //Radians
 const TEMPERATURE_SCALE = 1.6;
 const TERRAFORMING_SPEED = 1; // When winning the game
@@ -32,7 +32,7 @@ const MAN_INVENTORY_DRAG = 0.2;
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
 const ZOOM_SPEED = 0.25;
-const MIN_ZOOM = 0.04;
+const MIN_ZOOM = 0.0001;//0.04;
 const MAX_ZOOM = 0.5;
 
 // Items
@@ -42,15 +42,16 @@ const ITEM_JUMP_POWER = 0.3;
 const ITEM_SCALE = 0.5;
 const ITEM_SLOT_SCALE_SPEED = 8;
 
+const WORLD_ITEM_SCATTER = {'metal':10};
+
 // Machines
 const ITEM_SLOT_FORCE = 32;
 const ITEM_SLOT_DRAG = 0.2;
 
 const MACHINE_SLOT_SPACING = 0.2;
-const MACHINE_SLOT_X = 0.6;
+const MACHINE_SLOT_X = 0.4;
 const MACHINE_SLOT_Y = 0.3;
 const MACHINE_SIZE = 0.6;
-
 
 const RUNNING_WIGGLE_SPEED = 24;
 const RUNNING_WIGGLE_MAGNITUDE = 0.005;
@@ -106,11 +107,11 @@ const MACHINE_CONFIG = {
     },
     'terraformer':{
         image: "Machimes/terraformer.png",
-        components: {"metal":8},
+        components: {"metal":4},
         consume_time: 2000000000000, 
         produce_time: 2000000000000,
         stock: 1,
-        consumes: {"battery":8},
+        consumes: {"carbon":2,"water":2,},
         produces: {"battery":8},
     },
 };
