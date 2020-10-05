@@ -26,6 +26,7 @@ class Item extends Sprite {
         engine.clickables.delete(this.click_region);
     }
     clickitem() {
+        if (this.engine.man.pos.sub(this.pos).abs() > MAX_REACH) return;
         if (this.holder === null || this.holder instanceof ItemSlot) {
             if (this.engine.man.dead) return; // Dead men can't pick up items
             if (this.holder instanceof ItemSlot) {
@@ -72,6 +73,7 @@ class ItemSlot extends Sprite {
         this.doomed = false;
     }
     clickslot() {
+        if (this.engine.man.pos.sub(this.pos).abs() > MAX_REACH) return;
         if (this.engine.man.dead) return; // Dead men can't pick up items
         if (this.holding !== null) {
             this.holding.clickitem();
