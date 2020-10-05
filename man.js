@@ -108,7 +108,7 @@ class Man extends NightdaySprite {
         this.target.eq(target);
     }
     jump() {
-        if (!this.jumped) {
+        if (!this.jumped && !this.dead) {
             this.r_vel = MAN_JUMP_VEL;
             this.jumped = true;
         }
