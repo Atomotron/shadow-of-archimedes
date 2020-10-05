@@ -15,7 +15,7 @@ class Machine extends NightdaySprite {
         super(engine,pass,
             MACHINE_CONFIG[type].image,
             1, // variant
-            1.0, // layer
+            0.75, // layer
             1, // scale
         );
         this.pos = pos;
@@ -57,6 +57,7 @@ class Machine extends NightdaySprite {
         this.run_time = 0;
         this.consume_timer = 0;
         this.produce_timer = 0;
+        this.running = false;
     }
     setImage(image,variant=null,layer=null) {
         this.image = image;
@@ -131,6 +132,8 @@ class Machine extends NightdaySprite {
             this.previous_full_slots = full_slot_count
             this.variant_target = Math.round(full_slot_count/this.component_slots.length*(MACHINE_STAGES.length-1));
         }
+        // Terraformers are bare rocks at variant level 1, they never go to 0.
+        if (this.type === "terraformer" && this.variant_target < 1) this.variant_target = 1;
         if (this.variant !== this.variant_target) {
             this.frame_age += dt;
             if (this.frame_age > CONSTRUCTION_ANIM_FRAME_TIME) {
@@ -157,15 +160,35 @@ class Machine extends NightdaySprite {
                 }
                 this.scale_y = 1.0 + RUNNING_WIGGLE_MAGNITUDE*Math.sin(RUNNING_WIGGLE_SPEED*this.run_time);
                 this.transform_computed = false;
+                // When running changes
+                if (!this.running) {
+                    this.running = true;
+                    this.onStartRunning();
+                }
+            } else {
+                if (this.running) {
+                    this.running = false;
+                    this.onStopRunning();
+                }
             }
         } else {
             this.run_time = 0; // Incomplete
             this.produce_timer = 0;
+            if (this.running) {
+                this.running = false;
+                this.onStopRunning();
+            }
         }
-        if (this.variant === 0 && this.type !== "terraformer") {
+        if (this.variant === 0) {
             this.destroy();
         }
         super.update(dt);
+    }
+    onStopRunning() {
+        
+    }
+    onStartRunning() {
+    
     }
     destroy() {
         this.engine.machines.delete(this);
