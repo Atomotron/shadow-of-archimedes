@@ -746,11 +746,11 @@ class ArchimedesEngine extends Engine {
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
             this.message("UI/text-damgerouslyhigh.png",new Vec(0.0,0.85));
-            this.sound.play("panting");
+            if (!this.man.dead) this.sound.play("panting");
             this.seen_heat_warning = true;
         } else if (this.thermometer.full < 0.1 && !this.seen_cold_warning) {
             this.message("UI/text-damgerouslylow.png",new Vec(0.0,0.85));
-            this.sound.play("shivering");
+            if (!this.man.dead) this.sound.play("shivering");
             this.seen_cold_warning = true;
         }
         if (this.thermometer.full < 0.8 && this.thermometer.full > 0.2) {
