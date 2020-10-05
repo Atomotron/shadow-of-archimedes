@@ -74,6 +74,7 @@ class Engine {
                 that.scene.update(average_dt);
                 that.scene.prepare(that.gl);
                 that.scene.draw(that.gl);
+                that.sound.tick(dt);
             }
             last_t = t;
             window.requestAnimationFrame(loop);

@@ -586,6 +586,10 @@ class ArchimedesEngine extends Engine {
         this.daytime = 0;
         //Title (only on first start)
         this.message("UI/text-title.png");
+        // Music
+        this.tracks = ["song1","song2","song3"];
+        this.time_until_next = 60;
+        this.time_between = 120;
     }
     buildMachine(type,pos) {
         const stride = (!!this.man ? this.man.facing() : new Vec(1.0,0.0)).muleq(MACHINE_SIZE);
@@ -746,6 +750,7 @@ class ArchimedesEngine extends Engine {
             if (!this.won) {
                 this.zoom_target = 0.005;
                 this.zoom_control = false;
+                this.message("UI/text-win.png",new Vec(0.0,0.5),1.0,null)
                 this.won = true;
             }
         }
@@ -761,7 +766,7 @@ class ArchimedesEngine extends Engine {
         }
         
         // Update thermometer
-        this.thermometer.full = this.man.temperature+0.5;
+        if (!this.man.dead) this.thermometer.full = this.man.temperature+0.5;
         if (this.man.temperature > 0.5 && !this.lost) {
             this.message("UI/text-heatdeath.png",new Vec(0.0,0.3),0.5,2.0,2.0);
             this.lose();
@@ -809,6 +814,16 @@ class ArchimedesEngine extends Engine {
         this.scene.view.eq(T);
         Mat.Compose(this.scene.view, R, this.scene.view);
         Mat.Compose(this.scene.view, S, this.scene.view);
+        // Audio tracking
+        if (!this.sound.stuck) {
+            this.time_until_next -= dt;
+            if (this.time_until_next <= 0) {
+                const name = this.tracks.shift();
+                this.sound.start_music(name,2);
+                this.tracks.push(name);
+                this.time_until_next = this.time_between;
+            }
+        }
     }
 }
 
@@ -831,7 +846,9 @@ const engine = new ArchimedesEngine(
         animations: 'images/Animations.json',
     },
     music = {
-        //"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
+        "song1": "sounds/song1.mp3",
+        "song2": "sounds/song2.mp3",
+        "song3": "sounds/song3.mp3",
     },
     sfx = {
         "stone_walk1": "sounds/stone_walk1.mp3",

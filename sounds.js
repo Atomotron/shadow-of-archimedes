@@ -71,7 +71,7 @@ class Sounds {
         // Set up sound effects master nodes
         this.sfx_volume = this.ctx.createGain();
         this.sfx_volume.connect(this.master_volume);
-        
+        this.stuck = true;
         this.start_loading();
     }
     // Creates elements and sets up on-load callbacks.
@@ -119,6 +119,7 @@ class Sounds {
         source.buffer = buffer;
         source.connect(this.ctx.destination);
         source.start();
+        this.stuck = false;
     }
     // Adds a controller to our set of controllers.
     control(controller) {
@@ -138,7 +139,7 @@ class Sounds {
         }
     }
     // Starts a music track. Can be given a fade-in time.
-    start_music(name,T=500) {
+    start_music(name,T=1) {
         this.control(new ExpRampController(
             this.music_track_volumes.get(name).gain,
             0.001,1,
@@ -147,7 +148,7 @@ class Sounds {
         this.music.get(name).play();
     }
     // Stops a music track. Can be given a fade-out time.
-    stop_music(name,T=500) {
+    stop_music(name,T=1) {
         const element = this.music.get(name);
         this.control(new ExpRampController(
             this.music_track_volumes.get(name).gain,
