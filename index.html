@@ -378,6 +378,7 @@ class Button extends UISprite {
         this.age = 0.0;
         this.special_scale = scale;
         this.scale = BUTTON_UI_SCALE*this.special_scale;
+        this.hidden = false;
     }
     clicked() {
         this.alpha = 0.9;
@@ -387,8 +388,10 @@ class Button extends UISprite {
     update(dt) {
         this.scale += 1*dt;
         this.age += dt;
-        if (this.age > UI_FADE_START) this.alpha += dt/UI_FADE_IN;
+        if (!this.hidden && this.age > UI_FADE_START) this.alpha += dt/UI_FADE_IN;
+        if (this.hidden)  this.alpha -= dt/UI_FADE_IN;
         if (this.alpha > 1.0) this.alpha = 1.0;
+        if (this.alpha < 0.0) this.alpha = 0.0;
         if (this.scale > BUTTON_UI_SCALE*this.special_scale) this.scale = BUTTON_UI_SCALE*this.special_scale;
         this.setImage(this.image,this.alpha);
         super.update(dt);
@@ -760,10 +763,10 @@ class ArchimedesEngine extends Engine {
         // Update thermometer
         this.thermometer.full = this.man.temperature+0.5;
         if (this.man.temperature > 0.5 && !this.lost) {
-            this.message("UI/text-heatdeath.png",new Vec(0.0,0.3),0.5,4.0,4.0);
+            this.message("UI/text-heatdeath.png",new Vec(0.0,0.3),0.5,2.0,2.0);
             this.lose();
         } else if (this.man.temperature < -0.5 && !this.lost) {
-            this.message("UI/text-frozedeath.png",new Vec(0.0,0.3),0.5,4.0,4.0);
+            this.message("UI/text-frozedeath.png",new Vec(0.0,0.3),0.5,2.0,2.0);
             this.lose();
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
@@ -781,9 +784,10 @@ class ArchimedesEngine extends Engine {
         }
         
         if (!this.lost) {
-            this.reset_button.alpha = 0;
+            this.reset_button.hidden = true;
             this.reset_button.click_region.r = 0;
         } else {
+            this.reset_button.hidden = false;
             this.reset_button.click_region.r = 1;
         }
         
