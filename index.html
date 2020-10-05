@@ -56,9 +56,9 @@ uniform sampler2D gradient;
 void main() {
     float texture_index = 0.5*length(world_coord)/planet_radius;
     float step = smoothstep(0.5-0.0001,0.5+0.0001,texture_index);
-    texture_index += 0.25*step-0.125;
+    texture_index += 0.25*(step-0.5);
     float alpha = 1.0-step;
-    gl_FragColor = vec4(texture2D(gradient,vec2(0.1,daytime+0.5)).xyz,1.0)*alpha;
+    gl_FragColor = vec4(texture2D(gradient,vec2(texture_index,daytime+0.5)).xyz,1.0)*alpha;
 }
 </script>
 
