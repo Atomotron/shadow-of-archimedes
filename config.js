@@ -32,7 +32,7 @@ const MAN_INVENTORY_DRAG = 0.2;
 // Camera
 const CAMERA_SPEED = MAN_SPEED*1.2;
 const ZOOM_SPEED = 0.25;
-const MIN_ZOOM = 0.0001;//0.04;
+const MIN_ZOOM = 0.0038;//0.04;
 const MAX_ZOOM = 0.5;
 
 // Items
