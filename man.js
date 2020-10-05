@@ -68,6 +68,7 @@ class Man extends NightdaySprite {
     putItem(item) {
         this.inventory.push(item);
         this.recalculateInventorySlots();
+        this.engine.item_tutorial_message.hide();
     }
     recalculateInventorySlots() {
         this.inventory_slots = [];

@@ -261,24 +261,26 @@ class UISprite{
 }
 
 class Message extends UISprite {
-    constructor(engine,pass,image=null,pos=new Vec(),fadein=0,duration=null,fadeout=0) {
+    constructor(engine,pass,image=null,pos=new Vec(),fadein=0,duration=null,fadeout=0,delay=0) {
         super(engine,pass,image,pos,0.0);
         this.duration = duration;
         this.fadein = fadein;
         this.duration = duration;
+        this.delay = delay;
         this.fadeout = fadeout;
         this.scale = 0.5; // Required to make the pixels look good
         this.age = 0;
     }
     update(dt) {
         this.age += dt;
-        let alpha = this.age/this.fadein;
+        if (this.age < this.delay) return;
+        let alpha = (this.age-this.delay)/this.fadein;
         if (alpha > 1.0) {
             alpha = 1.0;
             if (this.duration) {
-                if (this.age > this.duration + this.fadein) {
+                if (this.age > this.duration + this.fadein + this.delay) {
                     if (this.fadeout > 0) {
-                        alpha = 1.0 - (this.age-this.duration-this.fadein)/this.fadeout;
+                        alpha = 1.0 - (this.age-this.duration-this.fadein-this.delay)/this.fadeout;
                     }
                     if (this.fadeout === 0 || alpha < 0.0) {
                         alpha = 0.0;
@@ -289,10 +291,16 @@ class Message extends UISprite {
         }
         this.setImage(this.image,alpha);
         super.update(dt);
-    }    
+    }
+    hide() {
+        console.log("hide");
+        if (this.duration !== null && this.age > this.duration+this.fadein+this.delay) return; // Already hidden
+        this.duration = this.age-this.fadein-this.delay;
+        console.log(this.duration,this.age);
+    }
 }
-THERMOMETER_FADE_START = 5.0
-THERMOMETER_FADE_IN = 2.0
+UI_FADE_START = 5.0
+UI_FADE_IN = 2.0
 
 class Thermometer extends UISprite {
     constructor(engine,pass,image,bar_image,pos) {
@@ -301,7 +309,7 @@ class Thermometer extends UISprite {
         this.bar_sprite = pass.dvao.acquire();
         this.bar_model_matrix = new Mat();
         this.full = 0.5;
-        this.scale = 0.7;
+        this.scale = 0.675;
         this.alpha = 0.0;
         this.setBar(this.full);
         this.original_pos = pos.clone();
@@ -338,7 +346,7 @@ class Thermometer extends UISprite {
     }
     update(dt) {
         this.age += dt;
-        if (this.age > THERMOMETER_FADE_START) this.alpha += dt/THERMOMETER_FADE_IN;
+        if (this.age > UI_FADE_START) this.alpha += dt/UI_FADE_IN;
         if (this.alpha > 1.0) this.alpha = 1.0;
         if (this.full < 0.1 || this.full > 0.9) {
             this.pos.eq(this.original_pos.add(new Vec(Math.random()-0.5,Math.random()-0.5).muleq(0.01)));
@@ -360,16 +368,18 @@ class Button extends UISprite {
         };
         this.click_region = new Clickable(this.pos,r*BUTTON_UI_SCALE,this.callback,true);
         engine.clickables.add(this.click_region);
-        this.alpha = 1.0;
+        this.alpha = 0.0;
+        this.age = 0.0;
         this.scale = BUTTON_UI_SCALE;
     }
     clicked() {
-        this.alpha = 0.5;
+        this.alpha = 0.9;
         this.scale = 0.8*BUTTON_UI_SCALE;
     }
     update(dt) {
-        this.alpha += 4*dt;
         this.scale += 1*dt;
+        this.age += dt;
+        if (this.age > UI_FADE_START) this.alpha += dt/UI_FADE_IN;
         if (this.alpha > 1.0) this.alpha = 1.0;
         if (this.scale > BUTTON_UI_SCALE) this.scale = BUTTON_UI_SCALE;
         this.setImage(this.image,this.alpha);
@@ -472,31 +482,31 @@ class ArchimedesEngine extends Engine {
         // Buttons
         new Button(
             this,this.uipass,"UI/steam-selected.png",
-            new Vec(-0.8,-0.8),
+            new Vec(-0.8,0.65),
             0.3,
             () => {this.buildMachine("boiler",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/combust-selected.png",
-            new Vec(-0.4,-0.8),
+            new Vec(-0.4,0.65),
             0.3,
             () => {this.buildMachine("engine",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/carbomrefimer-selected.png",
-            new Vec(0.0,-0.8),
+            new Vec(0.0,0.65),
             0.3,
             () => {this.buildMachine("carbon",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/waterpump-selected.png",
-            new Vec(0.4,-0.8),
+            new Vec(0.4,0.65),
             0.3,
             () => {this.buildMachine("water",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/metalmimer-selected.png",
-            new Vec(0.8,-0.8),
+            new Vec(0.8,0.65),
             0.3,
             () => {this.buildMachine("metal",this.man.pos)}
         );
@@ -548,6 +558,7 @@ class ArchimedesEngine extends Engine {
         this.reset_scheduled = false;
         this.seen_heat_warning = false;
         this.seen_cold_warning = false;
+        this.item_tutorial_message = null;
         this.create();
         
         //Title (only on first start)
@@ -582,11 +593,11 @@ class ArchimedesEngine extends Engine {
             name, // type
         );
     }    
-    message(image,pos=new Vec(0.0,0.5),fadein=0.5,duration=2.0,fadeout=2.0) {
-        new Message(
+    message(image,pos=new Vec(0.0,0.5),fadein=0.5,duration=2.0,fadeout=2.0,delay=0.0) {
+        return new Message(
             this,this.uipass,image,
             pos,
-            fadein,duration,fadeout
+            fadein,duration,fadeout,delay
         );
     }
     gen_layer(sprites,layer,rdelta,biomes) {
@@ -644,6 +655,12 @@ class ArchimedesEngine extends Engine {
         }
         // Nice zone
         this.scene.solar_vector.polareq(1/this.nice_zone_size,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
+        // Tutorial messages
+        
+        this.item_tutorial_message = this.message("UI/text-clicktheresource.png",
+            new Vec(0.0,-0.7),
+            2.0,null,0.5,5.0
+        );
     }
     destroy() {
         this.man.destroy();
@@ -658,6 +675,7 @@ class ArchimedesEngine extends Engine {
         this.zoom_control = true;
         this.nice_zone_size = NICE_ZONE_SIZE;
         this.won = false;
+        this.item_tutorial_message.hide();
     }
     reset() {
         this.reset_scheduled = false;
