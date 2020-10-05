@@ -14,6 +14,19 @@ class Man extends NightdaySprite {
             "Tex/man6.png",
             "Tex/man7.png",
         ];
+        this.death_frames = [
+            "Tex/death1.png",
+            "Tex/death2.png",
+            "Tex/death3.png",
+            "Tex/death4.png",
+            "Tex/death5.png",
+            "Tex/death6.png",
+            "Tex/death7.png",
+            "Tex/death8.png",
+            "Tex/death9.png",
+            "Tex/death10.png",
+            "Tex/death11.png",
+        ];
         this.jump_frame = "Tex/man-jump.png";
         this.step_sounds = [
             "stone_walk1",
@@ -155,6 +168,7 @@ class Man extends NightdaySprite {
         if (this.temperature > 0.5 || this.temperature < -0.5) {
             if (!this.dead) {
                 this.dropEverything();
+                this.frame = 0;
             }
             this.dead = true;
         }
@@ -180,7 +194,7 @@ class Man extends NightdaySprite {
         // Update animation
         if (this.jumped) {
             this.setImage(this.jump_frame);
-        } else {
+        } else if (!this.dead) {
             this.frame_age += dt;
             if ((this.walking || this.frame != 0) && this.frame_age > MAN_FRAME_TIME) {
                 if (this.frame === 3 && !this.jumped) {
@@ -201,6 +215,13 @@ class Man extends NightdaySprite {
                 this.frame_age = 0;
             }
             this.setImage(this.frames[this.frame]);
+        } else {
+            this.frame_age += dt;
+            if (this.frame_age > MAN_FRAME_TIME) {
+                this.frame = this.frame+1;
+                if (this.frame >= this.death_frames.length) this.frame = this.death_frames.length-1;
+            }
+            this.setImage(this.death_frames[this.frame]);
         }
         super.update(dt);
     }
