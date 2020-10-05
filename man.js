@@ -31,13 +31,7 @@ class Man extends NightdaySprite {
         this.temperature = 0;
         
         // Set up clickable region for jumping  
-        const that = this;
-        this.click_region = new Clickable(this.pos,0.25,() => {
-            if (!that.jumped) {
-                that.r_vel = MAN_JUMP_VEL;
-                that.jumped = true;
-            }
-        });
+        this.click_region = new Clickable(this.pos,0.25,() => {this.jump()});
         this.engine.clickables.add(this.click_region);
         
         // Set up inventory
@@ -93,20 +87,35 @@ class Man extends NightdaySprite {
     setTarget(target) {
         this.target.eq(target);
     }
+    jump() {
+        if (!this.jumped) {
+            this.r_vel = MAN_JUMP_VEL;
+            this.jumped = true;
+        }
+    }
     facing() {
         return this.pos.norm().rot90eq().muleq(this.mirror ? -1:1);
     }
     update_pos(dt) {
         // Update position
-        const dr = this.target.sub(this.pos);
-        this.walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
-        if (this.walking) {
-            this.pos.addeq(
-                dr.normeq().muleq(MAN_SPEED*dt)
-            );
-        };
+        let dr = this.target.sub(this.pos);
+        let keyboard_control = false;
+        if (this.engine.cm.isPressed("KeyA") || 
+            this.engine.cm.isPressed("ArrowLeft")) {
+            dr.eq(this.pos.norm().rot90().muleq(0.1+MAN_WALK_SATISFACTION_RANGE));    
+            keyboard_control = true;
+        } else if (this.engine.cm.isPressed("KeyD") || 
+            this.engine.cm.isPressed("ArrowRight")) {
+            dr.eq(this.pos.norm().rot90().muleq(-0.1-MAN_WALK_SATISFACTION_RANGE));  
+            keyboard_control = true;   
+        }
+        if (this.engine.cm.isPressed("KeyW") || 
+            this.engine.cm.isPressed("ArrowUp") || 
+            this.engine.cm.isPressed("Space")) this.jump();
+        
+        // Update motion
+        this.r_vel -= GRAVITY*0.016;
         this.r_defect += this.r_vel*dt;
-        this.r_vel -= GRAVITY*dt;
         if (this.r_defect < 0) {
             this.r_vel = 0
             this.r_defect = 0;
@@ -115,8 +124,20 @@ class Man extends NightdaySprite {
             }
             this.jumped = false;
         }
+        this.walking = dr.abs() > MAN_WALK_SATISFACTION_RANGE;
+        if (this.walking) {
+            this.pos.addeq(
+                dr.normeq().muleq(MAN_SPEED*dt)
+            );
+        };
         this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
-        this.mirror = this.pos.cross(dr) < 0;
+        if (keyboard_control) {
+            this.target.eq(this.pos);
+        }
+        const satisfaction = this.pos.cross(dr);
+        if (satisfaction < -0.01) this.mirror = true;
+        if (satisfaction > 0.01) this.mirror = false;
+        //debugger;
         this.transform_computed = false;
         // Update temperature
         const external_temperature = TEMPERATURE_SCALE*this.pos.dot(this.engine.scene.solar_vector);
