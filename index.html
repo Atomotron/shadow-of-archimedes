@@ -518,6 +518,14 @@ class ArchimedesEngine extends Engine {
             () => {if (!this.man.dead) this.buildMachine("metal",this.man.pos)}
         );
         
+        // Lose button
+        this.reset_button = new Button(
+            this,this.uipass,"UI/text-newgame.png",
+            new Vec(0,0),
+            0.0,
+            () => {this.schedule_reset()}
+        );
+        
         // Thermometer
         this.thermometer = new Thermometer(this,this.uipass,
             "UI/thermo-empty.png",
@@ -768,6 +776,13 @@ class ArchimedesEngine extends Engine {
         if (this.thermometer.full < 0.8 && this.thermometer.full > 0.2) {
             this.seen_cold_warning = false;
             this.seen_cold_warning = false;
+        }
+        
+        if (!this.lost) {
+            this.reset_button.alpha = 0;
+            this.reset_button.click_region.r = 0;
+        } else {
+            this.reset_button.click_region.r = 1;
         }
         
         // Camera update
