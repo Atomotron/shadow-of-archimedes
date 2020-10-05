@@ -28,7 +28,9 @@ class Machine extends NightdaySprite {
         this.config = MACHINE_CONFIG[type];
         const ihat = pos.norm();
         const jhat = ihat.rot90();
-        this.produce_root = this.pos.add(ihat);
+        this.ihat = ihat;
+        this.jhat = jhat;
+        this.produce_root = this.pos.add(type=="terraformer" ? ihat.mul(2.3):ihat);
         // Construction components
         this.component_slots = [];
         const res_root = pos.add(ihat.mul(MACHINE_SLOT_Y)).add(jhat.mul(MACHINE_SLOT_X));
@@ -124,7 +126,7 @@ class Machine extends NightdaySprite {
                 new Item(
                     this.engine,// engine
                     this.produce_root, // Pos
-                    new Vec(1.0,Math.random()-0.5), // Vel
+                    this.ihat.add(this.jhat.mul(Math.random()-0.5)), // Vel
                     name, // type
                 );
             }
@@ -174,6 +176,9 @@ class Machine extends NightdaySprite {
                     this.running = true;
                     this.onStartRunning();
                 }
+                if (this.type === "terraformer") {
+                    new TerraformParticle(this.engine,this.produce_root,this.ihat.mul(5).addeq(this.jhat.mul(5+Math.random())));
+                }
             } else {
                 if (this.running) {
                     this.running = false;
@@ -211,4 +216,55 @@ class Machine extends NightdaySprite {
         super.destroy();
     }
 }
+
+const TERRAFORM_PARTICLES = [
+    "Particles/particle1.png",
+    "Particles/particle2.png",
+    "Particles/particle3.png",
+    "Particles/particle4.png",
+    "Particles/particle5.png",
+    "Particles/particle6.png",
+    "Particles/particle7.png",
+    "Particles/particle8.png",
+    "Particles/particle9.png",
+    "Particles/particle10.png",
+    "Particles/particle11.png",
+    "Particles/particle12.png",
+    "Particles/particle13.png",
+    "Particles/particle14.png",
+    "Particles/particle15.png",
+    "Particles/particle16.png",
+    "Particles/particle17.png",
+    "Particles/particle18.png",
+    "Particles/particle19.png",
+    "Particles/particle20.png",
+    "Particles/particle21.png",
+];
+
+class TerraformParticle extends Sprite {
+    constructor(engine,pos=new Vec(),vel=new Vec()) {
+        super(engine,engine.itempass,
+            TERRAFORM_PARTICLES[Math.floor(Math.random()*TERRAFORM_PARTICLES.length)],     
+        );
+        this.scale = 1.0;
+        this.pos.eq(pos);
+        this.particle = new PassthroughParticle(this.pos,vel.clone(),engine.gravity);
+        engine.live_particles.add(this.particle);
+        engine.particles.add(this);
+        this.age = 0.0;
+    }
+    destroy() {
+        super.destroy();
+        engine.live_particles.delete(this.particle);
+        engine.clickables.delete(this.click_region);
+        engine.particles.delete(this);
+    }
+    update(dt) {
+        this.age += dt;
+        this.scale += dt;
+        if (this.age > 10.0) this.destroy();
+        super.update(dt);
+    }
+}
+
 

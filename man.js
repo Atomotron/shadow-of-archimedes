@@ -85,6 +85,11 @@ class Man extends NightdaySprite {
             i += 1;
         }
     }    
+    dropEverything() {
+        for (const i of this.inventory) i.drop();
+        this.inventory = [];
+        this.recalculateInventorySlots();
+    }
     // Called by the engine if a click is not trapped by anything else
     setTarget(target) {
         this.target.eq(target);
@@ -115,6 +120,9 @@ class Man extends NightdaySprite {
             this.engine.cm.isPressed("ArrowUp") || 
             this.engine.cm.isPressed("Space")) this.jump();
         
+        // Dead men can't move
+        if (this.dead) dr.zeroeq();
+        
         // Update motion
         this.r_vel -= GRAVITY*0.016;
         this.r_defect += this.r_vel*dt;
@@ -144,6 +152,12 @@ class Man extends NightdaySprite {
         // Update temperature
         const external_temperature = TEMPERATURE_SCALE*this.pos.dot(this.engine.scene.solar_vector);
         this.temperature = external_temperature;
+        if (this.temperature > 0.5 || this.temperature < -0.5) {
+            if (!this.dead) {
+                this.dropEverything();
+            }
+            this.dead = true;
+        }
         
         // Update inventory pos
         this.inventory_root.eq(this.pos);
@@ -185,8 +199,8 @@ class Man extends NightdaySprite {
                     }
                 }                
                 this.frame_age = 0;
-                this.setImage(this.frames[this.frame]);
             }
+            this.setImage(this.frames[this.frame]);
         }
         super.update(dt);
     }

@@ -350,6 +350,13 @@ class Thermometer extends UISprite {
         if (this.full < 0.1 || this.full > 0.9) {
             this.pos.eq(this.original_pos.add(new Vec(Math.random()-0.5,Math.random()-0.5).muleq(0.01)));
         }
+        if (this.full < 0.1) {
+            this.bar_image = "UI/thermo-low.png";
+        } else if (this.full > 0.9) {
+            this.bar_image = "UI/thermo-high.png";
+        } else {
+            this.bar_image = "UI/thermo-mercury.png";
+        }
         const x = this.full > 1.0 ? 1.0 : this.full;
         this.setBar(x < 0.0 ? 0.0 : x,this.alpha);
         this.setImage(this.image,this.alpha);
@@ -484,31 +491,31 @@ class ArchimedesEngine extends Engine {
             this,this.uipass,"UI/steam-selected.png",
             new Vec(-0.8,0.65),
             0.3,
-            () => {this.buildMachine("boiler",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("boiler",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/combust-selected.png",
             new Vec(-0.4,0.65),
             0.3,
-            () => {this.buildMachine("engine",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("engine",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/carbomrefimer-selected.png",
             new Vec(0.0,0.65),
             0.3,
-            () => {this.buildMachine("carbon",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("carbon",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/waterpump-selected.png",
             new Vec(0.4,0.65),
             0.3,
-            () => {this.buildMachine("water",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("water",this.man.pos)}
         );
         new Button(
             this,this.uipass,"UI/metalmimer-selected.png",
             new Vec(0.8,0.65),
             0.3,
-            () => {this.buildMachine("metal",this.man.pos)}
+            () => {if (!this.man.dead) this.buildMachine("metal",this.man.pos)}
         );
         
         // Thermometer
@@ -559,6 +566,7 @@ class ArchimedesEngine extends Engine {
         this.seen_heat_warning = false;
         this.seen_cold_warning = false;
         this.item_tutorial_message = null;
+        this.particles = new Set();
         this.create();
         
         //Title (only on first start)
@@ -683,11 +691,14 @@ class ArchimedesEngine extends Engine {
     destroy() {
         this.man.destroy();
         for (const s of this.bgsprites) s.destroy();
-        this.bgsprites = null;
+        this.bgsprites = new Set();
         for (const m of this.machines) m.destroy();
-        this.machines = null;
+        this.machines = new Set();
         for (const i of this.items) i.destroy();
-        this.items = null;
+        this.items = new Set();
+        for (const p of this.particles) p.destroy();
+        this.particles = new Set();
+        this.live_particles = null;
         this.ndspritepass.dvao.expunge();
         this.running_terraformers = 0;
         this.zoom_control = true;
@@ -703,7 +714,7 @@ class ArchimedesEngine extends Engine {
     schedule_reset() {
         if (this.reset_scheduled) return;
         this.reset_scheduled = true;
-        window.setTimeout(()=>this.reset(),100);
+        //window.setTimeout(()=>this.reset(),100);
     }
     update(dt) {
         super.update(dt);
@@ -735,11 +746,11 @@ class ArchimedesEngine extends Engine {
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
             this.message("UI/text-damgerouslyhigh.png",new Vec(0.0,0.85));
-            this.sound.play("panting");
+            if (!this.man.dead) this.sound.play("panting");
             this.seen_heat_warning = true;
         } else if (this.thermometer.full < 0.1 && !this.seen_cold_warning) {
             this.message("UI/text-damgerouslylow.png",new Vec(0.0,0.85));
-            this.sound.play("shivering");
+            if (!this.man.dead) this.sound.play("shivering");
             this.seen_cold_warning = true;
         }
         if (this.thermometer.full < 0.8 && this.thermometer.full > 0.2) {

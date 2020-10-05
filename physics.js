@@ -47,6 +47,9 @@ class PhysicsParticle {
         Vec.Mul(this.accumulator,this.vel,dt);
         Vec.Add(this.pos,this.pos,this.accumulator);
         // Planet collision
+        this.planet_collide(engine,dt);
+    }
+    planet_collide(engine,dt) {
         this.pos.mapabseq(
             (r) => {
                 if (r < PLANET_RADIUS) {
@@ -64,3 +67,8 @@ class PhysicsParticle {
         )
     }
 }
+class PassthroughParticle extends PhysicsParticle{
+    planet_collide(engine,dt) {}
+}
+
+
