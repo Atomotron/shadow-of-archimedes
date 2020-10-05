@@ -366,7 +366,7 @@ class Thermometer extends UISprite {
 
 const BUTTON_UI_SCALE = 0.25;
 class Button extends UISprite {
-    constructor(engine,pass,image=null,pos=new Vec(),r=0,callback=null) {
+    constructor(engine,pass,image=null,pos=new Vec(),r=0,callback=null,scale=1) {
         super(engine,pass,image,pos,1.0);
         this.callback = () => {
             this.clicked();
@@ -376,11 +376,12 @@ class Button extends UISprite {
         engine.clickables.add(this.click_region);
         this.alpha = 0.0;
         this.age = 0.0;
-        this.scale = BUTTON_UI_SCALE;
+        this.special_scale = scale;
+        this.scale = BUTTON_UI_SCALE*this.special_scale;
     }
     clicked() {
         this.alpha = 0.9;
-        this.scale = 0.8*BUTTON_UI_SCALE;
+        this.scale = 0.8*BUTTON_UI_SCALE*this.special_scale;
         this.engine.sound.play("click");
     }
     update(dt) {
@@ -388,7 +389,7 @@ class Button extends UISprite {
         this.age += dt;
         if (this.age > UI_FADE_START) this.alpha += dt/UI_FADE_IN;
         if (this.alpha > 1.0) this.alpha = 1.0;
-        if (this.scale > BUTTON_UI_SCALE) this.scale = BUTTON_UI_SCALE;
+        if (this.scale > BUTTON_UI_SCALE*this.special_scale) this.scale = BUTTON_UI_SCALE*this.special_scale;
         this.setImage(this.image,this.alpha);
         super.update(dt);
     }
@@ -523,7 +524,8 @@ class ArchimedesEngine extends Engine {
             this,this.uipass,"UI/text-newgame.png",
             new Vec(0,0),
             0.0,
-            () => {this.schedule_reset()}
+            () => {this.schedule_reset()},
+            2.0,
         );
         
         // Thermometer
@@ -727,7 +729,7 @@ class ArchimedesEngine extends Engine {
     schedule_reset() {
         if (this.reset_scheduled) return;
         this.reset_scheduled = true;
-        window.setTimeout(()=>this.reset(),100);
+        window.setTimeout(()=>this.reset(),1);
     }
     lose() {
         this.lost = true;
@@ -758,10 +760,10 @@ class ArchimedesEngine extends Engine {
         // Update thermometer
         this.thermometer.full = this.man.temperature+0.5;
         if (this.man.temperature > 0.5 && !this.lost) {
-            this.message("UI/text-heatdeath.png",new Vec(0.0,0.5));
+            this.message("UI/text-heatdeath.png",new Vec(0.0,0.3),0.5,4.0,4.0);
             this.lose();
         } else if (this.man.temperature < -0.5 && !this.lost) {
-            this.message("UI/text-frozedeath.png",new Vec(0.0,0.5));
+            this.message("UI/text-frozedeath.png",new Vec(0.0,0.3),0.5,4.0,4.0);
             this.lose();
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
