@@ -27,6 +27,7 @@ class Item extends Sprite {
     }
     clickitem() {
         if (this.holder === null || this.holder instanceof ItemSlot) {
+            if (this.engine.man.dead) return; // Dead men can't pick up items
             if (this.holder instanceof ItemSlot) {
                 this.holder.holding = null;
             }
@@ -43,6 +44,10 @@ class Item extends Sprite {
         if (this.holder === null) this.click_region.r = ITEM_CLICK_RADIUS;
         else this.click_region.r = 0;
         super.update(dt);
+    }
+    drop() {
+        this.particle.force_node = this.engine.gravity;
+        this.holder = null;
     }
 }
 class ItemSlot extends Sprite {
@@ -67,6 +72,7 @@ class ItemSlot extends Sprite {
         this.doomed = false;
     }
     clickslot() {
+        if (this.engine.man.dead) return; // Dead men can't pick up items
         if (this.holding !== null) {
             this.holding.clickitem();
             return;
@@ -97,8 +103,7 @@ class ItemSlot extends Sprite {
     }
     disable() {
         if (this.holding !== null) {
-            this.holding.particle.force_node = this.engine.gravity;
-            this.holding.holder = null;
+            this.holding.drop();
             this.holding = null;
         }
         this.radius_target = 0.0;

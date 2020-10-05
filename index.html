@@ -714,7 +714,7 @@ class ArchimedesEngine extends Engine {
     schedule_reset() {
         if (this.reset_scheduled) return;
         this.reset_scheduled = true;
-        window.setTimeout(()=>this.reset(),100);
+        //window.setTimeout(()=>this.reset(),100);
     }
     update(dt) {
         super.update(dt);
