@@ -31,7 +31,6 @@ class Item extends Sprite {
                 this.holder.holding = null;
             }
             this.click_region.r = 0;
-            this.engine.sound.play("antenna_upload");
             this.holder = this.engine.man;
             this.engine.man.putItem(this);
         }

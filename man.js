@@ -58,10 +58,14 @@ class Man extends NightdaySprite {
                 break;
             }
         }
-        if (found_index === null) return null;
+        if (found_index === null) {
+            this.engine.sound.play("fail");
+            return null
+        };
         const found = this.inventory[found_index];
         this.inventory.splice(found_index,1);
         this.recalculateInventorySlots();
+        this.engine.sound.play("deposit");
         return found;
     }
     // Puts an item in the man's inventory
@@ -69,6 +73,7 @@ class Man extends NightdaySprite {
         this.inventory.push(item);
         this.recalculateInventorySlots();
         this.engine.item_tutorial_message.hide();
+        this.engine.sound.play("pickup");
     }
     recalculateInventorySlots() {
         this.inventory_slots = [];
@@ -105,6 +110,9 @@ class Man extends NightdaySprite {
         if (this.r_defect < 0) {
             this.r_vel = 0
             this.r_defect = 0;
+            if (this.jumped) {
+                this.engine.sound.play("jump_land");
+            }
             this.jumped = false;
         }
         this.pos.normeq().muleq(MAN_RADIUS + this.r_defect);
@@ -135,7 +143,7 @@ class Man extends NightdaySprite {
         // Update animation
         this.frame_age += dt;
         if ((this.walking || this.frame != 0) && this.frame_age > MAN_FRAME_TIME) {
-            if (this.frame === 3) {
+            if (this.frame === 3 && !this.jumped) {
                 this.engine.sound.play(
                     this.step_sounds[Math.floor(Math.random()*this.step_sounds.length)]
                 );

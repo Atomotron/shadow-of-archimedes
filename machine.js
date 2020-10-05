@@ -18,6 +18,11 @@ class Machine extends NightdaySprite {
             0.75, // layer
             1, // scale
         );
+        this.construct_sounds = [
+            "construct1",
+            "construct2",
+            "construct3",
+        ];
         this.pos = pos;
         this.type = type;
         this.config = MACHINE_CONFIG[type];
@@ -139,6 +144,9 @@ class Machine extends NightdaySprite {
             if (this.frame_age > CONSTRUCTION_ANIM_FRAME_TIME) {
                 this.frame_age = 0.0;
                 this.variant = (this.variant + (this.variant > this.variant_target ? -1 : 1));
+                this.engine.sound.play(
+                    this.construct_sounds[Math.floor(Math.random()*this.construct_sounds.length)]
+                );
             }
             this.setImage(this.image,this.variant);
             for (const slot of this.consume_slots) slot.disable();
@@ -192,6 +200,7 @@ class Machine extends NightdaySprite {
     onStartRunning() {
         if (this.type === "terraformer") {
             this.engine.running_terraformers += 1;
+            this.engine.sound.play("terraformer_start");
         }    
     }
     destroy() {

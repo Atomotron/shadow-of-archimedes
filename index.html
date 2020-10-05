@@ -16,6 +16,7 @@
     <script src="man.js"></script>
     <script src="item.js"></script>
     <script src="machine.js"></script>
+    <title>Shadow of Archimedes</title>
 </head>
 <body style="background-color:#000000;padding:0px;margin:0px;overflow:hidden;">
 <div id="canvas-container" style="height:100vh; width:100vw"></div>
@@ -270,33 +271,29 @@ class Message extends UISprite {
         this.fadeout = fadeout;
         this.scale = 0.5; // Required to make the pixels look good
         this.age = 0;
+        this.alpha_target = 1.0;
+        this.alpha = 0.0;
     }
     update(dt) {
         this.age += dt;
-        if (this.age < this.delay) return;
-        let alpha = (this.age-this.delay)/this.fadein;
-        if (alpha > 1.0) {
-            alpha = 1.0;
-            if (this.duration) {
-                if (this.age > this.duration + this.fadein + this.delay) {
-                    if (this.fadeout > 0) {
-                        alpha = 1.0 - (this.age-this.duration-this.fadein-this.delay)/this.fadeout;
-                    }
-                    if (this.fadeout === 0 || alpha < 0.0) {
-                        alpha = 0.0;
-                        this.destroy();
-                    }
-                }
-            }
+        if (this.age < this.delay) this.alpha_target = 0.0;
+        else if (this.duration === null || this.age < this.delay+this.duration+this.fadein) this.alpha_target = 1.0;
+        else this.alpha_target = 0.0;
+        
+        if (this.age < this.delay+this.duration+this.fadein) {
+            if (this.fadein > 0) this.alpha += Math.sign(this.alpha_target-this.alpha) * dt / this.fadein;
+            else this.alpha = this.alpha_target;
+        } else {
+            if (this.fadeout > 0) this.alpha += Math.sign(this.alpha_target-this.alpha) * dt / this.fadeout;
+            else this.alpha = this.alpha_target;
         }
-        this.setImage(this.image,alpha);
+        this.setImage(this.image,this.alpha);
+        
         super.update(dt);
     }
     hide() {
-        console.log("hide");
-        if (this.duration !== null && this.age > this.duration+this.fadein+this.delay) return; // Already hidden
-        this.duration = this.age-this.fadein-this.delay;
-        console.log(this.duration,this.age);
+        this.duration = 1;
+        this.age = this.delay + this.fadein + this.duration;
     }
 }
 UI_FADE_START = 5.0
@@ -375,6 +372,7 @@ class Button extends UISprite {
     clicked() {
         this.alpha = 0.9;
         this.scale = 0.8*BUTTON_UI_SCALE;
+        this.engine.sound.play("click");
     }
     update(dt) {
         this.scale += 1*dt;
@@ -659,7 +657,7 @@ class ArchimedesEngine extends Engine {
         
         this.item_tutorial_message = this.message("UI/text-clicktheresource.png",
             new Vec(0.0,-0.7),
-            2.0,null,0.5,5.0
+            2.0,null,0.5,7.0
         );
     }
     destroy() {
@@ -710,10 +708,10 @@ class ArchimedesEngine extends Engine {
         // Update thermometer
         this.thermometer.full = this.man.temperature+0.5;
         if (this.man.temperature > 0.5) {
-            this.message("UI/text-heatdeath.png",new Vec(0.0,0.7));
+            this.message("UI/text-heatdeath.png",new Vec(0.0,0.5));
             this.schedule_reset();
         } else if (this.man.temperature < -0.5) {
-            this.message("UI/text-frozedeath.png",new Vec(0.0,0.7));
+            this.message("UI/text-frozedeath.png",new Vec(0.0,0.5));
             this.schedule_reset();
         }        
         if (this.thermometer.full > 0.9 && !this.seen_heat_warning) {
@@ -773,6 +771,16 @@ const engine = new ArchimedesEngine(
         "stone_walk4": "sounds/stone_walk4.mp3",
         "stone_walk5": "sounds/stone_walk5.mp3",
         "antenna_upload": "sounds/antenna_upload.mp3",
+        "pickup": "sounds/boop_pickup.mp3",
+        "deposit": "sounds/boop_deposit.mp3",
+        "fail": "sounds/click_error.mp3",
+        "click": "sounds/user_interface_click.mp3",
+        "jump_land": "sounds/jump_landing.mp3",
+        
+        "construct1": "sounds/construction1.mp3",
+        "construct2": "sounds/construction2.mp3",
+        "construct3": "sounds/construction3.mp3",
+        "terraformer_start": "sounds/monolith_creation.mp3",
     },
 );
 
