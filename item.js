@@ -103,10 +103,18 @@ class ItemSlot extends Sprite {
         }
         this.radius_target = 0.0;
     }
+    consume() {
+        this.radius_target = 0.0;
+        this.holding.click_region.r = 0;
+        this.click_region.r = 0;
+    }
     update(dt) {
         this.scale = ITEM_SCALE*this.radius;
         this.click_region.r = ITEM_CLICK_RADIUS*this.radius_target;
         this.radius += ITEM_SLOT_SCALE_SPEED*(this.radius_target - this.radius)*dt;
+        if (this.holding) {
+            this.holding.scale = this.radius*ITEM_SCALE;
+        }
         if (this.doomed && this.radius < 0.01) {
             super.destroy();
         }

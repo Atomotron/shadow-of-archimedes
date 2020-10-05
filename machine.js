@@ -93,7 +93,7 @@ class Machine extends NightdaySprite {
         for (name in this.config.consumes) {
             let countdown = this.config.consumes[name];
             for (const slot of this.consume_slots) {
-                if (slot.holding !== null) {
+                if (slot.holding !== null && slot.holding.type == name) {
                     slots.push(slot);
                     countdown -= 1;
                 }
@@ -153,6 +153,7 @@ class Machine extends NightdaySprite {
         }
         if (this.variant === this.variant_target && this.variant_target === MACHINE_STAGES.length-1) {
             for (const slot of this.consume_slots) slot.enable();
+            if (this.type !== "terraformer") for (const slot of this.component_slots) slot.consume();
             // Construction complete
             if (this.can_consume()) {
                 this.run_time += dt;
