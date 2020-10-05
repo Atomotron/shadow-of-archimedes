@@ -350,6 +350,13 @@ class Thermometer extends UISprite {
         if (this.full < 0.1 || this.full > 0.9) {
             this.pos.eq(this.original_pos.add(new Vec(Math.random()-0.5,Math.random()-0.5).muleq(0.01)));
         }
+        if (this.full < 0.1) {
+            this.bar_image = "UI/thermo-low.png";
+        } else if (this.full > 0.9) {
+            this.bar_image = "UI/thermo-high.png";
+        } else {
+            this.bar_image = "UI/thermo-mercury.png";
+        }
         const x = this.full > 1.0 ? 1.0 : this.full;
         this.setBar(x < 0.0 ? 0.0 : x,this.alpha);
         this.setImage(this.image,this.alpha);
