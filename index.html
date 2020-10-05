@@ -145,7 +145,8 @@ void main() {
 const PLANET_RADIUS = 24;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
-const MACHINE_RADIUS = PLANET_RADIUS-0.03
+const MACHINE_RADIUS = PLANET_RADIUS-0.03;
+const TERRAFORMER_RADIUS = PLANET_RADIUS-0.07;
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;
 const ZONE_STARTING_ANGLE = 0.4; //Radians
@@ -593,7 +594,7 @@ class ArchimedesEngine extends Engine {
         pos = pos.clone();
         for (let attempt=0; attempt < 12; ++attempt) {
             pos.addeq(stride);
-            pos.normeq().muleq(MACHINE_RADIUS);
+            pos.normeq().muleq(type === "terraformer" ? TERRAFORMER_RADIUS:MACHINE_RADIUS);
             let overlap = false;
             for (const machine of this.machines) {
                 if (machine.pos.sub(pos).abs() < MACHINE_SIZE) {
