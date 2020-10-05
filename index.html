@@ -549,13 +549,12 @@ class ArchimedesEngine extends Engine {
     }
     gen_layer(sprites,layer,rdelta,biomes) {
         let angle = 0;
-        if (biomes.length === 0) return;
         while (angle < Math.PI*2.0) {
             const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
             angle += 0.1*Math.random();
             let found = false;
             let name = ""
-            while (!found) {
+            for (let attempt=0; attempt<100 && !found; ++attempt) {
                 let idx = Math.floor(Math.random()*sprites.length);
                 idx = idx >= sprites.length ? sprites.length-1 : idx;
                 name = sprites[idx];
