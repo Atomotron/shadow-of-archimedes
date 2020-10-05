@@ -68,6 +68,8 @@ class NightdaySprite {
         this.variant = variant;
         this.layer = layer;
         this.scale = scale;
+        this.scale_x = 1.0;
+        this.scale_y = 1.0;
         this.pos = new Vec();
         this.mirror = false;
         this.data = pass.dvao.acquire(engine.gl);
@@ -105,9 +107,9 @@ class NightdaySprite {
         this.rotation.rotationeq(-Math.atan2(-this.pos.x,this.pos.y));
         this.translation.translationeq(this.pos);
         if (this.mirror) {
-            this.scaling.scalingeq(-this.scale,this.scale);
+            this.scaling.scalingeq(-this.scale*this.scale_x,this.scale*this.scale_y);
         } else {
-            this.scaling.scalingeq(this.scale,this.scale);
+            this.scaling.scalingeq(this.scale*this.scale_x,this.scale*this.scale_y);
         }
         // Compute model matrix
         this.data.model.eq(this.sprite_matrix);

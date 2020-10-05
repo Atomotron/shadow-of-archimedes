@@ -67,6 +67,7 @@ class Man extends NightdaySprite {
     }
     recalculateInventorySlots() {
         this.inventory_slots = [];
+        let i = 0;
         for (const item of this.inventory) {
             const slot = new SpringForceNode(
                 this.pos.clone(),
@@ -75,6 +76,7 @@ class Man extends NightdaySprite {
             );
             this.inventory_slots.push(slot);
             item.particle.force_node = slot;
+            i += 1;
         }
     }    
     // Called by the engine if a click is not trapped by anything else
@@ -106,12 +108,14 @@ class Man extends NightdaySprite {
         this.mirror = this.pos.cross(dr) < 0;
         this.transform_computed = false;
         // Update inventory pos
-        Vec.Mul(this.inventory_root,this.pos,MAN_INVENTORY_HEIGHT);
+        this.inventory_root.eq(this.pos);
         const facing = this.pos.norm().rot90eq();
         facing.muleq(this.mirror ? MAN_INVENTORY_BEHIND : -MAN_INVENTORY_BEHIND);
+        let i = Math.exp(0.5);
         for (const slot of this.inventory_slots) {
-            this.inventory_root.addeq(facing);
-            slot.pos.eq(this.inventory_root);
+            slot.pos.eq(this.inventory_root.add(facing.mul(Math.log(i)*2)));
+            slot.pos.normeq().muleq(MAN_INVENTORY_HEIGHT);
+            i += 1;
         }
         // Update animation
         this.frame_age += dt;

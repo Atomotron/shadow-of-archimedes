@@ -121,7 +121,7 @@ const PARTICLE_ELASTICITY = 1.6; // Elasticity off of planet surface
 const MAN_SPEED = 2;
 const MAN_WALK_SATISFACTION_RANGE = 0.1;
 const MAN_JUMP_VEL = 1.5;
-const MAN_INVENTORY_HEIGHT = 1.013;
+const MAN_INVENTORY_HEIGHT = PLANET_RADIUS*1.013;
 const MAN_INVENTORY_BEHIND = 0.20;
 const MAN_INVENTORY_FORCE = 8;
 const MAN_INVENTORY_DRAG = 0.1;
@@ -141,8 +141,65 @@ const ITEM_SLOT_SCALE_SPEED = 8;
 
 // Machines
 const MACHINE_RADIUS = PLANET_RADIUS-0.03
-const ITEM_SLOT_FORCE = 8;
-const ITEM_SLOT_DRAG = 0.1;
+const ITEM_SLOT_FORCE = 32;
+const ITEM_SLOT_DRAG = 0.2;
+
+const MACHINE_SLOT_SPACING = 0.2;
+const MACHINE_SLOT_X = 0.6;
+const MACHINE_SLOT_Y = 1.0;
+
+
+const RUNNING_WIGGLE_SPEED = 24;
+const RUNNING_WIGGLE_MAGNITUDE = 0.005;
+const CONSTRUCTION_ANIM_FRAME_TIME = 0.6;
+
+const MACHINE_CONFIG = {
+    'boiler':{
+        image: "Machimes/battery-steam.png",
+        components: {"metal":2},
+        consume_time: 2, // Seconds between each resource consumption
+        produce_time: 1, // Seconds between each resource production
+        stock: 2,
+        consumes: {"water":1},
+        produces: {"battery":1},
+    },
+    'engine':{
+        image: "Machimes/battery-combustiom.png",
+        components: {"metal":2},
+        consume_time: 2, // Seconds between each resource consumption
+        produce_time: 1, // Seconds between each resource production
+        stock: 2,
+        consumes: {"carbon":1},
+        produces: {"battery":1},
+    },
+    'carbon':{
+        image: "Machimes/carbom.png",
+        components: {"metal":2},
+        consume_time: 2, // Seconds between each resource consumption
+        produce_time: 1, // Seconds between each resource production
+        stock: 2,
+        consumes: {"battery":1},
+        produces: {"carbon":1},
+    },
+    'metal':{
+        image: "Machimes/metal.png",
+        components: {"metal":2},
+        consume_time: 2, // Seconds between each resource consumption
+        produce_time: 1, // Seconds between each resource production
+        stock: 2,
+        consumes: {"battery":1},
+        produces: {"metal":1},
+    },
+    'water':{
+        image: "Machimes/water.png",
+        components: {"metal":2},
+        consume_time: 2, // Seconds between each resource consumption
+        produce_time: 1, // Seconds between each resource production
+        stock: 2,
+        consumes: {"battery":1},
+        produces: {"water":1},
+    },
+};
 
 /*
  * A custom render pass that uses the custom shaders
@@ -201,7 +258,10 @@ class Item extends Sprite {
         engine.clickables.delete(this.click_region);
     }
     clickitem() {
-        if (this.holder === null) {
+        if (this.holder === null || this.holder instanceof ItemSlot) {
+            if (this.holder instanceof ItemSlot) {
+                this.holder.holding = null;
+            }
             this.engine.sound.play("antenna_upload");
             this.holder = this.engine.man;
             this.engine.man.putItem(this);
@@ -215,7 +275,6 @@ class Item extends Sprite {
         super.update(dt);
     }
 }
-
 const MACHINE_STAGES = [
     new ArrayFloats(new Float32Array([0.0,0.0,0.0])), // 0 - nothing built
     new ArrayFloats(new Float32Array([2/3,0.0,0.0])), // 1 - base
@@ -225,15 +284,14 @@ const MACHINE_STAGES = [
     new ArrayFloats(new Float32Array([4/3,4/3,2/3])), // 5
     new ArrayFloats(new Float32Array([4/3,4/3,4/3])), // 6
 ];
-
 class ItemSlot extends Sprite {
     constructor(engine,pos=new Vec(),holds="carbon") {
         super(engine,engine.spritepass,
             {
-                'carbon':"Items/item-carbom.png",
-                'battery':"Items/item-battery.png",
-                'metal':"Items/item-metal.png",
-                'water':"Items/item-water.png",
+                'carbon':"Items/slot-carbom.png",
+                'battery':"Items/slot-battery.png",
+                'metal':"Items/slot-metal.png",
+                'water':"Items/slot-water.png",
             }[holds]        
         );
         this.scale = 0.5;
@@ -247,14 +305,33 @@ class ItemSlot extends Sprite {
         this.radius_target = 1.0;
     }
     clickslot() {
-        if (this.holding !== null) return;
+        if (this.holding !== null) {
+            this.holding.clickitem();
+            return;
+        }
         const item = this.engine.man.getItem(this.holds);
         if (item !== null) {
             this.holding = item;
             item.holder = this;
             item.particle.force_node = this.slot_force;
-            this.radius_target = 0.0;
         }
+    }
+    clear() {
+        if (this.holding !== null) {
+            this.holding.destroy();
+            this.holding = null;
+        }
+    }
+    enable() {
+        this.radius_target = 1.0;
+    }
+    disable() {
+        if (this.holding !== null) {
+            this.holding.particle.force_node = this.engine.gravity;
+            this.holding.holder = null;
+            this.holding = null;
+        }
+        this.radius_target = 0.0;
     }
     update(dt) {
         this.scale = ITEM_SCALE*this.radius;
@@ -266,14 +343,51 @@ class ItemSlot extends Sprite {
 }
 
 class Machine extends NightdaySprite {
-    constructor(engine,pass,image) {
+    constructor(engine,pass,pos,type) {
         super(engine,pass,
-            image,
+            MACHINE_CONFIG[type].image,
             0, // variant
             1.0, // layer
             1, // scale
         );
+        this.pos = pos;
+        this.type = type;
+        this.config = MACHINE_CONFIG[type];
+        const ihat = pos.norm();
+        const jhat = ihat.rot90();
+        this.produce_root = this.pos.add(ihat);
+        // Construction components
+        this.component_slots = [];
+        const res_root = pos.add(ihat.mul(MACHINE_SLOT_Y)).add(jhat.mul(MACHINE_SLOT_X));
+        for (const name in this.config.components) {
+            const count = this.config.components[name];
+            for (let i=0; i<count; ++i) {
+                this.component_slots.push(
+                    new ItemSlot(this.engine,res_root.add(ihat.mul(MACHINE_SLOT_SPACING*i)),name)
+                )
+            }
+        }
+        // Process consumption
+        this.consume_slots = [];
+        let con_head = res_root.add(jhat.mul(-MACHINE_SLOT_SPACING));
+        for (let stocki=0; stocki < this.config.stock; ++stocki) {
+            for (const name in this.config.consumes) {
+                const count = this.config.consumes[name];
+                for (let i=0; i<count; ++i) {
+                    let slot = new ItemSlot(this.engine,con_head.clone(),name);
+                    slot.radius_target = 0;
+                    this.consume_slots.push(slot);
+                    con_head.addeq(ihat.mul(MACHINE_SLOT_SPACING));
+                }
+            }
+        }
+        // Construction animation
         this.frame_age = 0;
+        this.variant_target = 0;
+        // Running
+        this.run_time = 0;
+        this.consume_timer = 0;
+        this.produce_timer = 0;
     }
     setImage(image,variant=null,layer=null) {
         this.image = image;
@@ -292,13 +406,88 @@ class Machine extends NightdaySprite {
         }
         this.transform_computed = false;
     }
-    update(dt) {
-        this.frame_age += dt;
-        if (this.frame_age > 0.6) {
-            this.frame_age = 0.0;
-            this.variant = (this.variant + 1) % MACHINE_STAGES.length;
+    count_full(slot_list) {
+        let full = 0;
+        for (const slot of slot_list) {
+            if (slot.holding !== null) full += 1;
         }
-        this.setImage(this.image,this.variant);
+        return full;
+    }
+    get_consumption_slots() {
+        const slots = [];
+        for (name in this.config.consumes) {
+            let countdown = this.config.consumes[name];
+            for (const slot of this.consume_slots) {
+                if (slot.holding !== null) {
+                    slots.push(slot);
+                    countdown -= 1;
+                }
+                if (countdown === 0) {
+                    break; // Don't find too many
+                }
+            }
+            if (countdown !== 0) {
+                return null; // Couldn't find enough stuff.
+            }
+        }
+        return slots;
+    }
+    can_consume() {
+        return this.get_consumption_slots() !== null;
+    }
+    consume() {
+        const slots = this.get_consumption_slots();
+        if (slots === null) return;
+        for (const slot of slots) {
+            slot.clear();
+        }
+    }
+    produce() {
+        for (const name in this.config.produces) {
+            const count = this.config.produces[name];
+            for (let i=0; i<count; ++i) {
+                new Item(
+                    this.engine,// engine
+                    this.produce_root, // Pos
+                    new Vec(1.0,Math.random()-0.5), // Vel
+                    name, // type
+                );
+            }
+        }
+    }
+    update(dt) {
+        // Determine construction goal
+        this.variant_target = Math.round(this.count_full(this.component_slots)/this.component_slots.length*(MACHINE_STAGES.length-1));
+        if (this.variant !== this.variant_target) {
+            this.frame_age += dt;
+            if (this.frame_age > CONSTRUCTION_ANIM_FRAME_TIME) {
+                this.frame_age = 0.0;
+                this.variant = (this.variant + (this.variant > this.variant_target ? -1 : 1));
+            }
+            this.setImage(this.image,this.variant);
+            for (const slot of this.consume_slots) slot.disable();
+        }
+        if (this.variant === this.variant_target && this.variant_target === MACHINE_STAGES.length-1) {
+            for (const slot of this.consume_slots) slot.enable();
+            // Construction complete
+            if (this.can_consume()) {
+                this.run_time += dt;
+                this.consume_timer += dt;
+                if (this.consume_timer > this.config.consume_time) {
+                    this.consume_timer = 0;
+                    this.consume();
+                }
+                this.produce_timer += dt;
+                if (this.produce_timer > this.config.produce_time) {
+                    this.produce_timer = 0;
+                    this.produce();
+                }
+                this.scale_y = 1.0 + RUNNING_WIGGLE_MAGNITUDE*Math.sin(RUNNING_WIGGLE_SPEED*this.run_time);
+                this.transform_computed = false;
+            }
+        } else {
+            this.run_time = 0; // Incomplete
+        }
         super.update(dt);
     }   
 }
@@ -438,34 +627,20 @@ class ArchimedesEngine extends Engine {
             true, // The planet's center never moves
         );
         this.live_particles = new Set(); // Particles that get simulation updates
-        for (const name of ['carbon','water','battery','metal']) {
+        // Machine test
+        let y = 0.0;
+        for (const name in MACHINE_CONFIG) {
+            const m = new Machine(this,this.aspritepass,new Vec(PLANET_RADIUS,y).normeq().muleq(MACHINE_RADIUS),name);
+            y += 1.0;
+        }
+        // Items
+        for (const name of ['carbon','water','battery','metal','metal']) {
             new Item(
                 this,// engine
                 (new Vec()).polareq(PLANET_RADIUS+1.0,0.0), // Pos
                 new Vec(1.0,Math.random()-0.5), // Vel
                 name, // type
             );
-        }
-        // Item slot
-        new ItemSlot(this,(new Vec()).polareq(PLANET_RADIUS+1.0,0.0),'carbon');
-        new ItemSlot(this,(new Vec()).polareq(PLANET_RADIUS+1.2,0.0),'water');
-        new ItemSlot(this,(new Vec()).polareq(PLANET_RADIUS+1.4,0.0),'metal');
-        new ItemSlot(this,(new Vec()).polareq(PLANET_RADIUS+1.6,0.0),'battery');
-        
-        // Machine test
-        let y = 0.0;
-        for (const name of [
-            "Machimes/carbom.png",
-            "Machimes/water.png",
-            "Machimes/metal.png",
-            "Machimes/battery-combustiom.png",
-            "Machimes/battery-steam.png",
-            ]) {
-            const m = new Machine(this,this.aspritepass,name);
-            m.pos.x = PLANET_RADIUS;
-            m.pos.y = y;
-            m.pos.normeq().muleq(MACHINE_RADIUS);
-            y += 1.0;
         }
     }
     update(dt) {
