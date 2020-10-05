@@ -549,6 +549,7 @@ class ArchimedesEngine extends Engine {
     }
     gen_layer(sprites,layer,rdelta,biomes) {
         let angle = 0;
+        if (biomes.length === 0) return;
         while (angle < Math.PI*2.0) {
             const biome = biomes[Math.floor(0.5 * angle / Math.PI * biomes.length)];
             angle += 0.1*Math.random();
