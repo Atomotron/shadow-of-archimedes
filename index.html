@@ -560,6 +560,7 @@ class ArchimedesEngine extends Engine {
                 name = sprites[idx];
                 found = !name.includes(biome+"/");
             }
+            if (!found) continue; // abort this one
             const flags = Math.floor(Math.random()*7.0+1);
             if (flags < 1) flags = 1;
             if (flags > 7) flags = 7;
