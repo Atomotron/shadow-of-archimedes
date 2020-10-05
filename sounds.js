@@ -71,7 +71,7 @@ class Sounds {
         // Set up sound effects master nodes
         this.sfx_volume = this.ctx.createGain();
         this.sfx_volume.connect(this.master_volume);
-        
+        this.stuck = true;
         this.start_loading();
     }
     // Creates elements and sets up on-load callbacks.
@@ -119,6 +119,7 @@ class Sounds {
         source.buffer = buffer;
         source.connect(this.ctx.destination);
         source.start();
+        this.stuck = false;
     }
     // Adds a controller to our set of controllers.
     control(controller) {

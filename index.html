@@ -586,6 +586,10 @@ class ArchimedesEngine extends Engine {
         this.daytime = 0;
         //Title (only on first start)
         this.message("UI/text-title.png");
+        // Music
+        this.tracks = ["song1","song2","song3"];
+        this.time_until_next = 60;
+        this.time_between = 120;
     }
     buildMachine(type,pos) {
         const stride = (!!this.man ? this.man.facing() : new Vec(1.0,0.0)).muleq(MACHINE_SIZE);
@@ -810,7 +814,15 @@ class ArchimedesEngine extends Engine {
         Mat.Compose(this.scene.view, R, this.scene.view);
         Mat.Compose(this.scene.view, S, this.scene.view);
         // Audio tracking
-        
+        if (!this.sound.stuck) {
+            this.time_until_next -= dt;
+            if (this.time_until_next <= 0) {
+                const name = this.tracks.shift();
+                this.sound.start_music(name,0.1);
+                this.tracks.push(name);
+                this.time_until_next = this.time_between;
+            }
+        }
     }
 }
 
