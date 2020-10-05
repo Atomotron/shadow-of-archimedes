@@ -792,24 +792,24 @@
         "y": 0.5
       }
     },
-    "Machimes/water.png": {
+    "UI/text-newgame.png": {
       "frame": {
         "x": 1414,
         "y": 230,
-        "w": 259,
-        "h": 337
+        "w": 263,
+        "h": 263
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 14,
-        "y": 52,
-        "w": 259,
-        "h": 337
+        "x": 91,
+        "y": 67,
+        "w": 263,
+        "h": 263
       },
       "sourceSize": {
-        "w": 300,
-        "h": 415
+        "w": 448,
+        "h": 394
       },
       "pivot": {
         "x": 0.5,
@@ -842,7 +842,7 @@
     },
     "Tex/death8.png": {
       "frame": {
-        "x": 1681,
+        "x": 1685,
         "y": 392,
         "w": 96,
         "h": 82
@@ -866,7 +866,7 @@
     },
     "Items/item-carbom.png": {
       "frame": {
-        "x": 1681,
+        "x": 1685,
         "y": 482,
         "w": 93,
         "h": 94
@@ -888,24 +888,24 @@
         "y": 0.5
       }
     },
-    "Machimes/carbom.png": {
+    "UI/text-newgamehover.png": {
       "frame": {
         "x": 1133,
         "y": 295,
-        "w": 259,
-        "h": 321
+        "w": 263,
+        "h": 263
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 34,
-        "y": 12,
-        "w": 259,
-        "h": 321
+        "x": 91,
+        "y": 67,
+        "w": 263,
+        "h": 263
       },
       "sourceSize": {
-        "w": 301,
-        "h": 360
+        "w": 448,
+        "h": 394
       },
       "pivot": {
         "x": 0.5,
@@ -1128,143 +1128,95 @@
         "y": 0.5
       }
     },
-    "UI/text-combustiomgemerator.png": {
+    "UI/text-newgamepressed.png": {
       "frame": {
-        "x": 1400,
-        "y": 575,
-        "w": 214,
-        "h": 19
+        "x": 1404,
+        "y": 501,
+        "w": 263,
+        "h": 263
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 4,
-        "y": 5,
-        "w": 214,
-        "h": 19
+        "x": 91,
+        "y": 67,
+        "w": 263,
+        "h": 263
       },
       "sourceSize": {
-        "w": 227,
-        "h": 28
+        "w": 448,
+        "h": 394
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "UI/text-steamgemerator.png": {
-      "frame": {
-        "x": 1622,
-        "y": 584,
-        "w": 160,
-        "h": 18
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 5,
-        "y": 7,
-        "w": 160,
-        "h": 18
-      },
-      "sourceSize": {
-        "w": 173,
-        "h": 30
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Items/icom-carbom.png": {
-      "frame": {
-        "x": 1400,
-        "y": 602,
-        "w": 183,
-        "h": 110
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 23,
-        "y": 4,
-        "w": 183,
-        "h": 110
-      },
-      "sourceSize": {
-        "w": 226,
-        "h": 154
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Items/icom-metal.png": {
-      "frame": {
-        "x": 1591,
-        "y": 610,
-        "w": 175,
-        "h": 125
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 20,
-        "y": 27,
-        "w": 175,
-        "h": 125
-      },
-      "sourceSize": {
-        "w": 210,
-        "h": 167
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/text-newgamehover.png": {
+    "Machimes/water.png": {
       "frame": {
         "x": 1131,
-        "y": 624,
-        "w": 175,
-        "h": 44
+        "y": 615,
+        "w": 259,
+        "h": 337
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 3,
-        "y": 0,
-        "w": 175,
-        "h": 44
+        "x": 14,
+        "y": 52,
+        "w": 259,
+        "h": 337
       },
       "sourceSize": {
-        "w": 178,
-        "h": 54
+        "w": 300,
+        "h": 415
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "Tex/man5.png": {
+    "Tex/death10.png": {
       "frame": {
-        "x": 1314,
-        "y": 624,
-        "w": 78,
-        "h": 106
+        "x": 1131,
+        "y": 566,
+        "w": 117,
+        "h": 41
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 472,
-        "y": 36,
-        "w": 78,
-        "h": 106
+        "x": 964,
+        "y": 105,
+        "w": 117,
+        "h": 41
       },
       "sourceSize": {
-        "w": 833,
+        "w": 1302,
+        "h": 181
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Tex/death11.png": {
+      "frame": {
+        "x": 1256,
+        "y": 566,
+        "w": 117,
+        "h": 41
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1092,
+        "y": 105,
+        "w": 117,
+        "h": 41
+      },
+      "sourceSize": {
+        "w": 1302,
         "h": 181
       },
       "pivot": {
@@ -1296,130 +1248,10 @@
         "y": 0.5
       }
     },
-    "UI/text-newgamepressed.png": {
-      "frame": {
-        "x": 1127,
-        "y": 676,
-        "w": 174,
-        "h": 44
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 3,
-        "w": 174,
-        "h": 44
-      },
-      "sourceSize": {
-        "w": 175,
-        "h": 52
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/text-newgame.png": {
-      "frame": {
-        "x": 1127,
-        "y": 728,
-        "w": 155,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 24,
-        "y": 20,
-        "w": 155,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 193,
-        "h": 48
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Items/icom-rearbubble.png": {
-      "frame": {
-        "x": 1400,
-        "y": 720,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle4.png": {
-      "frame": {
-        "x": 1554,
-        "y": 738,
-        "w": 29,
-        "h": 21
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 14,
-        "y": 6,
-        "w": 29,
-        "h": 21
-      },
-      "sourceSize": {
-        "w": 48,
-        "h": 33
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Light/blue3.png": {
-      "frame": {
-        "x": 1554,
-        "y": 767,
-        "w": 26,
-        "h": 26
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 97,
-        "y": 65,
-        "w": 26,
-        "h": 26
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Items/slot-carbom.png": {
       "frame": {
-        "x": 1290,
-        "y": 738,
+        "x": 1675,
+        "y": 584,
         "w": 93,
         "h": 94
       },
@@ -1440,24 +1272,24 @@
         "y": 0.5
       }
     },
-    "UI/carbomrefimer-deselected.png": {
+    "Machimes/carbom.png": {
       "frame": {
-        "x": 1127,
-        "y": 760,
-        "w": 146,
-        "h": 146
+        "x": 1776,
+        "y": 615,
+        "w": 259,
+        "h": 321
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
+        "x": 34,
+        "y": 12,
+        "w": 259,
+        "h": 321
       },
       "sourceSize": {
-        "w": 146,
-        "h": 146
+        "w": 301,
+        "h": 360
       },
       "pivot": {
         "x": 0.5,
@@ -1466,8 +1298,8 @@
     },
     "Tex/death7.png": {
       "frame": {
-        "x": 1281,
-        "y": 840,
+        "x": 1675,
+        "y": 686,
         "w": 90,
         "h": 85
       },
@@ -1488,360 +1320,24 @@
         "y": 0.5
       }
     },
-    "UI/carbomrefimer-selected.png": {
+    "UI/text-combustiomgemerator.png": {
       "frame": {
-        "x": 1774,
-        "y": 615,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/text-waterpump.png": {
-      "frame": {
-        "x": 1928,
-        "y": 615,
-        "w": 114,
-        "h": 18
+        "x": 1776,
+        "y": 944,
+        "w": 214,
+        "h": 19
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 4,
-        "y": 9,
-        "w": 114,
-        "h": 18
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 32
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/text-metalmimer.png": {
-      "frame": {
-        "x": 1928,
-        "y": 641,
-        "w": 113,
-        "h": 14
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 5,
-        "y": 7,
-        "w": 113,
-        "h": 14
-      },
-      "sourceSize": {
-        "w": 125,
-        "h": 30
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle8.png": {
-      "frame": {
-        "x": 1928,
-        "y": 663,
-        "w": 112,
-        "h": 48
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 8,
         "y": 5,
-        "w": 112,
-        "h": 48
+        "w": 214,
+        "h": 19
       },
       "sourceSize": {
-        "w": 136,
-        "h": 61
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/combust-deselected.png": {
-      "frame": {
-        "x": 1591,
-        "y": 743,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Light/green3.png": {
-      "frame": {
-        "x": 1554,
-        "y": 801,
-        "w": 26,
-        "h": 26
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 97,
-        "y": 11,
-        "w": 26,
-        "h": 26
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Light/red3.png": {
-      "frame": {
-        "x": 1554,
-        "y": 835,
-        "w": 26,
-        "h": 26
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 97,
-        "y": 120,
-        "w": 26,
-        "h": 26
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Light/white3.png": {
-      "frame": {
-        "x": 1554,
-        "y": 869,
-        "w": 26,
-        "h": 26
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 97,
-        "y": 93,
-        "w": 26,
-        "h": 26
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/combust-selected.png": {
-      "frame": {
-        "x": 1379,
-        "y": 874,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/metalmimer-deselected.png": {
-      "frame": {
-        "x": 1379,
-        "y": 1028,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/metalmimer-selected.png": {
-      "frame": {
-        "x": 1379,
-        "y": 1182,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Items/item-metal.png": {
-      "frame": {
-        "x": 1928,
-        "y": 719,
-        "w": 85,
-        "h": 85
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 24,
-        "y": 19,
-        "w": 85,
-        "h": 85
-      },
-      "sourceSize": {
-        "w": 129,
-        "h": 118
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/steam-deselected.png": {
-      "frame": {
-        "x": 1745,
-        "y": 769,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/steam-selected.png": {
-      "frame": {
-        "x": 1588,
-        "y": 897,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "UI/terraform-deselected.png": {
-      "frame": {
-        "x": 1588,
-        "y": 1051,
-        "w": 146,
-        "h": 146
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
-      },
-      "sourceSize": {
-        "w": 146,
-        "h": 146
+        "w": 227,
+        "h": 28
       },
       "pivot": {
         "x": 0.5,
@@ -1850,8 +1346,8 @@
     },
     "Items/slot-battery.png": {
       "frame": {
-        "x": 1533,
-        "y": 903,
+        "x": 1998,
+        "y": 944,
         "w": 41,
         "h": 114
       },
@@ -1874,8 +1370,8 @@
     },
     "Particles/particle17.png": {
       "frame": {
-        "x": 1533,
-        "y": 1025,
+        "x": 1998,
+        "y": 1066,
         "w": 40,
         "h": 44
       },
@@ -1896,34 +1392,130 @@
         "y": 0.5
       }
     },
-    "Items/icom-battery.png": {
+    "Items/icom-carbom.png": {
       "frame": {
-        "x": 1899,
-        "y": 812,
-        "w": 138,
-        "h": 242
+        "x": 1398,
+        "y": 772,
+        "w": 183,
+        "h": 110
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 33,
-        "y": 8,
-        "w": 138,
-        "h": 242
+        "x": 23,
+        "y": 4,
+        "w": 183,
+        "h": 110
       },
       "sourceSize": {
-        "w": 193,
-        "h": 261
+        "w": 226,
+        "h": 154
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "UI/terraform-selected.png": {
+    "Tex/man5.png": {
       "frame": {
-        "x": 1742,
-        "y": 923,
+        "x": 1589,
+        "y": 772,
+        "w": 78,
+        "h": 106
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 472,
+        "y": 36,
+        "w": 78,
+        "h": 106
+      },
+      "sourceSize": {
+        "w": 833,
+        "h": 181
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Items/icom-metal.png": {
+      "frame": {
+        "x": 1589,
+        "y": 886,
+        "w": 175,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 20,
+        "y": 27,
+        "w": 175,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 210,
+        "h": 167
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Tex/death1.png": {
+      "frame": {
+        "x": 1675,
+        "y": 779,
+        "w": 78,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 12,
+        "w": 78,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 108,
+        "h": 126
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/text-steamgemerator.png": {
+      "frame": {
+        "x": 1398,
+        "y": 890,
+        "w": 160,
+        "h": 18
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 7,
+        "w": 160,
+        "h": 18
+      },
+      "sourceSize": {
+        "w": 173,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Items/icom-rearbubble.png": {
+      "frame": {
+        "x": 1398,
+        "y": 916,
         "w": 146,
         "h": 146
       },
@@ -1944,10 +1536,106 @@
         "y": 0.5
       }
     },
-    "UI/waterpump-deselected.png": {
+    "Particles/particle4.png": {
       "frame": {
-        "x": 1896,
-        "y": 1062,
+        "x": 1552,
+        "y": 916,
+        "w": 29,
+        "h": 21
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 14,
+        "y": 6,
+        "w": 29,
+        "h": 21
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Light/blue3.png": {
+      "frame": {
+        "x": 1552,
+        "y": 945,
+        "w": 26,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 97,
+        "y": 65,
+        "w": 26,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Light/green3.png": {
+      "frame": {
+        "x": 1552,
+        "y": 979,
+        "w": 26,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 97,
+        "y": 11,
+        "w": 26,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Light/red3.png": {
+      "frame": {
+        "x": 1552,
+        "y": 1013,
+        "w": 26,
+        "h": 26
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 97,
+        "y": 120,
+        "w": 26,
+        "h": 26
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/carbomrefimer-deselected.png": {
+      "frame": {
+        "x": 1772,
+        "y": 971,
         "w": 146,
         "h": 146
       },
@@ -1968,24 +1656,72 @@
         "y": 0.5
       }
     },
-    "UI/waterpump-selected.png": {
+    "Particles/particle21.png": {
       "frame": {
-        "x": 1742,
-        "y": 1077,
-        "w": 146,
-        "h": 146
+        "x": 1926,
+        "y": 1019,
+        "w": 64,
+        "h": 24
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 146,
-        "h": 146
+        "x": 16,
+        "y": 6,
+        "w": 64,
+        "h": 24
       },
       "sourceSize": {
-        "w": 146,
-        "h": 146
+        "w": 86,
+        "h": 39
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Tex/death9.png": {
+      "frame": {
+        "x": 1926,
+        "y": 1118,
+        "w": 117,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 834,
+        "y": 97,
+        "w": 117,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 1302,
+        "h": 181
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/text-waterpump.png": {
+      "frame": {
+        "x": 1926,
+        "y": 1175,
+        "w": 114,
+        "h": 18
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 9,
+        "w": 114,
+        "h": 18
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 32
       },
       "pivot": {
         "x": 0.5,
@@ -1994,8 +1730,8 @@
     },
     "Particles/particle5.png": {
       "frame": {
-        "x": 1533,
-        "y": 1077,
+        "x": 1926,
+        "y": 971,
         "w": 38,
         "h": 29
       },
@@ -2018,8 +1754,8 @@
     },
     "Particles/particle18.png": {
       "frame": {
-        "x": 1533,
-        "y": 1114,
+        "x": 1926,
+        "y": 1051,
         "w": 38,
         "h": 23
       },
@@ -2040,120 +1776,24 @@
         "y": 0.5
       }
     },
-    "UI/text-carbomrefimer.png": {
+    "Light/white3.png": {
       "frame": {
-        "x": 1896,
-        "y": 1216,
-        "w": 138,
-        "h": 15
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 3,
-        "y": 4,
-        "w": 138,
-        "h": 15
-      },
-      "sourceSize": {
-        "w": 147,
-        "h": 25
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle16.png": {
-      "frame": {
-        "x": 1533,
-        "y": 1145,
-        "w": 37,
-        "h": 19
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 10,
-        "y": 7,
-        "w": 37,
-        "h": 19
-      },
-      "sourceSize": {
-        "w": 52,
-        "h": 34
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle10.png": {
-      "frame": {
-        "x": 1533,
-        "y": 1172,
-        "w": 35,
-        "h": 16
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 16,
-        "y": 8,
-        "w": 35,
-        "h": 16
-      },
-      "sourceSize": {
-        "w": 61,
-        "h": 33
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle11.png": {
-      "frame": {
-        "x": 1533,
-        "y": 1196,
-        "w": 34,
-        "h": 19
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 9,
-        "y": 4,
-        "w": 34,
-        "h": 19
-      },
-      "sourceSize": {
-        "w": 49,
+        "x": 1926,
+        "y": 1082,
+        "w": 26,
         "h": 26
       },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Tex/death9.png": {
-      "frame": {
-        "x": 1575,
-        "y": 1205,
-        "w": 117,
-        "h": 49
-      },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 834,
-        "y": 97,
-        "w": 117,
-        "h": 49
+        "x": 97,
+        "y": 93,
+        "w": 26,
+        "h": 26
       },
       "sourceSize": {
-        "w": 1302,
-        "h": 181
+        "w": 136,
+        "h": 164
       },
       "pivot": {
         "x": 0.5,
@@ -2162,8 +1802,8 @@
     },
     "Light/yellow3.png": {
       "frame": {
-        "x": 1533,
-        "y": 1223,
+        "x": 1960,
+        "y": 1082,
         "w": 26,
         "h": 26
       },
@@ -2184,10 +1824,34 @@
         "y": 0.5
       }
     },
+    "UI/carbomrefimer-selected.png": {
+      "frame": {
+        "x": 1586,
+        "y": 1019,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Particles/particle19.png": {
       "frame": {
-        "x": 1533,
-        "y": 1257,
+        "x": 1552,
+        "y": 1047,
         "w": 26,
         "h": 12
       },
@@ -2210,8 +1874,8 @@
     },
     "Light/blue1.png": {
       "frame": {
-        "x": 1700,
-        "y": 1205,
+        "x": 1740,
+        "y": 1019,
         "w": 24,
         "h": 24
       },
@@ -2232,34 +1896,10 @@
         "y": 0.5
       }
     },
-    "Tex/death10.png": {
-      "frame": {
-        "x": 1732,
-        "y": 1231,
-        "w": 117,
-        "h": 41
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 964,
-        "y": 105,
-        "w": 117,
-        "h": 41
-      },
-      "sourceSize": {
-        "w": 1302,
-        "h": 181
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Light/blue2.png": {
       "frame": {
-        "x": 1700,
-        "y": 1239,
+        "x": 1740,
+        "y": 1051,
         "w": 24,
         "h": 24
       },
@@ -2282,8 +1922,8 @@
     },
     "Light/green1.png": {
       "frame": {
-        "x": 1700,
-        "y": 1271,
+        "x": 1740,
+        "y": 1083,
         "w": 24,
         "h": 24
       },
@@ -2306,8 +1946,8 @@
     },
     "Light/green2.png": {
       "frame": {
-        "x": 1700,
-        "y": 1303,
+        "x": 1740,
+        "y": 1115,
         "w": 24,
         "h": 24
       },
@@ -2328,10 +1968,34 @@
         "y": 0.5
       }
     },
+    "UI/combust-deselected.png": {
+      "frame": {
+        "x": 1772,
+        "y": 1125,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Light/red1.png": {
       "frame": {
-        "x": 1857,
-        "y": 1231,
+        "x": 1740,
+        "y": 1147,
         "w": 24,
         "h": 24
       },
@@ -2352,34 +2016,10 @@
         "y": 0.5
       }
     },
-    "Tex/death11.png": {
-      "frame": {
-        "x": 1567,
-        "y": 1262,
-        "w": 117,
-        "h": 41
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 1092,
-        "y": 105,
-        "w": 117,
-        "h": 41
-      },
-      "sourceSize": {
-        "w": 1302,
-        "h": 181
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Light/red2.png": {
       "frame": {
-        "x": 1533,
-        "y": 1277,
+        "x": 1552,
+        "y": 1067,
         "w": 24,
         "h": 24
       },
@@ -2400,10 +2040,130 @@
         "y": 0.5
       }
     },
+    "UI/text-metalmimer.png": {
+      "frame": {
+        "x": 1926,
+        "y": 1201,
+        "w": 113,
+        "h": 14
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 7,
+        "w": 113,
+        "h": 14
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 30
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Particles/particle8.png": {
+      "frame": {
+        "x": 1926,
+        "y": 1223,
+        "w": 112,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 5,
+        "w": 112,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 61
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/combust-selected.png": {
+      "frame": {
+        "x": 629,
+        "y": 578,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/metalmimer-deselected.png": {
+      "frame": {
+        "x": 783,
+        "y": 630,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/metalmimer-selected.png": {
+      "frame": {
+        "x": 629,
+        "y": 732,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Light/white1.png": {
       "frame": {
-        "x": 1533,
-        "y": 1309,
+        "x": 937,
+        "y": 630,
         "w": 24,
         "h": 24
       },
@@ -2424,10 +2184,130 @@
         "y": 0.5
       }
     },
+    "Light/white2.png": {
+      "frame": {
+        "x": 937,
+        "y": 662,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 68,
+        "y": 94,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Light/yellow1.png": {
+      "frame": {
+        "x": 937,
+        "y": 694,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 39,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Light/yellow2.png": {
+      "frame": {
+        "x": 783,
+        "y": 578,
+        "w": 24,
+        "h": 24
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 68,
+        "y": 39,
+        "w": 24,
+        "h": 24
+      },
+      "sourceSize": {
+        "w": 136,
+        "h": 164
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Items/item-metal.png": {
+      "frame": {
+        "x": 937,
+        "y": 726,
+        "w": 85,
+        "h": 85
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 19,
+        "w": 85,
+        "h": 85
+      },
+      "sourceSize": {
+        "w": 129,
+        "h": 118
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/steam-deselected.png": {
+      "frame": {
+        "x": 783,
+        "y": 784,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "Items/slot-metal.png": {
       "frame": {
-        "x": 1565,
-        "y": 1311,
+        "x": 1030,
+        "y": 769,
         "w": 85,
         "h": 85
       },
@@ -2448,34 +2328,10 @@
         "y": 0.5
       }
     },
-    "Light/white2.png": {
-      "frame": {
-        "x": 1658,
-        "y": 1311,
-        "w": 24,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 68,
-        "y": 94,
-        "w": 24,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Tex/man6.png": {
       "frame": {
-        "x": 1565,
-        "y": 1404,
+        "x": 937,
+        "y": 819,
         "w": 83,
         "h": 108
       },
@@ -2498,8 +2354,8 @@
     },
     "Tex/man4.png": {
       "frame": {
-        "x": 1889,
-        "y": 1239,
+        "x": 1028,
+        "y": 862,
         "w": 81,
         "h": 102
       },
@@ -2520,106 +2376,10 @@
         "y": 0.5
       }
     },
-    "Light/yellow1.png": {
-      "frame": {
-        "x": 1857,
-        "y": 1263,
-        "w": 24,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 40,
-        "y": 39,
-        "w": 24,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Particles/particle21.png": {
-      "frame": {
-        "x": 1978,
-        "y": 1239,
-        "w": 64,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 16,
-        "y": 6,
-        "w": 64,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 86,
-        "h": 39
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Tex/death1.png": {
-      "frame": {
-        "x": 1732,
-        "y": 1280,
-        "w": 78,
-        "h": 96
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 22,
-        "y": 12,
-        "w": 78,
-        "h": 96
-      },
-      "sourceSize": {
-        "w": 108,
-        "h": 126
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Light/yellow2.png": {
-      "frame": {
-        "x": 1818,
-        "y": 1280,
-        "w": 24,
-        "h": 24
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 68,
-        "y": 39,
-        "w": 24,
-        "h": 24
-      },
-      "sourceSize": {
-        "w": 136,
-        "h": 164
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "Tex/death6.png": {
       "frame": {
-        "x": 1818,
-        "y": 1349,
+        "x": 937,
+        "y": 935,
         "w": 76,
         "h": 96
       },
@@ -2634,6 +2394,246 @@
       "sourceSize": {
         "w": 1302,
         "h": 181
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Particles/particle16.png": {
+      "frame": {
+        "x": 815,
+        "y": 578,
+        "w": 37,
+        "h": 19
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 7,
+        "w": 37,
+        "h": 19
+      },
+      "sourceSize": {
+        "w": 52,
+        "h": 34
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Particles/particle10.png": {
+      "frame": {
+        "x": 815,
+        "y": 605,
+        "w": 35,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 8,
+        "w": 35,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 61,
+        "h": 33
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Particles/particle11.png": {
+      "frame": {
+        "x": 860,
+        "y": 578,
+        "w": 34,
+        "h": 19
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 4,
+        "w": 34,
+        "h": 19
+      },
+      "sourceSize": {
+        "w": 49,
+        "h": 26
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/steam-selected.png": {
+      "frame": {
+        "x": 1117,
+        "y": 960,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/terraform-deselected.png": {
+      "frame": {
+        "x": 1271,
+        "y": 1070,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/terraform-selected.png": {
+      "frame": {
+        "x": 1425,
+        "y": 1114,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/waterpump-deselected.png": {
+      "frame": {
+        "x": 1579,
+        "y": 1173,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/waterpump-selected.png": {
+      "frame": {
+        "x": 1733,
+        "y": 1279,
+        "w": 146,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 146,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 146,
+        "h": 146
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Items/icom-battery.png": {
+      "frame": {
+        "x": 1887,
+        "y": 1327,
+        "w": 138,
+        "h": 242
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 33,
+        "y": 8,
+        "w": 138,
+        "h": 242
+      },
+      "sourceSize": {
+        "w": 193,
+        "h": 261
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "UI/text-carbomrefimer.png": {
+      "frame": {
+        "x": 1887,
+        "y": 1279,
+        "w": 138,
+        "h": 15
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 4,
+        "w": 138,
+        "h": 15
+      },
+      "sourceSize": {
+        "w": 147,
+        "h": 25
       },
       "pivot": {
         "x": 0.5,
