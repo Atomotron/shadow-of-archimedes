@@ -832,11 +832,11 @@ class ArchimedesEngine extends Engine {
                 this.ambience_started = true;
             }
             this.sound.music_track_volumes.get("hot-ambient").gain.value
-                = Math.exp(-16*(this.man.temperature-0.5)*(this.man.temperature-0.5));
+                = 1.5*Math.exp(-16*(this.man.temperature-0.5)*(this.man.temperature-0.5));
             this.sound.music_track_volumes.get("ambient").gain.value
                 = Math.exp(-16*(this.man.temperature-0.0)*(this.man.temperature-0.0));
             this.sound.music_track_volumes.get("cold-ambient").gain.value
-                = Math.exp(-16*(this.man.temperature+0.5)*(this.man.temperature+0.5));
+                = 2*Math.exp(-16*(this.man.temperature+0.5)*(this.man.temperature+0.5));
         }
     }
 }
