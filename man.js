@@ -84,7 +84,7 @@ class Man extends NightdaySprite {
         this.target.eq(target);
     }
     facing() {
-        return this.pos.norm().rot90eq();
+        return this.pos.norm().rot90eq().muleq(this.mirror ? -1:1);
     }
     update(dt) {
         // Update target
@@ -113,7 +113,7 @@ class Man extends NightdaySprite {
         // Update inventory pos
         this.inventory_root.eq(this.pos);
         const facing = this.facing();
-        facing.muleq(this.mirror ? MAN_INVENTORY_BEHIND : -MAN_INVENTORY_BEHIND);
+        facing.muleq(-MAN_INVENTORY_BEHIND);
         let i = Math.exp(0.5);
         for (const slot of this.inventory_slots) {
             slot.pos.eq(this.inventory_root.add(facing.mul(Math.log(i)*2)));

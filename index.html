@@ -145,6 +145,7 @@ void main() {
 const PLANET_RADIUS = 24;
 const MAN_RADIUS = PLANET_RADIUS-0.02;
 const CAMERA_RADIUS = PLANET_RADIUS+0.75;
+const MACHINE_RADIUS = PLANET_RADIUS-0.03
 const NICE_ZONE_SIZE = 48;
 const ZONE_SPEED = 0.03;
 const ZONE_STARTING_ANGLE = 0.4; //Radians
@@ -177,13 +178,13 @@ const ITEM_SCALE = 0.5;
 const ITEM_SLOT_SCALE_SPEED = 8;
 
 // Machines
-const MACHINE_RADIUS = PLANET_RADIUS-0.03
 const ITEM_SLOT_FORCE = 32;
 const ITEM_SLOT_DRAG = 0.2;
 
 const MACHINE_SLOT_SPACING = 0.2;
 const MACHINE_SLOT_X = 0.6;
 const MACHINE_SLOT_Y = 0.3;
+const MACHINE_SIZE = 0.6;
 
 
 const RUNNING_WIGGLE_SPEED = 24;
@@ -236,6 +237,15 @@ const MACHINE_CONFIG = {
         consumes: {"battery":1},
         produces: {"water":1},
     },
+    'terraformer':{
+        image: "Machimes/terraformer.png",
+        components: {"metal":8},
+        consume_time: 2000000000000, // Seconds between each resource consumption
+        produce_time: 2000000000000, // Seconds between each resource production
+        stock: 1,
+        consumes: {"battery":8},
+        produces: {"battery":8},
+    },
 };
 
 /*
@@ -271,16 +281,119 @@ class BackgroundPass extends RenderPass {
     }
 }
 
-class UIPass extends RenderPass {
+// A builtin pass
+class UIPass extends RenderPass{
     constructor(gl,scene,program,texture) {
         super(gl,program);
+        this.texture = texture;
         this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
             model: {type:'mat',dynamic:true},
             uv: {type:'mat',dynamic:true},
-            alpha: {type:'scalar',dynamic:false},
-        },16);
-        this.texture = texture;
-        this.texture_loc = gl.getUniformLocation(program,"spritesheet");
+            alpha: {type:'scalar',dynamic:true},
+        },8);
+        this.view_loc = gl.getUniformLocation(program,"view");
+        this.spritesheet_loc = gl.getUniformLocation(program,"spritesheet");
+        this.view = new Mat();
+    }
+    update(scene,dt) {
+        this.view.set(0.25,0.0,0.0,0.25*scene.view.yy/scene.view.xx, 0.0,0.0);
+    }
+    prepare(gl) {
+        this.dvao.prepare(gl);
+    }
+    draw(gl) {
+        gl.useProgram(this.program);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(this.spritesheet_loc, 0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.uniformMatrix3fv(this.view_loc,false,this.view.a);
+        this.dvao.draw(gl);
+    }
+}
+
+class UISprite{
+    constructor(engine,pass,image=null,pos=new Vec(),alpha=1.0) {
+        this.engine = engine;
+        this.pass = pass;
+        this.angle = 0;
+        this.scale = 1;
+        this.pos = pos;
+        this.mirror = false;
+        this.data = pass.dvao.acquire(engine.gl);
+        this.sprite_matrix = new Mat();
+        this.rotation = new Mat();
+        this.translation = new Mat();
+        this.scaling = new Mat();
+        this.setImage(image,alpha);
+        this.engine.sprites.add(this);
+    }
+    destroy() {
+        this.pass.dvao.relenquish(this.data);
+        this.engine.sprites.delete(this);
+    }
+    setImage(image,alpha=1.0) {
+        this.image = image;
+        if (image !== null) {
+            if (!this.engine.il.model_frames.has(image)) {
+                console.error("Missing image:",image);
+            }
+            this.sprite_matrix.eq(this.engine.il.model_frames.get(image));
+            this.data.uv.eq(this.engine.il.texture_frames.get(image));
+            this.data.alpha.set(alpha);
+        } else {
+            this.sprite_matrix.zeroeq();
+            this.data.uv.zeroeq();
+            this.data.alpha.zeroeq();
+        }
+    }
+    compute_transform() {
+        // Set matrices from values
+        this.rotation.rotationeq(this.angle);
+        this.translation.translationeq(this.pos);
+        if (this.mirror) {
+            this.scaling.scalingeq(-this.scale,this.scale);
+        } else {
+            this.scaling.scalingeq(this.scale,this.scale);
+        }
+        // Compute model matrix
+        this.data.model.eq(this.sprite_matrix);
+        this.data.model.composeq(this.scaling);
+        this.data.model.composeq(this.rotation);
+        this.data.model.composeq(this.translation);
+    }
+    update(dt) {
+        this.compute_transform();
+    }
+}
+
+class Message extends UISprite {
+    constructor(engine,pass,image=null,pos=new Vec(),fadein=0,duration=null,fadeout=0) {
+        super(engine,pass,image,pos,0.0);
+        this.duration = duration;
+        this.fadein = fadein;
+        this.duration = duration;
+        this.fadeout = fadeout;
+        this.age = 0;
+    }
+    update(dt) {
+        this.age += dt;
+        let alpha = this.age/this.fadein;
+        if (alpha > 1.0) {
+            alpha = 1.0;
+            if (this.duration) {
+                if (this.age > this.duration + this.fadein) {
+                    if (this.fadeout > 0) {
+                        alpha = 1.0 - (this.age-this.duration-this.fadein)/this.fadeout;
+                    }
+                    if (this.fadeout === 0 || alpha < 0.0) {
+                        alpha = 0.0;
+                        this.destroy();
+                    }
+                }
+            }
+        }
+        this.setImage(this.image,alpha);
+        super.update(dt);
     }
 }
 
@@ -370,7 +483,7 @@ class ArchimedesEngine extends Engine {
             this.sc.programs.get('ui'),
             this.il.textures.get('animations'),
         );
-        this.scene.addPass(this.uipass,0.100);
+        this.scene.addPass(this.uipass,0.000);
         
         // Generate background
         function find_layer(map,folder) {
@@ -406,10 +519,9 @@ class ArchimedesEngine extends Engine {
         this.create();
     }
     buildMachine(type,pos) {
-        const MACHINE_SIZE = 0.5;
-        const stride = this.man.facing().muleq(2*MACHINE_SIZE);
+        const stride = this.man.facing().muleq(MACHINE_SIZE);
         pos = pos.clone();
-        for (let attempt=0; attempt < 4; ++attempt) {
+        for (let attempt=0; attempt < 12; ++attempt) {
             pos.addeq(stride);
             pos.normeq().muleq(MACHINE_RADIUS);
             let overlap = false;
@@ -426,6 +538,14 @@ class ArchimedesEngine extends Engine {
                 break;
             }
         }
+    }
+    giveItem(name) {
+        new Item(
+            this,// engine
+            (new Vec()).polareq(PLANET_RADIUS+1.0,0.0), // Pos
+            new Vec(1.0,Math.random()-0.5), // Vel
+            name, // type
+        );
     }
     gen_layer(sprites,layer,rdelta,biomes) {
         let angle = 0;
@@ -475,6 +595,12 @@ class ArchimedesEngine extends Engine {
                 name, // type
             );
         }
+        // Title drop
+        let title = new Message(
+            this,this.uipass,"UI/text-title.png",
+            new Vec(0.0,0.5),
+            0.5,2.0,2.0,
+        );
     }
     destroy() {
         this.man.destroy();
@@ -493,12 +619,10 @@ class ArchimedesEngine extends Engine {
     update(dt) {
         super.update(dt);
         this.t += dt;
-        
         // Update physics particles
         for (const p of this.live_particles) {
             p.update(this,dt);
         }
-        
         // Update daytime
         this.scene.solar_vector.polareq(1/NICE_ZONE_SIZE,ZONE_STARTING_ANGLE-Math.PI*0.5-ZONE_SPEED*this.t);
         

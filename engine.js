@@ -70,8 +70,8 @@ class Engine {
                     average_dt = time/frames;
                     time = 0; frames = 0;
                 }
-                that.scene.update(average_dt);
                 that.update(average_dt);
+                that.scene.update(average_dt);
                 that.scene.prepare(that.gl);
                 that.scene.draw(that.gl);
             }
