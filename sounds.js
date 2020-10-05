@@ -147,6 +147,10 @@ class Sounds {
         ));
         this.music.get(name).play();
     }
+    loop_music(name) {
+        this.music.get(name).loop=true;
+        this.music.get(name).play();
+    }
     // Stops a music track. Can be given a fade-out time.
     stop_music(name,T=1) {
         const element = this.music.get(name);

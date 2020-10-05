@@ -590,6 +590,7 @@ class ArchimedesEngine extends Engine {
         this.tracks = ["song1","song2","song3"];
         this.time_until_next = 60;
         this.time_between = 120;
+        this.ambience_started = false;
     }
     buildMachine(type,pos) {
         const stride = (!!this.man ? this.man.facing() : new Vec(1.0,0.0)).muleq(MACHINE_SIZE);
@@ -823,6 +824,19 @@ class ArchimedesEngine extends Engine {
                 this.tracks.push(name);
                 this.time_until_next = this.time_between;
             }
+            if (!this.ambience_started) {
+                for (const name of ["hot-ambient","ambient","cold-ambient"]) {
+                    this.sound.loop_music(name);
+                    this.sound.music_track_volumes.get(name).gain.value = 0;
+                }
+                this.ambience_started = true;
+            }
+            this.sound.music_track_volumes.get("hot-ambient").gain.value
+                = Math.exp(-16*(this.man.temperature-0.5)*(this.man.temperature-0.5));
+            this.sound.music_track_volumes.get("ambient").gain.value
+                = Math.exp(-16*(this.man.temperature-0.0)*(this.man.temperature-0.0));
+            this.sound.music_track_volumes.get("cold-ambient").gain.value
+                = Math.exp(-16*(this.man.temperature+0.5)*(this.man.temperature+0.5));
         }
     }
 }
@@ -849,6 +863,9 @@ const engine = new ArchimedesEngine(
         "song1": "sounds/song1.mp3",
         "song2": "sounds/song2.mp3",
         "song3": "sounds/song3.mp3",
+        "hot-ambient":  "sounds/sun_continuous.mp3",
+        "ambient":      "sounds/nice_ambience.mp3",
+        "cold-ambient": "sounds/cold_ambience.mp3",
     },
     sfx = {
         "stone_walk1": "sounds/stone_walk1.mp3",
