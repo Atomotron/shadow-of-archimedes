@@ -185,8 +185,8 @@ class Man extends NightdaySprite {
                     }
                 }                
                 this.frame_age = 0;
-                this.setImage(this.frames[this.frame]);
             }
+            this.setImage(this.frames[this.frame]);
         }
         super.update(dt);
     }

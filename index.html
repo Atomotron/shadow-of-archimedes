@@ -559,6 +559,7 @@ class ArchimedesEngine extends Engine {
         this.seen_heat_warning = false;
         this.seen_cold_warning = false;
         this.item_tutorial_message = null;
+        this.particles = new Set();
         this.create();
         
         //Title (only on first start)
@@ -683,11 +684,14 @@ class ArchimedesEngine extends Engine {
     destroy() {
         this.man.destroy();
         for (const s of this.bgsprites) s.destroy();
-        this.bgsprites = null;
+        this.bgsprites = new Set();
         for (const m of this.machines) m.destroy();
-        this.machines = null;
+        this.machines = new Set();
         for (const i of this.items) i.destroy();
-        this.items = null;
+        this.items = new Set();
+        for (const p of this.particles) p.destroy();
+        this.particles = new Set();
+        this.live_particles = null;
         this.ndspritepass.dvao.expunge();
         this.running_terraformers = 0;
         this.zoom_control = true;
